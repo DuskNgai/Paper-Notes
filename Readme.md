@@ -4,45 +4,46 @@ Personal notes of read papers and books.
 
 # Finished Notes
 
-## Computer Graphics
+## Computer 
+
+### Differentiable Rendering
+
+1. 2018 Physics-informed neural networks A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations
 
 ### Image-based Rendering
 
+1. 1996 Light Field Rendering
+2. 1996 The Lumigraph
+3. 2021 SIGNET Efficient Neural Representation for Light Fields
+
 ### Level Sets
 
-2021 NeuS Learning Neural Implicit Surfaces by Volume Rendering for Multi-view Reconstruction
-
-2021 Volume Rendering of Neural Implicit Surfaces
+1. 2021 NeuS Learning Neural Implicit Surfaces by Volume Rendering for Multi-view Reconstruction
+2. 2021 Volume Rendering of Neural Implicit Surfaces
+3. 2022 HashSDF Accurate Implicit Surfaces with Fast Local Features on Permutohedral Lattices
 
 ### Neural Volume Rendering
 
-2020 NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis
+1. 2020 NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis
+2. 2020 NeRF++ Analyzing and Improving Neural Radiance Fields
+3. 2021 NeRF in detail: Learning to sample for view synthesis
+4. 2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
+5. 2021 Plenoxels: Radiance Fields without Neural Networks
+6. 2021 Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields
+7. 2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
+8. 2022 TensoRF: Tensorial Radiance Fields
+9. 2022 ReLU Fields The Little Non-linearity That Could
 
-2020 NeRF++ Analyzing and Improving Neural Radiance Fields
+### Mesh
 
-2021 NeRF in detail: Learning to sample for view synthesis
-
-2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
-
-2021 Plenoxels: Radiance Fields without Neural Networks
-
-2021 Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields
-
-2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
-
-2022 TensoRF: Tensorial Radiance Fields
-
-### Other
-
-2013 Sphere-Meshes Shape Approximation Using Spherical Quadratic Error Metrics
-
-### Rasterization
-
-1986 Data Structure for Soft Objects
-
-1987 Marching Cubes A High Resolution 3D Surface Construction Algorithm
+1. 1986 Data Structure for Soft Objects
+2. 1987 Marching Cubes A High Resolution 3D Surface Construction Algorithm
+3. 2013 Sphere-Meshes Shape Approximation Using Spherical Quadratic Error Metrics
 
 ### Ray Tracing
+
+1. 2020 Spatiotemporal reservoir resampling for real-time ray tracing with dynamic direct lighting
+2. 2021 Real-time Neural Radiance Caching for Path Tracing
 
 ### Volume Rendering
 
@@ -64,15 +65,9 @@ Personal notes of read papers and books.
 
 2012 SLIC Superpixels Compared to State-of-the-art Superpixel Methods
 
-## Cryo
-
 ## Deep Learning
 
 2018 Bridging the Gap between Deep Learning and Sparse Matrix Format Selection
-
-### Simulation
-
-2018 Physics-informed neural networks A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations
 
 # Books
 
