@@ -120,7 +120,7 @@ The mask decoder efficiently maps the image embedding, prompt embeddings, and an
 
 为了解决这个问题，我们修改模型以预测单个提示的多个输出遮罩。我们发现 3 个遮罩输出足以解决大多数常见情况（嵌套遮罩通常最多三个深度：整体、部分和子部分）。在训练期间，我们仅反向传播遮罩的最小损失。为了对遮罩进行排名，该模型预测每个遮罩的置信度分数（即估计的 IoU）。
 To address this, we modify the model to predict multiple output masks for a single prompt. We found 3 mask outputs is sufficient to address most common cases (nested masks are often at most three deep: whole, part, and subpart). During training, we backprop only the minimum loss over masks. To rank masks, the model predicts a confidence score (i.e., estimated IoU) for each mask.
- 
+
 #### Efficiency
 
 给定一个预先计算的图像嵌入，提示编码器和遮罩解码器在 CPU 上的 Web 浏览器中运行约 50 毫秒。
@@ -135,7 +135,7 @@ We supervise mask prediction with the linear combination of focal loss and dice 
 
 #### Assisted-manual stage
 
-我们没有对标记物体施加语义约束，注释者可以自由标记“stuff”和“things”。我们建议注释者标记他们可以命名或描述的物体，但不收集这些名称或描述。注释者被要求按照突出的顺序标记物体，并被鼓励在遮罩花费超过 30 秒进行注释后继续处理下一张图像。
+我们没有对标记物体施加语义约束，注释者可以自由标记 “stuff” 和 “things”。我们建议注释者标记他们可以命名或描述的物体，但不收集这些名称或描述。注释者被要求按照突出的顺序标记物体，并被鼓励在遮罩花费超过 30 秒进行注释后继续处理下一张图像。
 We did not impose semantic constraints for labeling objects, and annotators freely labeled both "stuff" and "things". We suggested annotators label objects they could name or describe, but did not collect these names or descriptions. Annotators were asked to label objects in order of prominence and were encouraged to proceed to the next image once a mask took over 30 seconds to annotate.
 
 在此阶段开始时，SAM 使用常见的公共分割数据集进行训练。在完成足够的数据注释后，SAM 仅使用新注释的遮罩进行再训练。随着收集到更多遮罩，图像编码器从 ViT-B 扩展到 ViT-H，其他架构细节也随之演变；我们总共重新训练了模型 6 次。
@@ -160,8 +160,8 @@ As in the first stage, we periodically retrained our model on newly collected da
 首先，在这个阶段开始时，我们收集了足够多的遮罩来大大改进模型，包括上一阶段的各种遮罩。
 First, at the start of this stage, we had collected enough masks to greatly improve the model, including the diverse masks from the previous stage.
 
-其次，在这个阶段，我们已经开发了歧义感知模型，这使我们即使在模棱两可的情况下也能预测有效的遮罩。具体来说，我们使用 $32\times32$ 规则点网格提示模型，并为每个点预测一组可能对应于有效物体的遮罩。使用歧义感知模型，如果一个点位于部分或子部分上，我们的模型将返回子部分、部分和整个物体。我们模型的 IoU 预测模块用于选择置信遮罩； 此外，我们只识别并选择了稳定的遮罩（如果将概率图阈值设置为 $0.5-\delta$ 和 $0.5+\delta$ 结果类似的遮罩，我们认为遮罩是稳定的）。
-Second, by this stage we had developed the ambiguity-aware model, which allowed us to predict valid masks even in ambiguous cases. Specifically, we prompted the model with a $32\times32$ regular grid of points and for each point predicted a set of masks that may correspond to valid objects. With the ambiguity-aware model, if a point lies on a part or subpart, our model will return the subpart, part, and whole object. The IoU prediction module of our model is used to select confident masks; moreover, we identified and selected only stable masks (we consider a mask stable if thresholding the probability map at $0.5-\delta$ and $0.5+\delta$results in similar masks).
+其次，在这个阶段，我们已经开发了歧义感知模型，这使我们即使在模棱两可的情况下也能预测有效的遮罩。具体来说，我们使用 $32\times32$ 规则点网格提示模型，并为每个点预测一组可能对应于有效物体的遮罩。使用歧义感知模型，如果一个点位于部分或子部分上，我们的模型将返回子部分、部分和整个物体。我们模型的 IoU 预测模块用于选择置信遮罩； 此外，我们只识别并选择了稳定的遮罩（如果将概率图阈值设置为 $0.5-\delta$ 和 $0.5+\delta$ 的时候产生相近的遮罩，我们就认为遮罩是稳定的）。
+Second, by this stage we had developed the ambiguity-aware model, which allowed us to predict valid masks even in ambiguous cases. Specifically, we prompted the model with a $32\times32$ regular grid of points and for each point predicted a set of masks that may correspond to valid objects. With the ambiguity-aware model, if a point lies on a part or subpart, our model will return the subpart, part, and whole object. The IoU prediction module of our model is used to select confident masks; moreover, we identified and selected only stable masks (we consider a mask stable if thresholding the probability map at $0.5-\delta$ and $0.5+\delta$ results in similar masks).
 
 最后，在选择了可信和稳定的遮罩后，我们应用非最大抑制 (NMS) 来过滤重复项。为了进一步提高较小遮罩的质量，我们还处理了多个重叠的放大图像裁剪。
 Finally, after selecting the confident and stable masks, we applied non-maximal suppression (NMS) to filter duplicates. To further improve the quality of smaller masks, we also processed multiple overlapping zoomed-in image crops.
