@@ -247,7 +247,7 @@
 
    > Maintaining a thermodynamical equilibrium.
 
-3. Name three lethal and at least one more non-lethal hazards associated with electron cryo-microscopes
+3. Name three lethal and at least one more non-lethal hazards associated with electron cryo-microscopes
 
    > X-rays.
    >
@@ -450,7 +450,7 @@
    > Horizontal axis is frequency, which represents different components of Fourier transform.
    > Vertical axis is contrast.
 
-3. What is the CTF’s domain and range?
+3. What is the CTF's domain and range?
 
    > Domain: $[0, \infty)$.
    > Range: $[-1, 1]$.
@@ -478,7 +478,7 @@
 
 # 3-4 Defocus and its effects
 
-1. What is a “Thon” ring?
+1. What is a "Thon" ring?
 
    > The graph of the square of the CTF.
 
@@ -494,11 +494,11 @@
 
    > Less defocused.
 
-5. What is “over-focus”?
+5. What is "over-focus"?
 
    > If the image form above the predetermined image plane, we call it over-focused.
 
-6. How do heavily defocussed images look different than “closer-to-focus” images?
+6. How do heavily defocussed images look different than "closer-to-focus" images?
 
    > We can maximize the CTF value of the specified spatial frequency to get details.
 
