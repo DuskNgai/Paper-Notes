@@ -1,6 +1,6 @@
 # Mask Autoencoder Are Scalable Vision Learners
 
-MAE 最突出的贡献就是提出了预训练视觉大模型。
+MAE 最突出的贡献就是提出了预训练视觉大模型。第二个贡献就是纠正了 Linear Probing 的错误观点。
 
 ## 0 Abstract
 
@@ -148,10 +148,30 @@ Simple random sampling works the best for our MAE.
 
 #### Comparisons with self-supervised methods
 
-
+1600 epochs, 31 hours, 128 TPU-v3 cores.
 
 #### Comparisons with supervised pre-training
 
 ### 4.3 Partial Fine-tuning
 
+表 1 显示，线性探测和微调结果基本不相关。在过去几年中，线性探测一直是一种流行的协议；然而，它错失了追求强大但非线性特征的机会--而这正是深度学习的优势所在。作为中间方案，我们研究了一种部分微调协议：在冻结其他层的同时，微调最后几层。
+Table 1 shows that linear probing and fine-tuning results are largely uncorrelated. Linear probing has been a popular protocol in the past few years; however, it misses the opportunity of pursuing strong but non-linear features--which is indeed a strength of deep learning. As a middle ground, we study a partial fine-tuning protocol: fine-tune the last several layers while freezing the others.
+
+值得注意的是，只对一个 Transformer 块进行微调，准确率就会从 73.5% 显著提高到 81.0%。此外，如果我们只微调最后一个块的 "一半"（即它的 MLP 子区块），我们可以得到 79.1%，比线性探测要好得多。这一变体实质上是对 MLP 头进行微调。微调几个区块（如 4 或 6 个）可以达到接近完全微调的精度。
+Notably, fine-tuning only one Transformer block boosts the accuracy significantly from 73.5% to 81.0%. Moreover, if we fine-tune only "half" of the last block (i.e., its MLP sub-block), we can get 79.1%, much better than linear probing. This variant is essentially fine-tuning an MLP head. Fine-tuning a few blocks (e.g., 4 or 6) can achieve accuracy close to full fine-tuning.
+
+这些观察结果表明，线性可分性并不是评估表征质量的唯一标准。我们还观察到，线性探测与迁移学习性能的相关性并不高，例如在物体检测方面。据我们所知，线性评估并不常用于 NLP 的预训练基准。
+These observations suggest that linear separability is not the sole metric for evaluating representation quality. It has also been observed that linear probing is not well correlated with transfer learning performance, e.g., for object detection. To our knowledge, linear evaluation is not often used in NLP for benchmarking pre-training.
+
 ## 5 Transfer Learning Experiments
+
+#### Object detection and segementation
+
+#### Semantic segmentation
+
+#### Classification tasks
+
+#### Pixels vs. tokens
+
+## 6 Discussion and Conclusion
+
