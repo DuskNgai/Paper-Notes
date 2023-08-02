@@ -103,7 +103,7 @@ $\mathcal{S}_{i}[\hat{V}]:(k_x,k_y)\mapsto\hat{V}\left(R_i\begin{bmatrix}k_x\\k_
 
 ### 3.2 Overview of CryoAI
 
-![](images\cryo-AI-pipeline.png)
+![](images/cryo-AI-pipeline.png)
 
 编码器将图像 $Y_i$ 作为输入并输出预测方向 $R_i$ 以及预测平移 $\mathbf{t}_i$。$R_i$ 用于旋转大小为 $L^2$ 3D 坐标 $[k_x,k_y,0]\in\mathbb{R}^3$ 的 2D 网格，然后将其输入到神经网络 $\hat{V }_{\theta}$。
 The encoder takes an image $Y_i$ as input and outputs a predicted orientation $R_i$ along with a predicted translation $\mathbf{t}_i$. $R_i$ is used to rotate a 2D grid of $L^2$ 3D-coordinate $[k_x,k_y,0]\in\mathbb{R}^3$ which are then fed into the neural network $\hat{V}_{\theta}$.

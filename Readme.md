@@ -4,11 +4,22 @@ Personal notes of read papers and books.
 
 # Finished Notes
 
-## Computer 
+## Biology
+
+### Cryo
+
+1. 2017 cryoSPARC: Algorithms for Rapid Unsupervised cryo-EM Structure Determination
+2. 2020 Reconstructing Continuous Distributions of 3d Protein Structure From Cryo-EM Image
+3. 2023 Convolutional Networks for Supervised Mining of Molecular Patterns within Cellular Context
+
+### Ultra Sound
+
+1. 2007 Multistencils Fast Marching Methods: A Highly Accurate Solution to the Eikonal Equation on Cartesian Domains
+2. [viewed]2020 EikoNet Solving the Eikonal equation with Deep Neural Networks
+
+## Computer Graphics
 
 ### Differentiable Rendering
-
-1. 2018 Physics-informed neural networks A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations
 
 ### Image-based Rendering
 
@@ -22,6 +33,12 @@ Personal notes of read papers and books.
 2. 2021 Volume Rendering of Neural Implicit Surfaces
 3. 2022 HashSDF Accurate Implicit Surfaces with Fast Local Features on Permutohedral Lattices
 
+### Mesh
+
+1. 1986 Data Structure for Soft Objects
+2. 1987 Marching Cubes A High Resolution 3D Surface Construction Algorithm
+3. 2013 Sphere-Meshes Shape Approximation Using Spherical Quadratic Error Metrics
+
 ### Neural Volume Rendering
 
 1. 2020 NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis
@@ -34,12 +51,6 @@ Personal notes of read papers and books.
 8. 2022 TensoRF: Tensorial Radiance Fields
 9. 2022 ReLU Fields The Little Non-linearity That Could
 
-### Mesh
-
-1. 1986 Data Structure for Soft Objects
-2. 1987 Marching Cubes A High Resolution 3D Surface Construction Algorithm
-3. 2013 Sphere-Meshes Shape Approximation Using Spherical Quadratic Error Metrics
-
 ### Ray Tracing
 
 1. 2020 Spatiotemporal reservoir resampling for real-time ray tracing with dynamic direct lighting
@@ -47,15 +58,23 @@ Personal notes of read papers and books.
 
 ### Volume Rendering
 
-1995 Optical Models for Direct Volume Rendering
+1. 1995 Optical Models for Direct Volume Rendering
 
 ## Computer Vision
+
+### Large Model
+
+1. 2021 Mask Autoencoder Are Scalable Vision Learners
+2. 2023 Segment Anything
 
 ### Poisson
 
 2003 Poisson Image Editing
 
 ### Puzzle
+
+1. [viewed]2012 Jigsaw Puzzles with Pieces of Unknown Orientation
+2. [viewed]2013 Robust Solvers for Square Jigsaw Puzzles
 
 ### Reconstruction
 

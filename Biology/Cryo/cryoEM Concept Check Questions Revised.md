@@ -2,13 +2,13 @@
 
 1. What are the advantages and disadvantages of electrons compared to photons for microscopy? Neutrons?
 
-   > Advantages to photons: shorter wavelengths than visible light, can be focus compare to X-ray.
+   > Advantages to photons: shorter wavelengths than visible light, easier to focus than X-ray.
    >
-   > Disadvantages to photons: damage sample compare to visible light, poor penetration compare to X-ray.
+   > Disadvantages to photons: damaging sample compare to visible light, poor penetration than X-ray.
    >
-   > Advantages to neutrons: easy to produce and focus.
+   > Advantages to neutrons: being easier to produce and focus.
    >
-   > Disadvantages to neutrons: damage sample.
+   > Disadvantages to neutrons: damaging sample.
 
 2. What structural biological technologies give higher resolution information than cryo-EM, and what kinds of samples and questions can they address?
 
@@ -22,7 +22,7 @@
 
 1. Where do the imaging electrons in an electron microscope come from?
 
-   > Electron gun.
+   > Electron gun, which is a bent wire line with current.
 
 2. What part of the gun is called the "cathode"? What should be called the "anode"?
 
@@ -30,15 +30,18 @@
 
 3. What is the accelerator stack a "stack" of?
 
-   > A series of discs with holes in them and connected with a series of resistances. The voltage increase from -300 kV to 0 V step by step.
+   > A series of discs with holes in them connected with a series of resistances. The voltage increase from -300 kV to 0 V disc by disc.
 
 4. What voltages are typically used in transmission electron microscopes? What kinds of electron wavelengths does this correspond to?
 
-   > 300 kV. 2 pm.
+   > 300 kV.
+   > $$
+\lambda=h/p=h/\sqrt{2mUe}\approx2\mathrm{pm}
+   $$
 
 5. What does it mean to "condition" the gun?
 
-   > Raise the voltage then the normal operating voltage and discharging.
+   > Raise the normal operating voltage in case of discharging. 
 
 6. What is the difference between spatial and temporal coherence?
 
@@ -48,9 +51,9 @@
 
 7. What are the three main types of electron guns? What are the advantages and disadvantages of each?
 
-   > 1. Tungsten filaments: cheap, not coherent.
+   > 1. Tungsten filaments: cheap, not coherent (Volcano-like).
    > 2. Lanthanum hexaboride: more coherent.
-   > 3. Field emission gun: great coherent.
+   > 3. Field emission gun: expensive, greatly coherent (Child-slide-like).
 
 # 1-2 Electron lenses 
 
@@ -60,50 +63,50 @@
 
 2. Why/how do optical lenses focus light?
 
-   > When encountering with atoms, the atoms perform as scattering center. As wave encounter with dense material, the wave slows down, and wave length compresses. Wave in different paths have the same optical path lengths which means they are all in phase, so they form the image.
+   > Huygens' Principle: When a wave encountering atoms, the atoms perform as scattering centers. As a wave encounters dense material, the wave slows down, and wavelength compresses. Waves in different paths have the same optical path lengths means they are all in phase. So they form the image.
 
 3. Draw a diagram that shows how a lens can be used to form a magnified image. What parameters determine the magnification?
 
-   > pass.
+   > Pass.
    >
-   > Current, Coil turns.
+   > Focal distance & Object distance. If object distance is between 1$\times$ and 2$\times$ of the focal distance, then image distance is larger than 2$\times$ of the focal distance.
 
 4. How do electron lenses focus electrons?
 
-   > The electrons along the axis will go straightforward. Other electrons will be focused by the magnetic field.
+   > The electrons along the axis go straightforwardly. Other electrons will be focused by the magnetic field excited by alternating current.
 
 5. Why do electron images rotate in an electron lens?
 
-   > The electrons which are off the axis will be rotated by the magnetic field. So the image will be rotated.
+   > Electrons that are off-axis will rotate in a magnetic field. As a result, the image will also rotate.
 
 6. What are the four main components of an electron lens system? What does each do?
 
-   > *Deflector*: Adjust the electrons which are produced by electron gun going along the axis.
+   > *Deflector*: Adjust the electrons produced by the electron gun going along the axis.
    >
-   > *lens*: Focus the electrons.
+   > *Lens*: Focus the electrons.
    >
-   > *Stigmator*: Compensate for asymmetric of magnetic field.
+   > *Stigmator*: Compensate for the asymmetric magnetic field of the lens to pull the electrons to the optical axis.
    >
-   > *Aperture*: Select the electrons that pass through the aperture.
+   > *Aperture*: Select the electrons near the optical axis.
 
 # 1-3 The column
 
 1. What are the three main lens systems in an electron microscope called?
 
-   > Condenser lens system
-   > Objective lens system
-   > Projector lens system
+   > - Condenser lens system;
+   > - Objective lens system;
+   > - Projector lens system.
 
 2. What is meant by a "conjugate plane"?
 
-   > The images on conjugate planes have the same wave function with different magnified factor.
+   > The images on conjugate planes have the same wave function with different magnified factors.
 
 3. What are the special names given to the three independent sets of deflectors?
 
-   > "gun" deflector
-   > "beam" deflector
-   > "image" deflector
-   > "projector" deflector
+   > - "gun" deflector
+   > - "beam" deflector
+   > - "image" deflector
+   > - "projector" deflector
 
 4. What current is controlled by the "filament"? "emission"? "spot size"? "intensity"? "focus"? "magnification"?
 
@@ -111,17 +114,17 @@
    >
    > Emission: Voltage between Wehnelt cylinder and accelerator stack.
    >
-   > Spot size: Current passing through the condenser lenses.
+   > Spot size: Current passing through the upper condenser lenses.
    >
-   > Intensity: Current passing through the condenser lenses, affecting crossover position.
+   > Intensity: Current passing through the lower condenser lenses, affecting the crossover position.
    >
    > Focus: Current passing through the objective lenses.
    >
-   > magnification: Current passing through the intermediate lenses.
+   > Magnification: Current passing through the intermediate lenses.
 
 5. What is controlled by the "high tension" knob?
 
-   > The Voltage drop in accelerator stack.
+   > The voltage drop in the accelerator stack.
 
 6. What is a "crossover"?
 
@@ -129,27 +132,27 @@
 
 7. Which knob controls whether the microscope is in "LM," "M," or "SA" mode? What currents change?
 
-   > LM: Projector lens are on.
+   > LM: Only the projector lens is on.
    >
-   > M: Intermediate lens and projector lens are on.
+   > M: The intermediate lens and the projector lens are on.
    >
-   > SA: All the 3 lenses are on.
+   > SA: All the three lenses are on.
 
 8. What are "pivot points"?
 
-   > Let the electrons tilt without shift or shift without tilt.
+   > Each deflector set has a pivot point. At the pivot point, the electrons tilt without shift or shift without tilt.
 
 9. What does it mean to "align" the microscope?
 
-   > Set deflectors and let the electrons go the optical axis to form a good image.
+   > Set deflectors and let the electrons along the optical axis to form a good image.
 
 10. What is "hysteresis"?
 
-    > For a specific current, there are 2 magnification of magnetic as current increase and decreasing.
+    > As one increases the current magnification, the magnetic field magnification increases. Meanwhile, the material of the coils gets magnetized temporally, so as you decrease the current magnification, the magnetic field magnification will be higher for a fixed magnification of the current.
 
 11. What does the "normalize" button do?
 
-    > It will increase the current to the top and then decrease to the bottom and them increase to the initial place, in order to get rid of effect of hysteresis.
+    > It will increase the current to the top, decrease to the bottom, and then increase to the initial state, in order to get rid of the effect of hysteresis.
 
 # 1-4 The sample chamber
 
@@ -159,19 +162,19 @@
 
 2. Where does the sample rest with respect to the objective lens?
 
-   > Between pole pieces of objective lenses.
+   > Between pole pieces gap of objective lenses.
 
 3. What is the "pole piece gap"?
 
-   > Gap between two lenses(magnetic poles).
+   > Gap between two lenses (magnetic poles).
 
 4. What is a "cryo-box"?
 
-   > The little box in around the sample in order to block the water molecules.
+   > The tiny box in EM wraps around the sample in order to block the water molecules.
 
-5. What is "en-centric height"? Is it different for every grid?
+5. What is "eucentric height"? Is it different for every grid?
 
-   > When we rotate the sample insertion tube, the height of rotating axis.
+   > When rotating the sample inside the EM around center axis of the insertion tube, a horizontal axis, the eucentric height is height of the rotating axis. It is different for every grid.
 
 # 1-5 Energy filters
 
@@ -523,4 +526,6 @@
 4. How do these effects depend on defocus?
 
    > 
+
+# 3-6 CTF Correction
 
