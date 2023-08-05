@@ -8,9 +8,10 @@ Personal notes of read papers and books.
 
 ### Cryo
 
-1. 2017 cryoSPARC: Algorithms for Rapid Unsupervised cryo-EM Structure Determination
-2. 2020 Reconstructing Continuous Distributions of 3d Protein Structure From Cryo-EM Image
-3. 2023 Convolutional Networks for Supervised Mining of Molecular Patterns within Cellular Context
+1. cryoEM Concept Check Questions Revised
+2. 2017 cryoSPARC: Algorithms for Rapid Unsupervised cryo-EM Structure Determination
+3. 2020 Reconstructing Continuous Distributions of 3d Protein Structure From Cryo-EM Image
+4. 2023 Convolutional Networks for Supervised Mining of Molecular Patterns within Cellular Context
 
 ### Ultra Sound
 
@@ -20,6 +21,8 @@ Personal notes of read papers and books.
 ## Computer Graphics
 
 ### Differentiable Rendering
+
+1. 2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
 
 ### Image-based Rendering
 
@@ -47,9 +50,8 @@ Personal notes of read papers and books.
 4. 2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
 5. 2021 Plenoxels: Radiance Fields without Neural Networks
 6. 2021 Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields
-7. 2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
-8. 2022 TensoRF: Tensorial Radiance Fields
-9. 2022 ReLU Fields The Little Non-linearity That Could
+7. 2022 TensoRF: Tensorial Radiance Fields
+8. 2022 ReLU Fields The Little Non-linearity That Could
 
 ### Ray Tracing
 
