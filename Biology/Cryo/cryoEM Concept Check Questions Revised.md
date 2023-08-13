@@ -520,53 +520,53 @@
 
 1. What effect does partial spatial coherence have on the CTF? Why?
 
-    > 
+    > The electrons are not focused exactly on the same point. The low spatial frequncies in the CTF are not affected, but the high spatial frequencies are diminished. So the envelope of the CTF looks like a low-pass filter.
 
 2. What effect does partial temporal coherence have on the CTF? Why?
 
-    > 
+    > The electons get both over-focused and defocused. So the CTF value is diminished.
 
 3. What is their combined effect?
 
-    > 
+    > The net effect is the product of the two effects. The high spatial frequencies are diminished.
 
 4. How do these effects depend on defocus?
 
-    > 
+    > Since the CTF depends on the defocus, the higher the defocus, the faster the CTF value diminishes.
 
 ## 3-6 CTF Correction
 
 1. What is a "point spread function"?
 
-    >
+    > A function that describes the relationship between a point before and after a image formation process.
 
 2. How is the point spread function related to the CTF?
 
-    >
+    > The point spread function is the Fourier transform of the CTF.
 
 3. What is the relationship between the wave function that exists on the back focal plane of the microscope and the Fourier transform of the recorded image?
 
-    >
+    > Image is formed by the convolution of the point spread function and the object function.
 
 4. How (conceptually) can EM images be "CTF-corrected"?
 
-    > 
+    > We can deconvolute the image by the point spread function to get the object function. We can do it in frequency domain: by dividing the Fourier transform of the image by the CTF, then do the inverse Fourier transform.
 
 5. How can the CTF of a TEM image be determined?
 
-    > 
+    > Calculate the Fourier transform of the image, and then take radiL means of the power spectrum. The result is the CTF.
 
 6. What special issue arises at CTF-zeros? How can it be handled?
 
-    > 
+    > Zero division. Exclude the points near the CTF-zeros from the calculation and set the result to zero.
 
 7. What would it mean if someone said they "CTF-corrected by phase-flipping only"?
 
-    > 
+    > Just take the absolute value of the CTF, which means shift the phase 180 degrees of the frequency components with negative CTF values.
 
 8. How can the information loss at CTF-zeros be overcome?
 
-    > 
+    > Take the image at different defocuses and combine them.
 
 # 4 Fundamental Challenges in Biological TEM
 
@@ -574,27 +574,107 @@
 
 1. Why can't cells just be inserted into the microscope and imaged (without any special preparation)?
 
-    > 
+    > The environment in the microscope is vacuum, which will cause the liquid in the cell to boil and distroy the cell.
 
 2. What is "chemical fixation", what agents are used to do it, and what are its advantages and disadvantages?
 
-    > 
+    > One way is using aldehydes to form bonds to chemical moieties on biological macromolecules. Another way is using osmium to make the structues to become more rigid and better preserved.
 
 3. Once a cell or tissue is chemically fixed, what else is typically done in preparation for traditional "thin section" EM?
 
-    > 
+    > - Dehydration.
+    > - Plastic embedment.
+    > - Sectioning.
+    > - Staining.
 
 4. What metal stains are typically used for thin-section EM, and how do they affect the visibility of sample structures?
 
-    > 
+    > - Uranyl acetate: decorating the protein components of the cell.
+    > - Osmium tetroxide: being collected inside the membrane.
 
 5. How does "metal shadowing" work?
 
-    > 
+    > Fix the sample put it on a rotating grid. Then the metal partical will drop from the top. Since the grid is rotating, the metal partial will only be collected on one side of the sample, forming a shadow.
 
 6. How is metal shadowing different from "negative staining"?
 
-    > 
+    > Metal shadowing uses a heated rod to produce metal partical, while negative staning uses metal partical solution.
 
 ## 4-2 Sample prep - Methods involving freezing
+
+1. What problem does high pressure freezing solve?
+
+    > Traditional thin section EM requires the sample to be dehydrated, which will cause the cell to shrink. High pressure freezing can freeze the sample so fast that the water molecules will not form ice crystals.
+
+2. What is "low-temperature" embedding?
+
+    > The block of tissue dehydrated and infiltrated by an organic solvent with a plastic resin will polymerizen at low temperature.
+
+3. What is "cryo-sectioning", and what artifacts (3) and challenges (several) are associated with it?
+
+    > First high presure freezing the sample, and then sectioning it in the frozen state. Finally the section is transferred to a grid and imaged.
+    > - Artifacts:
+    >      - Sections are not flat.
+    >      - Knife marks are visible.
+    >      - During sectioning, the stress forces the sample to erupt up out of the surface creating a series of crevasse-like cracks.
+
+4. What kinds of samples can be "plunge-frozen"?
+
+    > Any samples that can be suspended in a liquid.
+
+5. How can focussed ion beams be used to prepare cryo-EM samples?
+
+    > 
+
+## 4-3 Sample prep - Grid
+
+1. What are the most common materials used to make grids?
+
+    > 
+
+2. If you wanted to culture cells on grids, which grids would be better - copper or gold?
+
+    > 
+
+3. What does "250 mesh" mean?
+
+    > 
+
+4. What is a "slot" grid? A "finder" grid?
+
+    > 
+
+5. What is formvar?
+
+    > 
+
+6. What is the difference between "holey" carbon and "Quantifoil" coatings?
+
+    > 
+
+7. What is a carbon evaporator, and how does it work?
+
+    > 
+
+8. What is "glow discharging," and why is it done?
+
+    > 
+
+9. What is "cryo-crinkling", and what are some ways to reduce it?
+
+    > 
+
+## 4-4 3-D reconstruction
+
+1. How can 3-D reconstructions be calculated from 2-D projections in real space?
+
+    > 
+
+2. What is the "projection theorem"? Draw it.
+
+    > 
+
+3. How are 3-D reconstructions calculated from 2-D projections in reciprocal space?
+
+    > 
 

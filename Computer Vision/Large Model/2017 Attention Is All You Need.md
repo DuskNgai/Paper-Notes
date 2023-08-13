@@ -1,14 +1,28 @@
 # Attention Is All You Need
 
-Transformer 处理序列输入，序列输出。其中输入和输出的可以不等长。
+## -1 Personal Understandings
 
-Non-Autoregressive
+- Input: 一段文本，可以被分解为一个个 token。
+- Input Embedding: token 到 $\mathbb{R}^{d_{\text{model}}\times1}$ 的输入向量 $X$。
+- Positional Embedding: 将位置信息加入到 $\mathbb{R}^{d_{\text{model}}\times1}$ 的向量 $X$。
+- Query/Key/Value: $\mathbb{R}^{d_{\text{model}}\times1}$ 的向量 $X$ 经过线性层后得到的。$QK^T/\sqrt{d_k}$ 给出了一个相关矩阵，数值大小代表关联大小，$\sqrt{d_k}$ 使得输入在比较小的范围内，不至于梯度消失或者梯度爆炸。Softmax 获得归一化的权重，且增强了相关矩阵内较大的值，抑制了相关矩阵内较小的值。最后与 $V$ 相乘得到结果值。
+- Multi-head Attention: 每个 Attention 得到的结果连接起来，最后经过一个线性层得到多头注意力的结果。
+- Residual Block + Layer Normalization: 将多头注意力的结果与输入向量 $X$ 相加，经过层归一化
+- Point-wise Feed Forward: 加强考虑上下文之间的联系的区域。随后输出与输入再次 Residual Block + Layer Normalization。
+- Transformer Encoder Block: 以上 4 步组成了一个 Transformer Encoder Block，多个 Block 前后相连组成了 Transformer Encoder。
+- Output Embedding: 在第一个 Decoder Block 前，需要接收之前的输出，映射方式同输入向量 $X$。随后经过一个特殊的 Multi-head Attention，为了防止 Decode 查看到未来的输出，需要在 softmax 之前 mask 相关矩阵的右上角部分。
+- Transformer Decoder Block: 第一个 Decoder Block 出，$Q$ 和 $K$ 来自于 Encoder，$V$ 来自于 Decoder。后续和 Transformer Encoder Block 完全一致。
+- Linear Classifier: 回归预测下一个 token。
 
-交叉注意力机制 Cross-Attention Mechanism
+Attention:
+$$
+\mathrm{Head}_i=\mathrm{Attention}(X)=\mathrm{softmax}\left(\frac{XW^Q_i(XW^K_i)^T}{\sqrt{d_k}}\right)XW^V_i
+$$
 
-连接 Transformer Encoder 和 Decoder 的模块。
-
-Query 来自于 Decoder，Key 和 Value 来自于 Encoder。
+Multi-head Attention:
+$$
+\mathrm{MultiHead}(Q, K, V) = \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)W^O
+$$
 
 ## 0 Abstract
 
@@ -63,29 +77,22 @@ We suspect that for large values of $d_k$, the dot products grow large in magnit
 Instead of performing a single attention function with $d_{\text{model}}$-dimensional keys, values and queries, we found it beneficial to linearly project the queries, keys and values $h$ times with different, learned linear projections to $d_k$, $d_k$ and $d_v$ dimensions, respectively. On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding $d_v$-dimensional output values. These are concatenated and once again projected, resulting in the final values.
 $$
 \begin{align*}
-\mathrm{MultiHead}(Q, K, V) &= \mathrm{Concat}W^O(\mathrm{head}_1,\dots,\mathrm{head}_h)\\
+\mathrm{MultiHead}(Q, K, V) &= \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)W^O\\
 \mathrm{head}_i&=\mathrm{Attention}(QW_i^Q,KW_i^K,VW_i^V)
 \end{align*}
 $$
 
-> 输入 $X=(x_1,\dots,x_n)\in\mathbb{R}^{d_k\times n}$
-> $$
-\begin{align*}
-Q&=W^QX\in\mathbb{R}^{d_k\times n}\\
-K&=W^KX\in\mathbb{R}^{d_k\times n}\\
-V&=W^VX\in\mathbb{R}^{d_v\times n}\\
-\mathrm{Attention}(Q,K,V)&=\mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V\in\mathbb{R}^{d_v\times n}\\
-W^Q_i&\in\mathbb{R}^{d_{\text{model}}\times d_k}\\
-W^K_i&\in\mathbb{R}^{d_{\text{model}}\times d_k}\\
-W^V_i&\in\mathbb{R}^{d_{\text{model}}\times d_v}\\
-W^O_i&\in\mathbb{R}^{hd_v\times d_{\text{model}}}\\
-\mathrm{head}_i&=\mathrm{Attention}(QW_i^Q,KW_i^K,VW_i^V)\\
-\mathrm{MultiHead}(Q, K, V) &= \mathrm{Concat}W^O(\mathrm{head}_1,\dots,\mathrm{head}_h)\in\mathbb{R}^{d_v\times n}
-\end{align*}
- $$
-
 其中 $h=8,d_k=d_v=d_{\text{model}}/h=64$.
 #### 3.2.3 Application of Attention in our Model
 
+解码器中的自注意力层允许解码器中的每个位置关注解码器中包括该位置在内的所有位置。我们需要防止解码器中的信息向左流动，以保持自动回归特性。我们在缩放点积注意力中通过屏蔽（设置为 $-\infty$）softmax 输入中对应非法连接的所有值，实现了这一点。
+Self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to prevent leftward information flow in the decoder to preserve the auto-regressive property. We implement this inside of scaled dot-product attention by masking out (setting to  $-\infty$) all values in the input of the softmax which correspond to illegal connections.
 
+### 3.3 Position-wise Feed-Forward Networks
 
+### 3.4 Embeddings and Softmax
+
+我们使用学习到的嵌入将输入标记和输出标记转换为维度为 $d_\text{model}$ 的向量。我们还使用通常学习到的线性变换和 softmax 函数将解码器输出转换为预测的下一个标记概率。在我们的模型中，两个嵌入层和预软最大线性变换之间共享相同的权重矩阵。在嵌入层中，我们将这些权重乘以 $\sqrt{d_\text{model}}$。
+We use learned embeddings to convert the input tokens and output tokens to vectors of dimension $d_\text{model}$. We also use the usual learned linear transformation and softmax function to convert the decoder output to predicted next-token probabilities. In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation. In the embedding layers, we multiply those weights by $\sqrt{d_\text{model}}$.
+
+### 3.5 Positional Encoding
