@@ -1,0 +1,387 @@
+# Chapter 4 广义线性空间 General Vector Spaces
+
+## 4.1 实线性空间 Real Vector Spaces
+
+### DEFINITION 1
+
+Let $V$ be an arbitrary nonempty set of objects on *which two* operations are defined: *addition*, and *multiplication* by numbers called scalars. By addition we mean a rule for associating with each pair of objects $\mathbf u$ and $\mathbf v$ in $V$ an object $\mathbf u + \mathbf v$, called the sum of $\mathbf u$ and $\mathbf v$; by scalar multiplication we mean a rule for associating with each scalar $k$ and each object $\mathbf u$ in $V$ an object $k\mathbf u$, called the scalar multiple of $\mathbf u$ by $k$. **If the following 10 axioms are satisfied by all objects $\mathbf u$, $\mathbf v$, $\mathbf w$ in $V$ and all scalars $k$ and $m$, then we call $V$ a vector space and we call the objects in $V$ vectors.**
+
+1. If $\mathbf u$ and $\mathbf v$ are objects in $V$, then $\mathbf u + \mathbf v$ is in $V$
+2. $\mathbf u + \mathbf v = \mathbf v + \mathbf u$
+3. $\mathbf u + (\mathbf v + \mathbf w) = (\mathbf u + \mathbf v) + \mathbf w$
+4. There is an object $\mathbf 0$ in $V$, called a zero vector for $V$, such that $\mathbf 0 + \mathbf u = \mathbf u + \mathbf 0 = \mathbf u$ for all u in $V$.
+5. For each $\mathbf u$ in $V$, there is an object $−\mathbf u$ in $V$, called a negative of $\mathbf u$, such that $\mathbf u + (−\mathbf u) = (−\mathbf u) + \mathbf u = \mathbf 0$
+6. If $k$ is any scalar and $\mathbf u$ is any object in $V$, then $k\mathbf u$ is in $V$
+7. $k(\mathbf u + \mathbf v) = k\mathbf u + k\mathbf v$
+8. $(k + m)\mathbf u = k\mathbf u + m\mathbf u$
+9. $k(m\mathbf u) = (km)(\mathbf u)$
+10. $1\mathbf u = \mathbf u$
+
+Any kind of object can be a vector, and the operations of addition and scalar multiplication need not have any relationship to those on $\mathbb R^n$. The only requirement is that the ten vector space axioms be satisfied.
+
+> $\{\mathbf 0\}$, $\mathbb R^n$, $\mathbb R^{\infty}$, $m\times n$ matrix, real valued functions are vector space.
+
+### THEOREM 4.1.1
+
+Let $V$ be a vector space, $\mathbf u$ a vector in $V$, and $k$ a scalar; then:
+
+1. $0\mathbf u = \mathbf 0$
+2. $k\mathbf 0 = \mathbf 0$
+3. $(−1)\mathbf u = −\mathbf u$
+4. If $k\mathbf u = 0$, then $k = 0$ or $\mathbf u = 0$.
+
+## 4.2 子空间 Subspaces
+
+### DEFINITION 1
+
+A subset $W$ of a vector space $V$ is called a subspace of $V$ if $W$ is itself a vector space under the addition and scalar multiplication defined on $V$.
+
+In general, to show that a nonempty set $W$ with two operations is a vector space one must verify the ten vector space axioms. However, if $W$ is a subspace of a known vector space $V$, then certain axioms need not be verified because they are "inherited" from $V$.
+
+### THEOREM 4.2.1
+
+If $W$ is a set of one or more vectors in a vector space $V$, then $W$ is a subspace of $V$ if and only if the following conditions are satisfied.
+
+1. If $\mathbf u$ and $\mathbf v$ are vectors in $W$, then $\mathbf u+\mathbf v$ is in $W$.
+2. If $k$ is a scalar and $\mathbf u$ is a vector in $W$, then $k\mathbf u$ is in $W$.
+
+> $\{\mathbf 0\}$ for any space, lines, planes through origin for $\mathbb R^n$,  continuous functions with Continuous Derivatives on $(-\infty, \infty)$ for function on $(-\infty, \infty)$, polynomials for polynomials are corresponding subspaces.
+>
+> $F(-\infty, \infty)\supset C(-\infty, \infty)\supset C^1(-\infty, \infty)\supset C^n(-\infty, \infty)\supset C^{\infty}(-\infty, \infty)\supset P_n$
+
+### THEOREM 4.2.2
+
+If $W_1, W_2,\dots,W_r$ are subspaces of a vector space $V$, then the intersection of these subspaces is also a subspace of $V$.
+
+### DEFINITION 2
+
+If $\mathbf w$ is a vector in a vector space $V$, then $\mathbf w$ is said to be a 线性组合 *linear combination* of the vectors $\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r$ in $V$ if $\mathbf w$ can be expressed in the form $\mathbf w = k_1\mathbf v_1 + k_2\mathbf v_2 +\dots+ k_r\mathbf v_r$ where $k_1, k_2,\dots,k_r$ are scalars. These scalars are called the 系数 *coefficients* of the linear combination.
+
+### THEOREM 4.2.3
+
+If $S = \{\mathbf w_1, \mathbf w_2,\dots, \mathbf w_r\}$ is a nonempty set of vectors in a vector space $V$, then:
+
+1. The set $W$ of all possible linear combinations of the vectors in $S$ is a subspace of $V$.
+2. The set $W$ in part(a) is the “smallest” subspace of $V$ that contains all of the vectors in $S$ in the sense that any other subspace that contains those vectors contains $W$.
+
+#### Proof
+
+##### 1
+
+$W$ is closed under addition and multiplication.
+
+##### 2
+
+Let $W'$ be any subspace of $S$, then $W'$ is closed under addition and multiplication, then it contains all linear combinations of the vectors in $S$, then it contains $W$. Then $W$ is the smallest.
+
+### DEFINITION 3 张成 Span
+
+If $S = \{\mathbf w_1, \mathbf w_2,\dots, \mathbf w_r\}$ is a nonempty set of vectors in a vector space $V$ , then the subspace $W$ of $V$ that consists of all possible linear combinations of the vectors in $S$ is called the subspace of $V$ generated by $S$, and we say that the vectors $\mathbf w_1, \mathbf w_2,\dots, \mathbf w_r$ 张成 *span* W. We denote this subspace as
+$$
+W = \text{span}\{\mathbf w_1, \mathbf w_2,\dots, \mathbf w_r\}\\
+W = \text{span}(S)
+$$
+
+### THEOREM 4.2.4
+
+The solution set of a homogeneous linear system $A\mathbf x = \mathbf 0$ of $m$ equations in $n$ unknowns is a subspace of $\mathbb R^n$. Then we call it the 解空间 *solution space* of the system.
+
+#### Proof
+
+Let $W$ be solution to $A\mathbf x=\mathbf 0$, $\forall \mathbf x_1, \mathbf x_2\in W,\mathbf x_1, \mathbf x_2\in \mathbb R^n$, and they are closed under addition and multiplication. Then $W$ is a subspace of $\mathbb R^n$.
+
+### THEOREM 4.2.5
+
+核 *kernel*: the solution space of $A\mathbf x=\mathbf 0$
+
+If $A$ is an $m \times n$ matrix, then the kernel of the matrix transformation $T_A: \mathbb R^n\to \mathbb R^m$ is a subspace of $\mathbb R^n$.
+
+### THEOREM 4.2.6
+
+If $S = \{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$ and $S' = \{\mathbf w_1, \mathbf w_2,\dots, \mathbf w_r\}$ are nonempty sets of vectors in a vector space V, then
+$$
+\text{span}\{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\} = \text{span}\{\mathbf w_1, \mathbf w_2,\dots, \mathbf w_r\}
+$$
+if and only if each vector in $S$ is a linear combination of those in $S'$, and each vector in $S'$ is a linear combination of those in $S$.
+
+#### Proof
+
+$$
+S\sub S',S'\sub S\Longrightarrow S=S'
+$$
+
+## 4.3 线性无关 Linear Independence
+
+### DEFINITION 1
+
+If $S = \{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$ is a set of two or more vectors in a vector space $V$ , then $S$ is said to be a 线性无关 *linearly independent* set if no vector in $S$ can be expressed as a linear combination of the others. A set that is not linearly independent is said to be 线性相关 *linearly dependent*.
+
+### THEOREM 4.3.1
+
+A nonempty set $S = \{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$ in a vector space $V$ is linearly independent if and only if the only coefficients satisfying the vector equation
+$$
+k_1\mathbf v_1 + k_2\mathbf v_2 +\dots+ k_r\mathbf v_r = \mathbf 0
+$$
+are $k_1 = 0, k_2 = 0,\dots,k_r = 0$.
+
+#### Proof
+
+Suppose $S$ is not a linearly independent set, then there is a vector $\mathbf v_i$, 
+$$
+\mathbf v_i=a_1\mathbf v_1+\dots+a_{i-1}\mathbf v_{i-1}+a_{i+1}\mathbf v_{i+1}+\dots+a_r\mathbf v_r
+$$
+with $a_j$ are not all $0$. Then $k_j$ are not all $0$.
+
+Suppose $k_j$ are not all $0$, then suppose it is $k_1$, then
+$$
+\mathbf v_1=(-\frac{k_2}{k_1})\mathbf v_2+\dots+(-\frac{k_r}{k_1})\mathbf v_r
+$$
+
+which expresses $\mathbf v_1$ as a linear combination of the other vectors in $S$.
+
+
+### THEOREM 4.3.2
+
+1. A finite set that contains $\mathbf 0$ is linearly dependent.
+2. A set with exactly 1 vector is linearly independent if and only if that vector is not $\mathbf 0$.
+3. A set with exactly 2 vectors is linearly independent if and only if neither vector is a scalar multiple of the other.
+
+#### Proof
+
+##### 1
+
+$$
+0\mathbf v_1 + 0\mathbf v_2 +\dots+ 0\mathbf v_r +(1)\mathbf 0= \mathbf 0
+$$
+
+##### 2
+
+$$
+(1)\mathbf 0=\mathbf 0
+$$
+
+##### 3
+
+$$
+a\mathbf v_1+b\mathbf v_2=\mathbf 0\\
+\mathbf v_1=\frac{b}{a}\mathbf v_2
+$$
+
+### THEOREM 4.3.3
+
+Let $S = \{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$ be a set of vectors in $\mathbb R^n$. If $r > n$, then $S$ is linearly dependent.
+
+#### Proof
+
+Consider
+$$
+k_1\mathbf v_1+\dots+k_r\mathbf v_r=\mathbf 0
+$$
+Expand it to a linear system. Since $r > n$, then this system has nontrivial solution, then $S$ is linearly dependent.
+
+### DEFINITION 2 Wronskian Determinant
+
+If $f_1,\dots,f_n$ are $n-1$ times differentiable on $\mathbb R$, then the Wronskian determinant is
+$$
+W(x)=\begin{vmatrix}
+f_1(x)&f_2(x)&\dots&f_n(x)\\
+f'_1(x)&f'_2(x)&\dots&f'_n(x)\\
+\vdots&\vdots&&\vdots\\
+f^{(n-1)}_1(x)&f^{(n-1)}_2(x)&\dots&f^{(n-1)}_n(x)
+\end{vmatrix}
+$$
+
+### THEOREM 4.3.4
+
+If the functions $f_1,\dots,f_n$ are $n-1$ times differentiable on $\mathbb R$, and the Wronskian determinant is not identically $0$ on $\mathbb R$, then these functions form a linearly independent set of vectors in $C^{(n-1)}(-\infty,\infty)$.
+
+## 4.4 坐标和基 Coordinates and Basis
+
+### DEFINITION 1
+
+If $S = \{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$ is a set of vectors in a finite-dimensional vector space $V$, then $S$ is called a *basis* for $V$ if <u>$S$ spans $V$ and $S$ is linearly independent</u>.
+
+### THEOREM 4.4.1 基唯一表示 Uniqueness of Basis Representation
+
+If $S = \{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$ is a basis for a vector space $V$, then every vector $\mathbf v$ can be expressed in the form $\mathbf v=c_1\mathbf v_1+\dots+c_n\mathbf v_n$ in exactly one way.
+
+#### Proof
+
+Suppose there is a vector $\mathbf v$ can be expressed in two way
+$$
+\mathbf v=a_1\mathbf v_1+\dots+a_n\mathbf v_n\\
+\mathbf v=b_1\mathbf v_1+\dots+b_n\mathbf v_n\\
+$$
+Then
+$$
+\mathbf 0=(a_1-b_1)\mathbf v_1+\dots+(a_n-b_n)\mathbf v_n\\
+$$
+Since $S$ is a basis for $V$, then 
+$$
+a_i=b_i
+$$
+Thus, the two expressions for $\mathbf v$ are the same.
+
+### DEFINITION 2
+
+If $S = \{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$ is a basis for a vector space $V$, and $\mathbf v=c_1\mathbf v_1+\dots+c_n\mathbf v_n$ is the expression for a vector $\mathbf v$ in terms of the basis $S$, then $c_1,\dots,c_n$ are called the *coordinates* of $\mathbf v$ relative to the basis $S$.
+$$
+[\mathbf v]_S=\begin{bmatrix}c_1&c_2&\dots&c_n\end{bmatrix}^T
+$$
+
+## 4.5 维 Dimension
+
+### THEOREM 4.5.1
+
+All bases for a finite-dimensional vector space have the same number of vectors.
+
+### THEOREM 4.5.2
+
+Let $V$ be an n-dimensional vector space, and let $\{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_n\}$ be any basis.
+
+1. If a set in $V$ has more than $n$ vectors, then it is linearly dependent. [4.3.3]
+2. If a set in $V$ has fewer than $n$ vectors, then it does not span $V$.
+
+#### Proof
+
+Consider
+$$
+k_1\mathbf v_1+\dots+k_r\mathbf v_r=\mathbf 0
+$$
+Expand it to a linear system. Since $r < n$, then perform Gauss elimination, and the rank will not be larger than $r$, then it does not span $V$.
+
+### DEFINITION 1
+
+The dimension of a finite-dimensional vector space $V$ is denoted by $\dim(V)$ and is defined to be the number of vectors in a basis for $V$. In addition, the zero vector space is defined to have dimension zero.
+
+### THEOREM 4.5.3 Plus/Minus Theorem
+
+Let $S$ be a nonempty set of vectors in a vector space $V$.
+
+1. If $S$ is a linearly independent set, and if $\mathbf v$ is a vector in $V$ that is outside of $\text{span}(S)$, then the set $S \cup \{\mathbf v\}$ that results by inserting $\mathbf v$ into $S$ is still linearly independent.
+
+2. If $\mathbf v$ is a vector in $S$ that is expressible as a linear combination of other vectors in $S$, and if $S - \{\mathbf v\}$ denotes the set obtained by removing $\mathbf v$ from $S$, then $S$ and $S − \{\mathbf v\}$ span the same space; that is,
+   $$
+   \text{span}(S)=\text{span}(S-\{\mathbf v\})
+   $$
+
+#### Proof
+
+##### 1
+
+Assume $S=\{\mathbf{v}_1,\dots,\mathbf{v}_r\}$ is a linear independent set in $V$, $\mathbf{v}$ is a vector in $V$ that is outside of $\text{span}(S)$. If $k_{r+1}$ is not zero for
+$$
+k_1\mathbf v_1+\dots+k_r\mathbf v_r+k_{r+1}\mathbf v=\mathbf 0
+$$
+then $\mathbf v\in\text{span}(S)$, this yields a contradiction. So $k_{r+1}=0$, due to linear independence, $k_i$ are zeros. Then $S\cup\{\mathbf v\}$ is linear independent.
+
+##### 2
+
+Assume $S=\{\mathbf{v}_1,\dots,\mathbf{v}_r\}$ is a set in $V$, $\mathbf{v}_r$ is a linear combination of other vectors, that is:
+$$
+\mathbf{v}_r=c_1\mathbf v_1+\dots+c_{r-1}\mathbf v_{r-1}
+$$
+ Suppose for any $\mathbf w\in\text{span}(S)$, then:
+$$
+\begin{align*}
+\mathbf w&=k_1\mathbf v_1+\dots+k_r\mathbf v_r\\
+&=k_1\mathbf v_1+\cdots+k_{r-1}\mathbf v_{r-1}+k_r(c_1\mathbf v_1+\dots+k_{r-1}\mathbf v_{r-1})
+\end{align*}
+$$
+Then $\mathbf w\in\text{span}{S}-\{\mathbf v\}$, then we proved.
+
+### THEOREM 4.5.4
+
+Let $V$ be an n-dimensional vector space, and let $S$ be a set in $V$ with exactly $n$ vectors. Then $S$ is a basis for $V$ if and only if $S$ spans $V$ or $S$ is linearly independent.
+
+#### Proof
+
+If $S$ is a basis for $V$, then it must spans $V$ and is linearly independent.
+
+If $S$ spans $V$, and if $S$ is not linearly independent, then by [4.5.3], we can remove one vector and $S$ still spans $V$. But violate [4.5.2], then $S$ must be linearly independent.
+
+If $S$ is linearly independent, similar to above.
+
+### THEOREM 4.5.5
+
+Let $S$ be a finite set of vectors in a finite-dimensional vector space $V$.
+
+1. If $S$ spans $V$ but is not a basis for $V$, then $S$ can be reduced to a basis for $V$ by removing appropriate vectors from $S$.
+2. If $S$ is a linearly independent set that is not already a basis for $V$, then $S$ can be enlarged to a basis for $V$ by inserting appropriate vectors into $S$.
+
+### THEOREM 4.5.6
+
+If $W$ is a subspace of a finite-dimensional vector space $V$, then:
+
+1. $W$ is finite-dimensional.
+2. $\dim(W) \le \dim(V)$. 
+3. $W = V$ if and only if $\dim(W) = \dim(V)$.
+
+#### Proof
+
+##### 1
+
+If $W$ is not finite, then it has a infinite basis, and this is also a vector set of $V$. Since it has more than $\dim(V)$ vectors, then it is not linear independent. So it has no infinite basis. So it is finite.
+
+##### 2
+
+$W$ has a finite basis $S$, then either $S$ is also a basis of $V$ or not. If $S$ has  $\dim(V)$ vectors, then $\dim(V)=\dim(W)$. If not, $S$ must have less than $\dim(V)$ vectors, then $\dim(W)\le\dim(V)$.
+
+##### 3
+
+$\Longrightarrow$ is obvious.
+
+$\Longleftarrow$ it talked above.
+
+## 4.6 Change of Basis
+
+### Coordinate Mapping
+
+If $S=\{\mathbf{v}_1,\dots,\mathbf{v}_n\}$ is a basis for finite-dimensional vector space $V$, and for any $\mathbf v\in V$, the *coordinate mapping relative $S$* is a mapping that creates a connection between the general vector space $V$ to $\mathbb R^n$:
+$$
+[\cdot]_{S}:V\mapsto\mathbb R^n\\
+[\mathbf v]_S=[c_1\mathbf v_1+\dots+c_n\mathbf v_n]_S=\begin{bmatrix}c_1\\\vdots\\c_n\end{bmatrix}
+$$
+
+### Transition Matrices
+
+The change-of-basis problem: If $\mathbf v$ is a vector in a finite-dimensional vector space $V$, and if we change the basis for $V$ from a basis $B$ to a basis $B'$ , how are the coordinate vectors $[\mathbf v]_B$ and $[\mathbf v]_{B'}$ related?
+
+Let $B=\{\mathbf{v}_1,\dots,\mathbf{v}_n\}$, $B'=\{\mathbf{v}_1',\dots,\mathbf{v}_n'\}$, for any $\mathbf v\in V$:
+$$
+\begin{align*}
+\mathbf v&=c_1\mathbf v_1+\dots+c_n\mathbf v_n\\
+&=c_1(a_{11}\mathbf v_1'+\dots+a_{n1}\mathbf v_n')+\dots+c_n(a_{1n}\mathbf v_1'+\dots+a_{nn}\mathbf v_n')\\
+&=(c_1a_{11}+\dots+c_na_{1n})\mathbf v_1'+\dots+(c_1a_{n1}+\dots+c_na_{nn})\mathbf v_n'\\
+\end{align*}
+$$
+Then:
+$$
+[\mathbf v]_{B'}=P_{B\to B'}[\mathbf v]_B
+$$
+where $P_{B\to B'}$ is the transition matrix:
+$$
+P_{B\to B'}=[[\mathbf v_1]_{B'}|[\mathbf v_2]_{B'}|\dots|[\mathbf v_n]_{B'}]
+$$
+Easy to prove that:
+$$
+P_{B\to B'}P_{B'\to B}=I
+$$
+
+### THEOREM 4.6.1
+
+If $P$ is the transition matrix from a basis $B'$ to a basis $B$ for a finite-dimensional vector space $V$, then $P$ is invertible and $P^{-1}$ is the transition matrix from $B$ to $B'$.  
+
+### THEOREM 4.6.2
+
+Let $B=\{\mathbf u_1,\mathbf u_2,\dots,\mathbf u_n\}$ be any basis for the vector space $\mathbb R^n$ and let $S=\{\mathbf e_1,\mathbf e_2,\dots,\mathbf e_n\}$ be the standard basis for $\mathbb R^n$. If the vectors in these bases are written in column form:
+$$
+P_{B'\to S}=[\mathbf u_1|\dots|\mathbf u_n]
+$$
+
+## 4.7 Row Space, Column Space, and Null Space
+
+### DEFINITION 2
+
+
+

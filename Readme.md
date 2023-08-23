@@ -67,8 +67,9 @@ Personal notes of read papers and books.
 ### Large Model
 
 1. 2017 Attention Is All You Need
-2. 2021 Mask Autoencoder Are Scalable Vision Learners
-3. 2023 Segment Anything
+2. 2021 LoRA: Low-Rank Adaptation of Large Language ModelsLoRA Low-Rank Adaptation of Large Language Models
+3. 2021 Mask Autoencoder Are Scalable Vision Learners
+4. 2023 Segment Anything
 
 ### Poisson
 

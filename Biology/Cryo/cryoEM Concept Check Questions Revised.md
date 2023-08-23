@@ -624,57 +624,91 @@
 
 5. How can focussed ion beams be used to prepare cryo-EM samples?
 
-    > 
+    > The focussed ion beams can be used to cut the sample into thin slices, a.k.a. "lamella".
 
 ## 4-3 Sample prep - Grid
 
 1. What are the most common materials used to make grids?
 
-    > 
+    > Copper, gold, and nickel.
 
 2. If you wanted to culture cells on grids, which grids would be better - copper or gold?
 
-    > 
+    > Gold. Copper will be oxidized.
 
 3. What does "250 mesh" mean?
 
-    > 
+    > The number of holes per inch in the grid.
 
 4. What is a "slot" grid? A "finder" grid?
 
-    > 
+    > - "slot grid": A large hole in the center of the grid.
+    > - "finder" grid: A number of symbols, a asymetric center hole, and a large arrow, which helps to identify the orientation of the grid.
 
 5. What is formvar?
 
-    > 
+    > A form of plastic that can be used to coat the grid.
 
 6. What is the difference between "holey" carbon and "Quantifoil" coatings?
 
-    > 
+    > The holes made by "Quantifoil" can be controlled to be the same size and evenly spaced.
 
 7. What is a carbon evaporator, and how does it work?
 
-    > 
+    > To coat the grid with carbon, the grid is placed in a vacuum chamber and a carbon rod is heated to evaporate the carbon.
 
 8. What is "glow discharging," and why is it done?
 
-    > 
+    > As the layer of carbon is deposited, it is hydrophilic. After storing the grid for weeks, the carbon layer will become hydrophobic. Glow discharging can make the carbon layer hydrophilic again. Glow discharging is is similar to carbon evaporation, this time the grid is placed between two electrodes and a high voltage is applied. The air between the electrodes will be ionized and the ions will bombard the grid, creating hydropilic groups on the carbon layer.
 
 9. What is "cryo-crinkling", and what are some ways to reduce it?
 
-    > 
+    > Cryo-crinkling is the crinkling of the carbon layer due to the difference in thermal expansion between the carbon layer and the copper grid in freezing. One way to reduce it is to use a gold grid.
 
 ## 4-4 3-D reconstruction
 
 1. How can 3-D reconstructions be calculated from 2-D projections in real space?
 
-    > 
+    > Back project the 2-D projections to the 3-D space to find the intersection.
 
 2. What is the "projection theorem"? Draw it.
 
-    > 
+    > Refer to the Fourier central slice theorem. The Fourier transform of the projection of an object is the central slice of the Fourier transform of the object.
 
 3. How are 3-D reconstructions calculated from 2-D projections in reciprocal space?
 
-    > 
+    > The Fourier transform of the 2-D projections are combined in the orientation of the projections that passes the center of the 3-D object to form the Fourier transform of the 3-D object. Then the inverse Fourier transform is applied to the Fourier transform of the 3-D object to get the 3-D object.
 
+## 4-5 Dose limitation
+
+1. How do imaging electrons damage biological samples?
+
+    > The electrons will ionize the molecule bonds, which create small gas molecules. The gas molecules can be seen as bubbles in the image.
+
+2. How can radiation damage be recognized in images?
+
+    > The image becomes fuzzer and the structure becomes less clear.
+
+3. How can the rate of this damage be assessed quantitatively?
+
+    > By measuring the intensity of high spatial frequency spots in the diffraction pattern under different doses.
+
+4. What is the effect of temperature on the rate of radiation damage?
+
+    > The higher the temperature, the faster the radiation damage.
+
+5. What disadvantage is there to imaging at temperatures less than 40K?
+
+    > Under 40K, the water molecules will form ice crystals, as the electrons pass through the ice crystals, the water molecules obtain energy from the electrons and re-arrange themselves into a more dense vitreous form. There density is close to the density of the protein, which makes low contrast.
+
+6. For what kinds of samples can radiation damage be overcome? How?
+
+    > By imaging a large number of identical copies of the same sample and averaging the images.
+
+7. What are the three basic modalities of cryo-EM? How are they different? What kinds of resolutions can be expected from each? Why?
+
+    > - Tomography: take a series of images of the same sample at different angles and reconstruct the 3-D structure. The resolution is about 4 nm restricted by the dose.
+    > - Single particle analysis: take a large number of images of the same sample and average them. The resolution is about atomic resolution.
+    > - 2-D crystallography: crystallize the sample and take X-ray diffraction images. The resolution is highest.
+
+# 5 Tomography
