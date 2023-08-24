@@ -241,12 +241,50 @@ $$
 
 ### 10.2.4 The Rectangle Aperture
 
+![rectangle-aperture](images/rectangle-aperture.png)
 
+根据惠更斯-菲涅尔原理，孔径内的微分面元 $\mathrm{d}S$ 可以被看作是覆盖着相干的次级点源。但是由于 $\mathrm{d}S$ 的尺寸远小于波长 $\lambda$，因此在 $P$ 点所有次级波相位相同，从而相长干涉。相长干涉导致了中心最亮的明亮斑点，这是在波通过小孔或障碍物边缘时产生的典型衍射现象。
 
+设 $\varepsilon_A$ 是单位面积内的振幅强度，则 $P$ 点（坐标 $(X,Y,Z)$）处由 $\mathrm{d}S$（坐标 $(0,y,z)$）带来的电场强度为
+$$
+\mathrm{d}E=\left(\frac{\varepsilon_A}{r}\right)e^{i(\omega t-kr)}\mathrm{d}S\tag{10.37}
+$$
+其中 $r=\sqrt{X^2+(Y-y)^2+(Z-z)^2}$。
 
+由于 $k=2\pi/\lambda$ 是一个比较大的数字，因此需要对于 $r$ 取到比较高阶的近似。考虑到 $R=\sqrt{X^2+Y^2+Z^2}$，我们有
+$$
+r=R\sqrt{1+(y^2+z^2)/R^2-2(Yy+Zz)/R^2}\tag{10.40}
+$$
+这里就可以忽略比较小的第二项，因此
+$$
+r=R\sqrt{1-2(Yy+Zz)/R^2}
+$$
+Taylor 展开得到
+$$
+r=R[1-(Yy+Zz)/R^2]
+$$
+因此 $P$ 点处的场强为
+$$
+\begin{align*}
+\tilde{E}&=\iint_{\Sigma}\left(\frac{\varepsilon_A}{R}\right)e^{i(\omega t-kR[1-(Yy+Zz)/R^2])}\mathrm{d}S\\
+&=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\iint_{\Sigma}e^{ik(Yy+Zz)/R}\mathrm{d}S
+\end{align*}\tag{10.41}
+$$
 
+其中 $\Sigma$ 为孔径光阑。假设 $\Sigma$ 是一个长为 $a$ 宽为 $b$ 的矩形，则积分结果为
+$$
+\begin{align*}
+\tilde{E}&=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\iint_{\Sigma}e^{ik(Yy+Zz)/R}\mathrm{d}S\\
+&=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\int_{-b/2}^{+b/2}e^{ikYy/R}\mathrm{d}y\int_{-a/2}^{+a/2}e^{ikZz/R}\mathrm{d}z\\
+&=\frac{ab\varepsilon_Ae^{i(\omega t-kR)}}{R}\left(\frac{\sin\alpha'}{\alpha'}\right)\left(\frac{\sin\beta'}{\beta'}\right)\\
+\end{align*}\tag{10.42}
+$$
+其中 $\alpha'=kaZ/2R,\beta'=kbY/2R$。因此光强为
+$$
+\tilde{I}(Y,Z)=I(0,0)\left(\frac{\sin\alpha'}{\alpha'}\right)^2\left(\frac{\sin\beta'}{\beta'}\right)^2\tag{10.43}
+$$
 
-
+### 10.2.5 The Circular Aperture
 
 
 
@@ -256,12 +294,3 @@ $$
 
 ## 10.3 Fresnel Diffraction
 
-Kirchhoff 衍射公式：
-$$
-\tilde{E}(P)=\frac{A}{i\lambda}\iint_{S}\left(\frac{\exp(ikl)}{l}\frac{\exp(ikr)}{r}\left(\frac{\cos(n,r)-\cos(n,l)}{2}\right)\right)\mathrm{d}S
-$$
-
-Kirchhoff 衍射公式傍轴近似：
-$$
-\tilde{E}(P)=\frac{\exp(ikz)}{i\lambda z}\iint_{-\infty}^{+\infty}E(x_1,y_1)\exp\left(\frac{ik}{2z}((x-x_1)^2+(y-y_1)^2)\right)\mathrm{d}x_1\mathrm{d}y_1
-$$

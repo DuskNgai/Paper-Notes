@@ -3,7 +3,7 @@
 It marks down the books of each course.
 
 - Differential Geometry
-    - *Differential Geometry of Curves and Surfaces*, Shoshichi Kobayashi.
+    - Differential Geometry of Curves and Surfaces, Shoshichi Kobayashi.
 - Linear Algebra
     - Elementary Linear Algebra (Applications Version), Howard Anton & Chris Rorres.
 - Mathematical Physics
