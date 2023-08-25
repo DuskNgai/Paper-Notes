@@ -286,11 +286,79 @@ $$
 
 ### 10.2.5 The Circular Aperture
 
+回顾 $P$ 点处的场强
+$$
+\tilde{E}=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\iint_{\Sigma}e^{ik(Yy+Zz)/R}\mathrm{d}S
+$$
 
+对于半径为 $a$ 的圆形孔，我们需要将积分变为极坐标形式，即
+$$
+\begin{align*}
+z&=\rho\cos\phi&y&=\rho\sin\phi\\
+Z&=q\cos\Phi&Y&=q\sin\Phi
+\end{align*}
+$$
+此时面积微元为 $\mathrm{d}S=\rho\mathrm{d}\rho\mathrm{d}\phi$，因此得到圆形孔的积分形式
+$$
+\begin{align*}
+\tilde{E}&=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\iint_{\Sigma}e^{ik(Yy+Zz)/R}\mathrm{d}S\\
+&=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\int_{0}^{a}\int_{0}^{2\pi}\rho e^{i(kq\rho/R)\cos(\Phi-\phi)}\mathrm{d}\rho\mathrm{d}\phi
+\end{align*}\tag{10.46}
+$$
+由于比较好的轴对称性，我们可以考虑 $\Phi=0$ 的情况，即
+$$
+\begin{align*}
+\tilde{E}&=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\int_{0}^{a}\int_{0}^{2\pi}\rho e^{i(kq\rho/R)\cos(\Phi-\phi)}\mathrm{d}\rho\mathrm{d}\phi\\
+&=\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\int_{0}^{a}\int_{0}^{2\pi}\rho e^{i(kq\rho/R)\cos\phi}\mathrm{d}\rho\mathrm{d}\phi\\
+&=\frac{2\pi\varepsilon_Ae^{i(\omega t-kR)}}{R}\int_{0}^{a}\rho J_0\left(\frac{kq\rho}{R}\right)\mathrm{d}\rho
+\end{align*}\tag{10.49}
+$$
+其中 $J_0$ 是零阶贝塞尔函数。运用 $m$ 阶贝塞尔函数的性质，我们有
+$$
+\begin{align*}
+\tilde{E}&=\frac{2\pi\varepsilon_Ae^{i(\omega t-kR)}}{R}\int_{0}^{a}\rho J_0\left(\frac{kq\rho}{R}\right)\mathrm{d}\rho\\
+&=\frac{2\pi\varepsilon_Ae^{i(\omega t-kR)}}{R}\left(\frac{R}{kq}\right)^2\int_{0}^{kaq/R}w J_0(w)\mathrm{d}w\\
+&=2\pi a^2\frac{\varepsilon_Ae^{i(\omega t-kR)}}{R}\frac{R}{kaq}J_1\left(\frac{kqa}{R}\right)
+\end{align*}\tag{10.51}
+$$
+因此光强为
+$$
+\tilde{I}(q)=\frac{2\varepsilon_A^2(\pi a^2)^2}{R^2}\left(\frac{J_1(kqa/R)}{kqa/R}\right)^2\tag{10.52}
+$$
+由 L'Hospital 法则可得
+$$
+\lim_{x\to0}\frac{J_1(x)}{x}=\frac{1}{2}
+$$
+因此
+$$
+\tilde{I}(0)=\frac{\varepsilon_A^2(\pi a^2)^2}{2R^2}\tag{10.54}
+$$
+即
+$$
+\tilde{I}(q)=\tilde{I}(0)\left(\frac{2J_1(kqa/R)}{kqa/R}\right)^2\tag{10.55}
+$$
+由于 $\sin\theta=q/R$，因此
+$$
+\tilde{I}(q)=\tilde{I}(0)\left(\frac{2J_1(ka\sin\theta)}{ka\sin\theta}\right)^2\tag{10.56}
+$$
 
+圆孔衍射的中心亮斑的被称为 Airy 斑，其半径满足
+$$
+ka\sin\theta=3.83
+$$
+对应在光屏上的半径为
+$$
+q=3.83\frac{R}{ka}=3.83\frac{R\lambda}{2\pi ka}=1.22\frac{R\lambda}{2a}=1.22\frac{f\lambda}{D}\tag{10.58}
+$$
 
+### 10.2.6 Resolution of Imaging System
 
+Airy 斑半径对应的张角为
+$$
+\Delta\theta=\frac{q}{f}=1.22\frac{\lambda}{D}\tag{10.59}
+$$
 
+Rayleigh 判据：能够分辨两个光源的中心亮斑的最小距离。在这里 Airy 斑半径对应的张角就是 Rayleigh 判据的张角。
 
 ## 10.3 Fresnel Diffraction
 
