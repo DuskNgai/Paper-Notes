@@ -12,16 +12,16 @@
     - [x] 2.7 Importance
     - [x] 2.8 The Measurement Equation
     - [x] 2.9 Summary
-- [ ] 3 Monte Carlo Methods
+- [x] 3 Monte Carlo Methods
     - [x] 3.1 Brief History
     - [x] 3.2 Why Are Monte Carlo Techniques Useful?
     - [x] 3.3 Review of Probability Theory
     - [x] 3.4 Monte Carlo Integration
     - [x] 3.5 Sampling Random Variables
-    - [ ] 3.6 Variance Reduction
-    - [ ] 3.7 Summary
+    - [x] 3.6 Variance Reduction
+    - [x] 3.7 Summary
 - [ ] 4 Strategies for Computing Light Transport
-    - [ ] 4.1 Formulation of the Rendering Equation
+    - [x] 4.1 Formulation of the Rendering Equation
     - [ ] 4.2 The Importance Function
     - [ ] 4.3 Adjoint Equations
     - [ ] 4.4 Global Reflectance Distribution Function
@@ -29,9 +29,9 @@
     - [ ] 4.6 Path Formulation
     - [ ] 4.7 Summary
 - [ ] 5 Stochastic Path-Tracing Algorithms             
-    - [ ] 5.1 Brief History
-    - [ ] 5.2 Ray-Tracing Set-Up
-    - [ ] 5.3 Simple Stochastic Ray Tracing
+    - [x] 5.1 Brief History
+    - [x] 5.2 Ray-Tracing Set-Up
+    - [x] 5.3 Simple Stochastic Ray Tracing
     - [ ] 5.4 Direct Illumination
     - [ ] 5.5 Environment Map Illumination
     - [ ] 5.6 Indirect Illumination

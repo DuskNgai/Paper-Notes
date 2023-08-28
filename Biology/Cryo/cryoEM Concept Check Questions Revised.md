@@ -712,3 +712,75 @@
     > - 2-D crystallography: crystallize the sample and take X-ray diffraction images. The resolution is highest.
 
 # 5 Tomography
+
+## 5-1 Intro
+
+1. What is a "tilt-series"?
+
+    > A set of images of the same sample at different angles.
+
+2. What range of angles is typically imaged?
+
+    > -60 to 60 degrees.
+
+3. What is the "missing wedge"?
+
+    > The sample get thicker as the tilt angle goes higher. So high tilt angle images are meaningless and discarded, which causes a missing wedge in the 3-D reconstruction.
+
+4. How are interpolations involved in the calculation of a tomogram?
+
+    > The image is digitized into pixels, which means the image is a discrete function. The Fourier transform of the image is also a discrete function. In the Fourier space, the value of a lattice points is interpolated from the values of the surrounding points of 2D signals.
+
+5. What does each word in "serial section montage tomography" signify?
+
+    > Serial section: Sectioning a large tissue block into smaller slice.
+    > Montage: Imaging a small area inside the slice and stacking along the slice.
+
+6. How large or small a sample can be imaged by electron tomography?
+
+    > From a cell to a macro-moleculecular complex.
+
+7. How is "volume rendering" different than showing an "isosurface" or single slice?
+
+    > Allowing you to see through the whole volume instead of just a surface or a piece of slice.
+
+## 5.2 Data collection and reconstruction
+
+1. What is "eucentric height"? Is it different for every sample?
+
+    > See [the sample chamber](#1-4-the-sample-chamber).
+
+2. What is the "tilt axis offset"? Is it different for every sample?
+
+    > The gonionmeter is not perfectly aligned with the optical axis. The tilt axis offset is the distance between the tilt axis and the optical axis. It is different for every sample.
+
+3. When speaking about automatic sequential tilt-series acquisition, what is "tracking"? What is "targeting"?
+
+    > Tracking: 
+    > 
+    > Targeting:
+
+4. How is the "predictive" tracking method different from the "focus position" method? Which is faster? Why would the slower method ever be used?
+
+    > 
+
+5. What is a "low mag atlas" and why would one be recorded?
+
+    > 
+
+6. What microscope operations are used to set specimen height automatically? Why?
+
+    > 
+
+7. What microscope operations are used to focus objects automatically? Why?
+
+    > 
+
+8. What about each image has to be determined to "align" a tilt-series? How are these parameters found?
+
+    > 
+
+9. What steps of data collection and 3-D reconstruction have to be done by the investigator, and which are typically automated?
+
+    > 
+

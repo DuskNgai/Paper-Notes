@@ -4,6 +4,8 @@ It marks down the books of each course.
 
 - Differential Geometry
     - Differential Geometry of Curves and Surfaces, Shoshichi Kobayashi.
+- Global Illumination
+    - Advanced Global Illumination, Philip Dutre, Kavita Bala, Philippe Bekaert.
 - Linear Algebra
     - Elementary Linear Algebra (Applications Version), Howard Anton & Chris Rorres.
 - Mathematical Physics
