@@ -26,15 +26,76 @@ RAFT 由三个主要部分组成：
 
 ## 2 Related Work
 
+#### Optical Flow as Energy Minimization
+
+为了确保目标函数的平滑，使用了一阶泰勒近似来拟合数据项。因此，它们只能很好地处理小位移。为了处理大位移，使用了从粗到细的策略，即使用图像金字塔在低分辨率下估计大位移，然后在高分辨率下细化小位移。但是，这种从粗到细的策略可能会遗漏快速移动的小物体，而且很难从早期的错误中纠正过来。
+
 ## 3 Approach
 
+![](images/raft.png)
 
+光流的任务就是估计前后帧图像 $I_1, I_2$ 之间的密集位移场 $(f^1, f^2)$，将 $I_1$ 中的像素 $(u,v)$ 映射到 $I_2$ 中的 $(u',v')=(u+f^1(u), v+f^2(v))$。
 
+### 3.1 Feature Extraction
 
+![](images/raft-network.png)
 
+- 特征编码网络 $g_{\theta}:\mathbb{R}^{H\times W\times3}\mapsto\mathbb{R}^{H/8\times W/8\times D}$，包含 6 个残差块，作用在前后帧的两张图像上。
+- 上下文网络 $h_\theta$，和 $g_\theta$ 架构一致，作用在前一帧图像上。
 
+### 3.2 Computing Visual Similarity
 
+相关性体积 $\mathbf{C}:\mathbb{R}^{H\times W\times3}\times\mathbb{R}^{H\times W\times3}\mapsto\mathbb{R}^{H\times W\times H\times W}$，计算了给定图像特征对的相关度。
+$$
+\mathbf{C}(g_\theta(I_1),g_\theta(I_2))=\mathrm{dot}\left(g_\theta(I_1),g_\theta(I_2),\mathrm{axis = -1}\right)\tag{1}
+$$
 
+#### Correlation Pyramid
 
+计算完相关性体积 $\mathbf{C}$ 之后，用大小为 1, 2, 4, 8 的卷积核和同等大小的步长降采样最后两个维度它得到 4 层金字塔 $\{\mathbf{C}^1, \mathbf{C}^2, \mathbf{C}^4, \mathbf{C}^8\}$。每个的大小是 $H\times W\times H/2^k\times W/2^k$ 。
 
+金字塔提供了大位移和小位移的信息；然而，保留前两个维度就保留了高分辨率信息，使我们的方法能够恢复快速移动的小物体的运动。
 
+#### Correlation Lookup
+
+查表操作符 $L_{\mathbf{C}}$：给定当前的光流场的估计 $(f^1, f^2)$，定义 $\mathbf{x}'$ 周围的局部网格为以 $\mathbf{x}'$ 为中心 $r$ 为半径范围内的整数偏移量集合，用 Manhattan 距离。
+$$
+\mathcal{N}(\mathbf{x}')_r=\{\mathbf{x}'+\mathrm{d}\mathbf{x}\mid\mathrm{d}\mathbf{x}\in\mathbb{Z}^2,\|\mathrm{d}\mathbf{x}\|_1\le r\}\tag{2}
+$$
+然后用 $\mathcal{N}(\mathbf{x}')_r$ 来索引相关性体积。使用双线性插值获得 $\mathcal{N}(\mathbf{x}')_r$ 的整数值来索引。
+
+我们在金字塔的所有层级上查表，例如，在第 $k$ 层索引相关性体积 $\mathbf{C}^k$ 使用网格 $\mathcal{N}(\mathbf{x}'/2^k)_r$。每个层级查表的半径恒定意味着在较低层级具有更大的上下文：对于最低层级 $k = 4$，使用半径为 4 相当于原始分辨率上 256 像素的范围。然后，从每个级别获取的值被连接成一个单一的特征。
+
+#### Efficient Computation for High Resolution Images
+
+**不关键**。$M$ 次迭代 $N$ 个像素的图片复杂度是 $O(MN^2)$，但是可以减少到 $O(MN)$ 的复杂度。考虑第 $k$ 层的相关性体积 $\mathbf{C}^{2^k}$，改进后的算法是
+$$
+\mathbf{C}^{2^k}_{ijst}=\frac{1}{2^{2k}}\sum_{p}^{2^k}\sum_{q}^{2^k}\left\langle g_\theta(I_1)_{i,j}, g_\theta(I_2)_{2^{k}s+p.2^kt+q}\right\rangle=\left\langle g_\theta(I_1)_{i,j}, \frac{1}{2^{2k}}\sum_{p}^{2^k}\sum_{q}^{2^k}g_\theta(I_2)_{2^{k}s+p.2^kt+q}\right\rangle
+$$
+即先用平均值降采样 $g_\theta(I_2)$，然后在查表时候才计算需要的值。
+
+### 3.3 Iterative Updates
+
+从 $\mathbf{f}_0=\mathbf{0}$ 开始，迭代估计光流序列 $\{\mathbf{f}_1,\dots,\mathbf{f}_N\}$。每一次迭代都得到一个增量 $\Delta\mathbf{f}$ 更新到当前估计的光流 $\mathbf{f}_{k+1}=\Delta\mathbf{f}+\mathbf{f}_{k+1}$。
+
+1. 初始化：将光流初始化为全 0，但是也可以将上一帧的光流复制过来（warm-start）。
+2. 输入：对于当前的光流估计 $\mathbf{f}^k$，获取对应的相关性体积的特征。该特征还过了 2 层卷积层，当前光流估计也过了 2 层卷积。最后的输入就是相关性特征、光流特征、上下文特征的合并。
+3. 更新：GRU 迭代，以 $x_t$ 为输入
+  $$
+   \begin{align*}
+   z_t&=\sigma(\mathrm{Conv}_{3\times3}([h_{t-1},x_{t}],W_z))\\
+   r_t&=\sigma(\mathrm{Conv}_{3\times3}([h_{t-1},x_{t}],W_r))\\
+   \tilde{h}_t&=\tanh(\mathrm{Conv}_{3\times3}([r_t\odot h_{t-1},x_{t}],W_h))\\
+   h_t&=(1-z_t)\odot h_{t-1}+z_t\odot\tilde{h}_t
+   \end{align*}
+   $$
+4. 光流预测：GRU 输出再过两层卷积层预测更新 $\Delta\mathbf{f}$，其大小为原图大小的 1/8。但训练时候会上采样到原图大小做 loss，上采样方法如下。
+5. 上采样：过两层卷积层预测一个 $H/8\times W/8\times(8\times8\times9)$ 的 mask，即，将全分辨率光流的每个像素视为其粗分辨率邻居的 $3\times3$ 的凸组合。9 个邻居的权重进行 softmax 处理。随后重排成 $H\times W\times2$。
+
+### 3.4 Supervision
+
+用 L1 loss，对于序列里面每个都做监督，但是赋予指数下降的权重
+$$
+\mathcal{L}=\sum_{i=1}^{N}\gamma^{N-i}\|\mathbf{f}_{gt}-\mathbf{f}_i\|_1\tag{7}
+$$
+其中 $\gamma=0.8$。
