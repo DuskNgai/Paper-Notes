@@ -44,11 +44,23 @@ Cryo-EM 当前挑选的方法存在假阳率过高、后处理不通用的问题
 
 各种视角的蛋白质都可以挑选出来。
 
-### Topaz Enables High-resolution Reconstruction with No Postprocessing
+### Topaz Enables High-resolution Reconstruction with No Post-processing
 
+用 Topaz 多挑出来的颗粒做重建，发现质量一样。
 
+### Topaz Particle Predictions are Well-ranked and Contain Few False Positives
+
+设定的阈值越低，挑选出的颗粒就越多，但是假阳率也越高，高到一定程度时候，分辨率反而会下降。但是视角均衡也会影响重建的质量，越均衡越好。
+
+### GE-criteria-based PU Learning Method Outperforms Other General-purpose PU Learning Approaches
+
+说明某个方法的好坏需要做假设检验。
+
+加入了自编码器增强 In-Context 学习，少标几个有助于学习，但是多标就容易导致过度正则化。测试下来权重 $\gamma=10/N$、$N\le250$ 会比较好。
 
 ## 3 Discussion
+
+## 4 Methods
 
 ### Dataset Description
 
@@ -136,8 +148,4 @@ $$
 $$
 
 ### Classifier and Autoencoder Architectures and Hyperparameters
-
-
-
-
 

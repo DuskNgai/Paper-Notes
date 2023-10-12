@@ -26,6 +26,8 @@
 
 ## 6 Data Records
 
+![](images/cryo-ppp.png)
+
 每个数据文件夹（以其相应的 EMPIAR ID 为命名）包含以下信息：
 1. 原始图片（无论是否经过运动校正）
 2. Gain 运动校正参考
