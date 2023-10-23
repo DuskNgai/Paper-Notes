@@ -23,9 +23,3 @@
 ### 1.3 Who Should Read this Paper?
 
 ![](images/visual-multimodal-model.png)
-
-## 2 Visual Understanding
-
-
-
-

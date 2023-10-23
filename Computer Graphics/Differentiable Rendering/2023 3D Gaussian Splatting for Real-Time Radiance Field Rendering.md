@@ -36,15 +36,61 @@
 
 ## 4 Differentiable 3D Gaussian Splatting
 
+| Symbols  |                  Descriptions                   |
+| :------: | :---------------------------------------------: |
+|  $\mu$   |           3D center point of Gaussian           |
+| $\Sigma$ | 3D covariance matrix of Gaussian in world space |
+| $\alpha$ |        alpha blending value of Gaussian         |
+|   $W$    |                 view transform                  |
+|   $J$    |              projection transform               |
+
 我们选择了 3D 高斯函数，它们是可微的，可以轻松投影到 2D 图像，以实现快速的 $\alpha$ 混合渲染。鉴于 SfM 点云的极端稀疏性，很难估计法线。而且优化这种估计得出的非常嘈杂的法向量将非常具有困难，因此不去建模法向量。
+
+$$
+G(x)=\alpha\exp\left(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\right)
+$$
+
+对于一般的实对称矩阵，当它为半正定矩阵的时候，它才满足作为协方差矩阵的条件。因此对角化这个协方差矩阵得到：
+$$
+\Sigma=R^T\Lambda R=R^TS^TS R
+$$
+其中旋转矩阵通常用四元数转换而来，缩放矩阵/对角矩阵就用 3D 向量表示。
+
+---
+
+$\Sigma$ 在 Camera Space 中的表示 $\Sigma'$ 为：
+$$
+\begin{align*}
+x&=W^{-1}J^{-1}x'\\
+x^T\Sigma^{-1}x&=x'^TJ^{-T}W^{-T}\Sigma^{-1}W^{-1}J^{-1}x'\\
+&=x'^T(JW\Sigma W^{T}J^{T})^{-1}x'\\
+&=x'^T\Sigma'^{-1}x'\\
+\Sigma'&=JW\Sigma W^{T}J^{T}
+\end{align*}
+$$
+
+---
 
 ## 5 Optimization with Adaptive Density Control of 3D Gaussian
 
 ### 5.1 Optimization
 
+Loss:
+$$
+\mathcal{L}=(1-\lambda)\mathcal{L}_1+\lambda\mathcal{L}_{\text{D-SSIM}}
+$$
+$\lambda=0.2$
+
 ### 5.2 Adaptive Control of Gaussian
 
+- 每 100 次迭代就把 $\alpha$ 低于 $\epsilon_\alpha$ 的 Gaussian 球移除。
+- 欠重建（under-reconstruction）：Gaussian 球稀疏区域。
+- 过重建（over-reconstruction）：Gaussian 球过大区域。
+- 这两种情况，view space 的关于位置的梯度都很大，优化偏向于将 Gaussian 球移向这个区域。
+
 ## 6 Fast Differentiable Rasterizer for Gaussian
+
+
 
 ## 7 Implementation, Result and Evaluation
 
@@ -56,3 +102,54 @@
 
 ### 7.4 Limitations
 
+# Derivation in Gaussian Splatting
+
+## Original Version
+
+
+
+## Modified Version
+
+$$
+\Sigma=R^TSR=\begin{bmatrix}
+r_{11}&r_{21}&r_{31}\\
+r_{12}&r_{22}&r_{32}\\
+r_{13}&r_{23}&r_{33}\\
+\end{bmatrix}
+\begin{bmatrix}
+s_{1}&0&0\\
+0&s_{2}&0\\
+0&0&s_{3}\\
+\end{bmatrix}
+\begin{bmatrix}
+r_{11}&r_{12}&r_{13}\\
+r_{21}&r_{22}&r_{23}\\
+r_{31}&r_{32}&r_{33}\\
+\end{bmatrix}
+$$
+
+$$
+R^TSR=\begin{bmatrix}
+r_{11}s_{1}r_{11}+r_{21}s_{2}r_{21}+r_{31}s_{3}r_{31}&r_{11}s_{1}r_{12}+r_{21}s_{2}r_{22}+r_{31}s_{3}r_{32}&r_{11}s_{1}r_{13}+r_{21}s_{2}r_{23}+r_{31}s_{3}r_{33}\\
+r_{12}s_{1}r_{11}+r_{22}s_{2}r_{21}+r_{32}s_{3}r_{31}&r_{12}s_{1}r_{12}+r_{22}s_{2}r_{22}+r_{32}s_{3}r_{32}&r_{12}s_{1}r_{13}+r_{22}s_{2}r_{23}+r_{32}s_{3}r_{33}\\
+r_{13}s_{1}r_{11}+r_{23}s_{2}r_{21}+r_{33}s_{3}r_{31}&r_{13}s_{1}r_{12}+r_{23}s_{2}r_{22}+r_{33}s_{3}r_{32}&r_{13}s_{1}r_{13}+r_{23}s_{2}r_{23}+r_{33}s_{3}r_{33}\\
+\end{bmatrix}
+$$
+
+$$
+R^TR=\begin{bmatrix}
+r_{11}r_{11}+r_{21}r_{21}+r_{31}r_{31}&r_{11}r_{12}+r_{21}r_{22}+r_{31}r_{32}&r_{11}r_{13}+r_{21}r_{23}+r_{31}r_{33}\\
+r_{12}r_{11}+r_{22}r_{21}+r_{32}r_{31}&r_{12}r_{12}+r_{22}r_{22}+r_{32}r_{32}&r_{12}r_{13}+r_{22}r_{23}+r_{32}r_{33}\\
+r_{13}r_{11}+r_{23}r_{21}+r_{33}r_{31}&r_{13}r_{12}+r_{23}r_{22}+r_{33}r_{32}&r_{13}r_{13}+r_{23}r_{23}+r_{33}r_{33}\\
+\end{bmatrix}
+$$
+
+
+$$
+\begin{align*}
+\frac{\partial{l}}{\partial{s_1}}&=\frac{\partial{l}}{\partial{\Sigma}}\frac{\partial{\Sigma}}{\partial{s_1}}\\
+&=\frac{\partial{l}}{\partial{\Sigma_{11}}}r_{11}r_{11}+\frac{\partial{l}}{\partial{\Sigma_{12}}}r_{11}r_{12}+\frac{\partial{l}}{\partial{\Sigma_{13}}}r_{11}r_{13}\\
+&+\frac{\partial{l}}{\partial{\Sigma_{21}}}r_{12}r_{11}+\frac{\partial{l}}{\partial{\Sigma_{22}}}r_{12}r_{12}+\frac{\partial{l}}{\partial{\Sigma_{23}}}r_{12}r_{13}\\
+&+\frac{\partial{l}}{\partial{\Sigma_{31}}}r_{13}r_{11}+\frac{\partial{l}}{\partial{\Sigma_{32}}}r_{13}r_{12}+\frac{\partial{l}}{\partial{\Sigma_{33}}}r_{13}r_{13}
+\end{align*}
+$$
