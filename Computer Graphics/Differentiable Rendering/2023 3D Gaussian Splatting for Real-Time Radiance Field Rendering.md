@@ -86,15 +86,26 @@ $\lambda=0.2$
 - 每 100 次迭代就把 $\alpha$ 低于 $\epsilon_\alpha$ 的 Gaussian 球移除。
 - 欠重建（under-reconstruction）：Gaussian 球稀疏区域。
 - 过重建（over-reconstruction）：Gaussian 球过大区域。
-- 这两种情况，view space 的关于位置的梯度都很大，优化偏向于将 Gaussian 球移向这个区域。
+- 这两种情况，View Space 内关于位置的梯度都很大，优化偏向于将 Gaussian 球移向这个区域。
+
+对于在 View Space 平均梯度值大于阈值的 $\tau_{\text{pos}}=2\times10^{-4}$ 的值 
+- 欠重建的解决方法：克隆一份相同的 Gaussian 球，并且移向梯度的方向。
+- 过重建的解决方法：将原本的 Gaussian 球复制 2 份，将其 $S$ 值除以 $\phi=1.6$，并且将原来的 Gaussian 球当作 PDF 采样新的球的位置。
+但二者都会不断增加 Gaussian 球。因此每 $N=3000$ 将 Gaussian 球的 $\alpha$ 值变成很接近于 0 的值，然后靠优化过程将 $\alpha$ 值变大并且自动去除 $\alpha$ 值小的球。（不重要）
 
 ## 6 Fast Differentiable Rasterizer for Gaussian
 
-
+1. 将屏幕划分为 $16\times16$ 的小片，然后计算这个小片和相机中心产生的视锥体和 Gaussian 的重叠，当置信区间大于 $99\%$ 时候就算重叠。
+2. 给 Gaussian 一个键，包含了 View Space 的深度和对应的小片的 ID。
+3. 用 GPU Radix Sort 按键来排序 Gaussian。
+4. 前向时候加载 Gaussian 到 GPU Shared Memory，从前往后做 $\alpha$ 混合，并且提前停止，记录停止的位置。
+5. 反向时候从停止位置开始回传梯度。
 
 ## 7 Implementation, Result and Evaluation
 
 ### 7.1 Implementation
+
+#### Optimization Details
 
 ### 7.2 Result and Evaluation
 
@@ -104,9 +115,57 @@ $\lambda=0.2$
 
 # Derivation in Gaussian Splatting
 
+假设 $l=l(\Sigma)$ 是一个标量。
+
 ## Original Version
 
-
+$R$ 是正交矩阵，$S$ 是对角线元素大于 0 的对角矩阵，$M=SR$ 是它们的乘积。$\Sigma=M^TM$ 是协方差矩阵，也是对称矩阵。$l$ 关于 $M$ 的导数为：
+$$
+\begin{align*}
+\frac{\partial{l}}{\partial{m_{ij}}}&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\frac{\partial{\Sigma_{pq}}}{\partial{m_{ij}}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\frac{\partial{\sum_km_{kp}m_{kq}}}{\partial{m_{ij}}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\left[\sum_km_{kq}\delta_{ik}\delta_{jp}+\sum_km_{kp}\delta_{ik}\delta_{jq}\right]\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}[m_{iq}\delta_{jp}+m_{ip}\delta_{jq}]\\
+&=\sum_q\frac{\partial{l}}{\partial{\Sigma_{jq}}}m_{iq}+\sum_p\frac{\partial{l}}{\partial{\Sigma_{pj}}}m_{ip}&\text{Symmetry}\\
+&=2\sum_p\frac{\partial{l}}{\partial{\Sigma_{pj}}}m_{ip}\\
+&=2M_{i\cdot}\left[\frac{\partial{l}}{\partial{\Sigma}}\right]_{j\cdot}^T\\
+&=2M_{i\cdot}\left[\frac{\partial{l}}{\partial{\Sigma}}\right]_{\cdot j}&\text{Symmetry}\\
+&=2\left[M\frac{\partial{l}}{\partial{\Sigma}}\right]_{ij}
+\end{align*}
+$$
+因此我们可以推测出：
+$$
+\frac{\partial{l}}{\partial{M}}=2M\frac{\partial{l}}{\partial{\Sigma}}
+$$
+$l$ 关于 $S$ 的导数为：
+$$
+\begin{align*}
+\frac{\partial{l}}{\partial{s_i}}&=\sum_p\sum_q\frac{\partial{l}}{\partial{m_{pq}}}\frac{\partial{m_{pq}}}{\partial{s_i}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{m_{pq}}}\frac{\partial{s_pr_{pq}}}{\partial{s_i}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{m_{pq}}}r_{pq}\delta_{ip}\\
+&=\sum_q\frac{\partial{l}}{\partial{m_{iq}}}r_{iq}\\
+&=R_{i\cdot}\frac{\partial{l}}{\partial{M}}_{\cdot i}\\
+&=\left[R\frac{\partial{l}}{\partial{M}}\right]_{ii}
+\end{align*}
+$$
+因此我们可以推测出：
+$$
+\frac{\partial{l}}{\partial{s_i}}=R_{i\cdot}\frac{\partial{l}}{\partial{M}}_{\cdot i}
+$$
+$l$ 关于 $R$ 的导数为：
+$$
+\begin{align*}
+\frac{\partial{l}}{\partial{r_{ij}}}&=\sum_p\sum_q\frac{\partial{l}}{\partial{m_{pq}}}\frac{\partial{m_{pq}}}{\partial{r_{ij}}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{m_{pq}}}\frac{\partial{s_pr_{pq}}}{\partial{r_{ij}}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{m_{pq}}}s_{p}\delta_{ip}\delta_{jq}\\
+&=\frac{\partial{l}}{\partial{m_{ij}}}s_{i}\\
+&=\frac{\partial{l}}{\partial{M}}_{ji}s_{i}
+\end{align*}
+$$
+因此我们可以推测出：
+$$
+\frac{\partial{l}}{\partial{R}}=S\frac{\partial{l}}{\partial{M}}
+$$
 
 ## Modified Version
 
@@ -129,27 +188,22 @@ r_{31}&r_{32}&r_{33}\\
 $$
 
 $$
-R^TSR=\begin{bmatrix}
-r_{11}s_{1}r_{11}+r_{21}s_{2}r_{21}+r_{31}s_{3}r_{31}&r_{11}s_{1}r_{12}+r_{21}s_{2}r_{22}+r_{31}s_{3}r_{32}&r_{11}s_{1}r_{13}+r_{21}s_{2}r_{23}+r_{31}s_{3}r_{33}\\
-r_{12}s_{1}r_{11}+r_{22}s_{2}r_{21}+r_{32}s_{3}r_{31}&r_{12}s_{1}r_{12}+r_{22}s_{2}r_{22}+r_{32}s_{3}r_{32}&r_{12}s_{1}r_{13}+r_{22}s_{2}r_{23}+r_{32}s_{3}r_{33}\\
-r_{13}s_{1}r_{11}+r_{23}s_{2}r_{21}+r_{33}s_{3}r_{31}&r_{13}s_{1}r_{12}+r_{23}s_{2}r_{22}+r_{33}s_{3}r_{32}&r_{13}s_{1}r_{13}+r_{23}s_{2}r_{23}+r_{33}s_{3}r_{33}\\
-\end{bmatrix}
+\begin{align*}
+\frac{\partial{l}}{\partial{s_i}}&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\frac{\partial{\Sigma_{pq}}}{\partial{s_i}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\frac{\partial{\sum_kr_{pk}s_kr_{kq}}}{\partial{s_i}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}r_{pi}r_{iq}\\
+\end{align*}
 $$
-
-$$
-R^TR=\begin{bmatrix}
-r_{11}r_{11}+r_{21}r_{21}+r_{31}r_{31}&r_{11}r_{12}+r_{21}r_{22}+r_{31}r_{32}&r_{11}r_{13}+r_{21}r_{23}+r_{31}r_{33}\\
-r_{12}r_{11}+r_{22}r_{21}+r_{32}r_{31}&r_{12}r_{12}+r_{22}r_{22}+r_{32}r_{32}&r_{12}r_{13}+r_{22}r_{23}+r_{32}r_{33}\\
-r_{13}r_{11}+r_{23}r_{21}+r_{33}r_{31}&r_{13}r_{12}+r_{23}r_{22}+r_{33}r_{32}&r_{13}r_{13}+r_{23}r_{23}+r_{33}r_{33}\\
-\end{bmatrix}
-$$
-
 
 $$
 \begin{align*}
-\frac{\partial{l}}{\partial{s_1}}&=\frac{\partial{l}}{\partial{\Sigma}}\frac{\partial{\Sigma}}{\partial{s_1}}\\
-&=\frac{\partial{l}}{\partial{\Sigma_{11}}}r_{11}r_{11}+\frac{\partial{l}}{\partial{\Sigma_{12}}}r_{11}r_{12}+\frac{\partial{l}}{\partial{\Sigma_{13}}}r_{11}r_{13}\\
-&+\frac{\partial{l}}{\partial{\Sigma_{21}}}r_{12}r_{11}+\frac{\partial{l}}{\partial{\Sigma_{22}}}r_{12}r_{12}+\frac{\partial{l}}{\partial{\Sigma_{23}}}r_{12}r_{13}\\
-&+\frac{\partial{l}}{\partial{\Sigma_{31}}}r_{13}r_{11}+\frac{\partial{l}}{\partial{\Sigma_{32}}}r_{13}r_{12}+\frac{\partial{l}}{\partial{\Sigma_{33}}}r_{13}r_{13}
+\frac{\partial{l}}{\partial{r_{ij}}}&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\frac{\partial{\Sigma_{pq}}}{\partial{r_{ij}}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\frac{\partial{\sum_kr_{pk}s_kr_{kq}}}{\partial{r_{ij}}}\\
+&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}[r_{pi}s_i\delta_{jq}+s_jr_{jq}\delta_{ip}]\\
+&=\sum_p\frac{\partial{l}}{\partial{\Sigma_{pj}}}r_{pi}s_i+\sum_q\frac{\partial{l}}{\partial{\Sigma_{iq}}}s_jr_{jq}\\
+&=s_i\sum_p\frac{\partial{l}}{\partial{\Sigma_{pj}}}r_{pi}+s_j\sum_q\frac{\partial{l}}{\partial{\Sigma_{iq}}}r_{jq}\\
+&=s_i\frac{\partial{l}}{\partial{\Sigma}}_{j\cdot}R_{\cdot i}+s_jR_{j\cdot}\frac{\partial{l}}{\partial{\Sigma}}_{\cdot i}\\
+&=s_i\left[\frac{\partial{l}}{\partial{\Sigma}}R\right]_{ji}+s_j\left[R\frac{\partial{l}}{\partial{\Sigma}}\right]_{ji}
 \end{align*}
 $$
+可以明显发现导数的形式变差了。
