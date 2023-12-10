@@ -145,7 +145,7 @@ $$
 注意，由于我们的目标是形状近似，这个能量并不强制要求球体严格保持在形状内。
 Note that since we target shape approximation, this energy does not enforce the spheres to remain strictly inside the shape.
 
-![](images/sphere-meshes.png)
+![](sphere-meshes.png)
 
 我们为输入网格的每个顶点 $v_i$ 配备由其三分之一相邻三角形（记为 $T_1(v_i)$）给出的所谓重心单元 $P_i$，并定义从球体 $s$ 到 $P_i$ 的 $\mathcal{L} _2$ 平方距离作为到 $s$ 的平方距离在 $P_i$ 上的积分：
 We equip each vertex $v_i$ of the input mesh with its so-called barycentric cell $P_i$ given by one third of its adjacent triangles (denoted by $T_1(v_i)$), and define the squared $\mathcal{L}_2$ distance from a sphere $s$ to $P_i$ as the integral over $P_i$ of the squared distance to $s$:

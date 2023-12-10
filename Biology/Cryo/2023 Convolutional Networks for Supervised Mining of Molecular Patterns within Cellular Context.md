@@ -2,7 +2,7 @@
 
 ## 0 Abstract
 
-为了在实验数据上对 DeePiCt (Deep Picker in Context) 进行训练和基准测试，我们全面标注了 20 份粟酒裂殖酵母的核糖体、脂肪酸合酶、膜、核孔复合物、细胞器和胞质溶胶的断层图。
+为了在实验数据上对 DeePiCt (Deep Picker in Context) 进行训练和基准测试，我们全面标注了 20 份粟酒裂殖酵母的**核糖体**、**脂肪酸合酶**、**膜**、**核孔复合物**、**细胞器**和**胞质溶胶**的断层图。
 To train and benchmark DeePiCt (Deep Picker in Context) on experimental data, we comprehensively annotated 20 tomograms of Schizosaccharomyces pombe for ribosomes, fatty acid synthases, membranes, nuclear pore complexes, organelles, and cytosol.
 
 我们使用 DeePiCt 研究组成不同的细胞核糖体亚群，重点关注它们与线粒体和内质网的背景关联。
@@ -46,7 +46,7 @@ For training, each network requires tomograms and corresponding 3D binary segmen
 在二维网络的训练过程中，图片会以 90 度的增量随机翻转和旋转，以提高泛化能力。对于 3D CNN，我们对输入图像进行了一系列可选的随机变换，以增加数据量（补充材料 1）。根据我们的经验，二维 CNN 需要大约 6 份完全分割的断层图像来进行训练，而三维 CNN 则需要大约 5 份断层图像来进行膜分离，并需要至少 300 个注释实例来进行粒子学习，这与细胞体积中的粒子稀疏性无关（补充图片 2）。
 During training of the 2D network, tiles are randomly flipped and rotated in 90-degree increments to improve generalization. For the 3D CNN, we implemented a number of optional random transformations to the input images for data augmentation. In our experience, the 2D CNNs require about 6 fully segmented tomograms for training, while the 3D CNNs require about 5 tomograms for membrane segmentation, and a minimum of 300 annotated instances for particle learning independent of particle sparsity in the cellular volumes.
 
-将二维网络输出的预测切片组合成三维体像，通过应用一维高斯滤波器沿 Z 轴进行平滑处理，然后进行阈值处理（用户可自定义，默认为 0.75），生成二值三维体像（扩展数据图 2a-2c）。根据用户定义的概率值对三维 CNN 的输出进行阈值处理，然后进行聚类，生成二值分割图。
+将二维网络输出的预测切片组合成三维体像，通过应用一维高斯滤波器沿 $Z$ 轴进行平滑处理，然后进行阈值处理（用户可自定义，默认为 0.75），生成二值三维体像（扩展数据图 2a-2c）。根据用户定义的概率值对三维 CNN 的输出进行阈值处理，然后进行聚类，生成二值分割图。
 The predicted slices outputted by the 2D network are combined into a 3D volume, smoothened along the z-axis by applying a one-dimensional Gaussian filter, and thresholded (user-definable, default = 0.75) to generate a binary 3D map. The output of the 3D CNN is thresholded at a user-defined probability value, followed by clustering, to generate a binary segmentation map.
 
 聚类输出可与代表断层扫描区域的二值图（例如二维 CNN 的细胞膜分割）中的上下文信息整合，以减少误报。整合模式可根据用户的具体应用，在三种不同选项中进行选择：交叉、接触或共定位（图 1e 和补充图像 3）。
@@ -60,7 +60,7 @@ For segmentations of continuous structures, such as cellular filaments, coordina
 
 ### 2.2 Generation of ground truth annotations in S. pombe
 
-我们设计了一个迭代工作流程，将模板匹配、DeePiCt 和人工拾取结合起来，对通过结合离焦和伏特电位相板 (VPP) 获得的十份断层图像以及十份纯离焦断层图像（离焦）中的核糖体、脂肪酸合成酶 (FAS)、膜、细胞器和细胞质进行注释（图 2 和补充表 2-4）。
+我们设计了一个迭代工作流程，将模板匹配、DeePiCt 和人工拾取结合起来，对通过结合离焦和伏特电位相板 (VPP) 获得的十份断层图像以及十份纯离焦断层图像（defocus）中的核糖体、脂肪酸合成酶 (FAS)、膜、细胞器和细胞质进行注释（图 2 和补充表 2-4）。
 We devised an iterative workflow combining template matching, DeePiCt, and manual picking, to annotate ribosomes, fatty acid synthases (FAS), membranes, organelles, and the cytoplasm in ten tomograms acquired by combining defocus and a Volta potential phase plate (VPP) and ten defocus-only tomograms (defocus).
 
 为注释核孔复合体（NPC），还使用了一个包含约 354 个 NPC 的 127 张断层图像（用 defocus* 表示）的额外数据集，以确保为这一**大型、低丰度（平均每张断层图像 3 个）、结构灵活的复合体**提供足够的训练数据。
@@ -83,7 +83,7 @@ To assess the quality of the obtained ground truth annotations for ribosome and 
 
 #### Performance analysis of 2D CNN in VPP.
 
-为了评估二维 CNN 的性能，我们使用五重交叉验证对十张地面实况 VPP 层析成像进行了两项二元分割任务评估：所有细胞器（所有膜封闭细胞器和核质）的分割和细胞质的分割。二维 CNN 实现了较高的精确度-召回曲线下面积（AUPRC；补充注释 1 和补充图 4），细胞器的 AUPRC 中值为 0.92，细胞质的 AUPRC 中值为 0.98（图 3a 和扩展数据图 5）。
+为了评估二维 CNN 的性能，我们使用五重交叉验证对十张 GT VPP 层析成像进行了两项二值分割任务评估：所有细胞器（所有膜封闭细胞器和核质）的分割和细胞质的分割。二维 CNN 实现了较高的精确度-召回曲线下面积（AUPRC；补充注释 1 和补充图 4），细胞器的 AUPRC 中值为 0.92，细胞质的 AUPRC 中值为 0.98（图 3a 和扩展数据图 5）。
 For assessing the performance of the 2D CNN, we evaluated two binary segmentation tasks on the ten ground truth VPP tomograms using fivefold cross-validation: segmentation of all organelles (all membrane-enclosed organelles and the nucleoplasm), and segmentation of the cytosol. The 2D CNN achieves high areas under the precision–recall curve (AUPRC), with a median AUPRC of 0.92 for organelles and 0.98 for cytosol.
 
 #### Hyper-parameter tuning for the 3D CNN
@@ -168,6 +168,10 @@ As a demonstration of the domain generalization potential of our workflow across
 ## 3 Discussion
 
 ## 4 Method
+
+### 4.4 Tomogram Reconstruction
+
+Tilt series 用 IMOD 做 Bin 4 重建，用 Patch Tracking，用 Weighted Back Projection。
 
 ### 4.5 Ground truth annotation for organelles, cytoplasm, and membranes
 
