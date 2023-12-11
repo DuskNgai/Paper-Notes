@@ -135,14 +135,20 @@ $$
 
 ### 5.2 Band-Limited Plenoptic Camera
 
-尽管理想的低通滤波不存在，但是可以做分析。空域上的低通滤波 $h$ 为
+| Symbols | Description |
+|:-------:|:-----------:|
+|$\Delta_{uv}$|Sampling rate on lens plane|
+|$\Delta_{xy}$|Sampling rate on sensor plane|
+|$N_{uv}$|Spatial resolution on lens plane|
+|$N_{xy}$|Spatial resolution on sensor plane|
+
+这里需要一个空域上的低通滤波 $h$，可以为理想低通滤波、Butterworth 低通滤波、Gaussian 低通滤波。以理想低通滤波为例：
 $$
 \begin{align*}
-h(p,q,s,t)&=\mathrm{sinc}\left(\frac{p}{\Delta{x}},\frac{q}{\Delta{y}},\frac{s}{\Delta{u}},\frac{t}{\Delta{v}}\right)\\
-&=\mathrm{sinc}\left(\frac{p}{\Delta{x}}\right)\mathrm{sinc}\left(\frac{q}{\Delta{y}}\right)\mathrm{sinc}\left(\frac{s}{\Delta{u}}\right)\mathrm{sinc}\left(\frac{t}{\Delta{v}}\right)
-\end{align*}
+h(p,q,s,t)&=\frac{1}{\Delta_{xy}^{2}}\frac{1}{\Delta_{uv}^{2}}\mathrm{sinc}\left(\frac{p}{\Delta_{xy}},\frac{q}{\Delta_{xy}},\frac{s}{\Delta_{uv}},\frac{t}{\Delta_{uv}}\right)\\
+&=\frac{1}{\Delta_{xy}^{2}}\frac{1}{\Delta_{uv}^{2}}\mathrm{sinc}\left(\frac{p}{\Delta_{xy}}\right)\mathrm{sinc}\left(\frac{q}{\Delta_{xy}}\right)\mathrm{sinc}\left(\frac{s}{\Delta_{uv}}\right)\mathrm{sinc}\left(\frac{t}{\Delta_{uv}}\right)
+\end{align*}\tag{12}
 $$
-其中每个 $\Delta$ 是在各自方向上的采样频率。
 
 #### 5.2.1 Analytic Form for Refocused Photographs
 
@@ -154,19 +160,22 @@ $$
 &=\mathcal{P}(\alpha)\circ\mathcal{C}^{4}(h)[L(\cdot;F)]\\
 &=\mathcal{C}^{2}(\mathcal{P}(\alpha)[h])\circ\mathcal{P}(\alpha)[L(\cdot;F)]\\
 &=\mathcal{C}^{2}(\mathcal{P}(\alpha)[h])[E(\cdot;F)]
-\end{align*}
+\end{align*}\tag{13}
 $$
 因此只要对于在深度为 $F$ 的成像的图像做 2D 的卷积，卷积核为低通滤波的 2D 成像，即
 $$
 \begin{align*}
-\mathcal{P}(\alpha)[h]&=
-\end{align*}
+\mathcal{P}(\alpha)[h]&=\mathcal{P}(\alpha)\left[\frac{1}{\Delta_{xy}^{2}}\frac{1}{\Delta_{uv}^{2}}\mathrm{sinc}\left(\frac{p}{\Delta_{xy}},\frac{q}{\Delta_{xy}},\frac{s}{\Delta_{uv}},\frac{t}{\Delta_{uv}}\right)\right]\\
+&=\frac{1}{D^2}\mathrm{sinc}\left(\frac{p}{D},\frac{q}{D}\right)
+\end{align*}\tag{14}
 $$
-证明在 Appendix C。
+其中 $D=\max(\alpha\Delta_{xy},|1-\alpha|\Delta_{uv})$。证明在 Appendix C。
 
 #### 5.2.2 Interpretation of Refocusing Performance
 
+**Exact Refocusing**
 
+**Inexact Refocusing**
 
 ---
 
@@ -247,3 +256,10 @@ $$
 第三个等号是容易证明的，第二、四个等号是卷积定理。
 
 ## Appendix C 
+
+$$
+\begin{align*}
+\mathcal{P}(\alpha)[h]&=\mathcal{P}(\alpha)\left[\frac{1}{\Delta_{xy}^{2}}\frac{1}{\Delta_{uv}^{2}}\mathrm{sinc}\left(\frac{p}{\Delta_{xy}},\frac{q}{\Delta_{xy}},\frac{s}{\Delta_{uv}},\frac{t}{\Delta_{uv}}\right)\right]\\
+&=\frac{1}{D^2}\mathrm{sinc}\left(\frac{p}{D},\frac{q}{D}\right)
+\end{align*}\tag{14}
+$$

@@ -47,21 +47,245 @@ AlphaFold2 的输入是一段氨基酸序列，输出每个氨基酸在三维空
 
 Evoformer 将蛋白质结构预测问题看作是 3D 空间中的图推理问题，图中的边由相邻的残基定义。
 
+### 3.0 Utils
+
+```python
+def attention(
+    self,
+    q_x: torch.Tensor,
+    kv_x: torch.Tensor,
+    biases: torch.Tensor
+) -> torch.Tensor:
+    # q_x, kv_x: [s, r, c_m]
+    # biases: []
+
+    q = self.linear_q(q_x)  # [s, r, n * h]
+    k = self.linear_k(kv_x) # [s, r, n * h]
+    v = self.linear_v(kv_x) # [s, r, n * h]
+
+    q = q.view(q.shape[:-1] + (self.n_heads, -1)).transpose(-2, -3)  # [s, n, r, h]
+    k = k.view(k.shape[:-1] + (self.n_heads, -1)).transpose(-2, -3) # [s, n, r, h]
+    v = v.view(v.shape[:-1] + (self.n_heads, -1)).transpose(-2, -3) # [s, n, r, h]
+
+    q /= math.sqrt(self.c_hidden)
+    k = k.transpose(-2, -1) # [s, n, h, r]
+
+    a = torch.matmul(q, k) # [s, n, r, r]
+    for b in biases:
+        a += b
+    a = softmax(a, -1) # [s, n, r, r]
+    a = torch.matmul(a, v) # [s, n, r, h]
+    a = a.transpose(-2, -3) # [s, r, n, h]
+
+    if self.linear_g is not None:
+        g = torch.sigmoid(self.linear_g(q_x)) # [s, r, n * h]
+        g = g.view(g.shape[:-1] + (self.n_heads, -1)) # [s, r, n, h]
+        a = a * g # [s, r, n, h]
+    a = torch.flatten(a, -2) # [s, r, n * h]
+
+    o = self.linear_o(a) # [s, r, c_m]
+    return o
+```
+
+```python
+def _mask_bias(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+	if mask is None:
+		mask_bias = torch.ones(*x.shape[:-1])
+
+	mask_bias = (torch.inf * (mask - 1)).unsqueeze(-2, -3) # [s, 1, ,1 r]
+	return mask_bias
+
+def _prep_inputs(
+    self,
+    msa: torch.Tensor,
+    pair: torch.Tensor,
+    mask: torch.Tensor | None
+) -> list[torch.tensor]:
+    # msa: [s, r, c_m]
+    # pair: [r, r, c_z]
+    # mask: [s, r]
+    mask_bias = self._mask_bias(msa, mask)
+
+    if self.linear_z is not None:
+	    z = self.layer_norm_z(pair) # [r, r, c_z]
+	    z = self.linear_z(z) # [r, r, n]
+	z = z.permute(-3, -1, -2).unsqueeze(-4) # [1, r, r, n]
+
+	biases = [mask_bias, z]
+	return biases
+```
 ### 3.1 MSA Row-wise Gated Self-Attention with Pair Bias
 
 ![algorithm 7](images/algorithm-7.png)
 
 ```python
 def MSA_row_attention_with_pair_bias(
+    self,
     msa: torch.Tensor,
-    pair: torch.Tensor
+    pair: torch.Tensor,
+    mask: torch.Tensor
 ):
     # msa: [s, r, c_m]
     # pair: [r, r, c_z]
-    msa = 
+    msa = self.layer_norm_m(msa)
+    biases = self._prep_input(msa, pair, mask)
+    msa = self.attention(msa, msa, biases)
+    return msa
+```
+
+### 3.2 MSA Column-wise Gated Self-Attention
+
+![algorithm-8](images/algorithm-8.png)
+
+```python
+def MSA_column_attention(
+    self,
+    msa: torch.Tensor
+):
+    # msa: [s, r, c_m]
+    # pair: [r, r, c_z]
+    msa = msa.transpose(-2, -3)
+    msa = self.layer_norm_m(msa)
+    msa = self.attention(msa, msa, [])
+    msa = msa.transpose(-2, -3)
+    return msa
+```
+
+### 3.3 MSA Transition
+
+![algorithm-9](images/algorithm-9.png)
+
+```python
+def MSA_transition(self, msa: torch.Tensor) -> torch.Tensor:
+    # msa: [s, r, c_m]
+    msa = self.layer_norm(msa) # [s, r, c_m]
+    msa = self.linear_1(msa) # [s, r, 4 * c_m]
+    msa = self.relu(msa) # [s, r, 4 * c_m]
+    msa = self.linear_2(msa) # [s, r, c_m]
+    return msa
+```
+
+### 3.4 Outer Product Mean
+
+![algorithm-10](images/algorithm-10.png)
+
+```python
+def outer_product_mean(
+	self,
+	msa: torch.Tensor,
+	mask: torch.Tensor
+) -> Torch.Tensor:
+    # msa: [s, r, c_m]
+    # mask: [s, r, 1]
+    msa = self.layer_norm(msa) # [s, r, c_m]
+    msa_1 = self.linear_1(msa) # [s, r, c]
+    msa_2 = self.linear_2(msa) # [s, r, c]
+    msa_1 = msa_1.transpose(-2, -3) # [r, s, c]
+    msa_2 = msa_2.transpose(-2, -3) # [r, s, c]
+    outer = torch.einsum("...bac,...dae->...dbce", msa_1, msa_2) # [r, r, c, c]
+    norm = torch.einsum("...abc,...adc->...bdc", msa_1, msa_2) # [r, r, 1]
+    outer = outer.flatten(-2) # [r, r, c * c]
+    outer = self.linear_o(outer) # [r, r, c_z]
+    outer = outer / norm # [r, r, c_z]
+    return outer
+```
+
+论文的伪代码先 mean 后 linear，但效果等价。
+
+### 3.5 Triangular Multiplicative Update
+
+![algorithm-11-12](images/algorithm-11-12.png)
+
+```python
+def triangle_multipicative_update_outgoing(
+	self,
+	pair: torch.Tensor
+) -> torch.Tensor:
+    # pair: [r, r, c_z]
+    pair = self.layer_norm_in(pair)
+    a = self.linear_a_p(pair) * torch.sigmoid(self.linear_a_g(pair)) # [r, r, c]
+    b = self.linear_b_p(pair) * torch.sigmoid(self.linear_b_g(pair)) # [r, r, c]
+    p = torch.einsum("...abc,...dbc->...adc", a, b) # [r, r, c]
+    p = self.layer_norm_out(p) # [r, r, c]
+    x = self.linear_z(p) * torch.sigmoid(self.linear_g(pair)) # [r, r, c_z]
+    return z
+
+def triangle_multipicative_update_incoming(
+	self,
+	pair: torch.Tensor
+) -> torch.Tensor:
+    # pair: [r, r, c_z]
+    pair = self.layer_norm_in(pair)
+    a = self.linear_a_p(pair) * torch.sigmoid(self.linear_a_g(pair)) # [r, r, c]
+    b = self.linear_b_p(pair) * torch.sigmoid(self.linear_b_g(pair)) # [r, r, c]
+    p = torch.einsum("...abc,...adc->...bdc", a, b) # [r, r, c]
+    p = self.layer_norm_out(p) # [r, r, c]
+    x = self.linear_z(p) * torch.sigmoid(self.linear_g(pair)) # [r, r, c_z]
+    return z
+```
+
+### 3.6 Triangular Self-Attention
+
+![algorithm-13-14](images/algorithm-13-14.png)
+
+```python
+def triangle_attention_starting_node(
+	self,
+	pair: torch.Tensor,
+	mask: torch.Tensor
+) -> torch.Tensor:
+    # pair: [r, r, c_z]
+    pair = self.layer_norm(pair) # [r, r, c_z]
+    biases = [self._mask_bias(pair, mask), self.linear(pair)]
+    pair = self.attention(pair, pair, biases)
+    return pair
+
+def triangle_attention_ending_node(
+	self,
+	pair: torch.Tensor,
+	mask: torch.Tensor
+) -> torch.Tensor:
+    # pair: [r, r, c_z]
+    pair = pair.transpose(-2, -3)
+    pair = self.layer_norm(pair) # [r, r, c_z]
+    biases = [self._mask_bias(pair, mask), self.linear(pair)]
+    pair = self.attention(pair, pair, biases)
+    pair = self.transpose(-2, -3)
+    return pair
+```
+
+### 3.7 Overall
+
+```python
+def evoformer_stack(
+	self,
+	msa: torch.Tensor,
+	pair: torch.Tensor,
+	mask: torch.Tensor
+) -> tuple[torch.Tensor, ...]:
+    for i range(48):
+        msa += self.msa_dropout(self.MSA_row_attention_with_pair_bias(msa, pair), 0.15)
+         msa += self.MSA_column_attention(msa)
+         msa += self.MSA_transition(msa)
+
+         pair += self.outer_product_mean(msa, pair, mask)
+         pair += self.msa_dropout(self.triangle_multipicative_update_outgoing(pair), 0.25)
+         pair += self.msa_dropout(self.triangle_multipicative_update_incoming(pair), 0.25)
+         pair += self.msa_dropout(self.triangle_attention_starting_node(pair, mask), 0.25)
+         pair += self.msa_dropout(self.triangle_attention_starting_node(pair, mask), 0.25)
+         pair += self.pair_transition(pair)
+
+    s = self.linear(msa[..., 0])
+
+    return msa, pair, s
 ```
 
 ## 4 End-to-end Structure Prediction
+
+![structure-module](images/structure-module.png)
+
+
+
 
 ## 5 Training with Labelled and Unlabelled Data
 
