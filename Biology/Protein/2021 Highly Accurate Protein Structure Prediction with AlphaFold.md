@@ -45,7 +45,7 @@ AlphaFold2 的输入是一段氨基酸序列，输出每个氨基酸在三维空
 
 ![evoformer](images/evoformer.png)
 
-Evoformer 将蛋白质结构预测问题看作是 3D 空间中的图推理问题，图中的边由相邻的残基定义。
+Evoformer 将蛋白质结构预测问题看作是 3D 空间中的图推理问题，图的边由相邻的残基定义。
 
 ### 3.0 Utils
 
@@ -284,12 +284,84 @@ def evoformer_stack(
 
 ![structure-module](images/structure-module.png)
 
+蛋白质 3D 结构由 $r$ 个独立的刚体旋转和平移组成，参考系是世界坐标系。刚体旋转和平移表示蛋白质主链，即 N-C$\alpha$-C 之间的关系，这主要约束了侧链的位置。但是主链的旋转和平移没有额外的约束，这里靠的是增加约束项。
 
+### 4.1 Invariant Point Attention
 
+![algorithm-22](images/algorithm-22.png)
+
+```python
+def invariant_point_attention(
+    self,
+    single: torch.Tensor,
+    pair: torch.Tensor,
+    rigid: Rigid
+) -> torch.Tensor:
+    # single: [r, c_s]
+    # pair: [r, r, c_z]
+    # rigid: [r]
+    q, k, v = self.linear_q(single), self.linear_k(single), self.linear_v(single) # [r, n, h]
+    q_pts, k_pts, v_pts = self.linear_q_pts(single), self.linear_k_pts(single), self.linear_v_pts(single) # [r, n, p, 3]
+    b = self.linear_b(pair) # [r, r, h]
+    a = torch.einsum("...abc,...dbc->...bad", q, k)# [n, r, r]
+    a += b.permute(-3, -1, -2)
+    pts_atten = torch.sum(rigid.apply(q).unsqueeze(-4) - rigid.apply(k).unsqueeze(-5), dim=-1) # [r, r, n, p]
+    pts_atten = torch.sum(pts_atten * CONSTANTS, dim=-1).transpose(-1, -3, -2) # [n, r, r]
+    a += pts_atten
+    a *= CONSTANTS
+    a = torch.softmax(a)
+
+    o = torch.einsum("...abc,...cad->...bad", a, v).flatten(-2) # [r, n * h]
+    o_pt = rigid.inverse_apply(torch.einsum("...abc,...cade->...bade", a, rigid.appky(v_pts))).flatten(-3, -2) # [r, n * p, 3]
+    o_pt_norm = torch.norm(o_pt, dim=-1) # [r, n * p]
+    o_pair = torch.einsum("...abc,...bcd->...bae", a, pair).flatten(-2) # [r, n * c_z]
+
+    single = self.linear_out(torch.cat([o, *torch.unbind(o_pt, dim=-1), o_pt_norm, o_pair], dim=-1)) # [r, c_s]
+``` 
+
+### 4.2 Backbone Update
+
+这里就是把网络输出转化成刚体的旋转和平移。其中旋转用四元数表示。
+
+### 4.3 Overall
+
+```python
+def structure_module(
+	self,
+    single: torch.Tensor,
+    pair: torch.Tensor
+) -> :
+    single = self.layer_norm_s(single)
+    single = self.linear_in(single)
+    pair = self.layer_norm_z(pair)
+    rigid = Rigid.identity()
+
+    for i in range(self.n_blocks):
+        single = single + self.ipa(single, pair, rigid)
+        single = self.linear_norm_ipa(single)
+        single = self.transition(single)
+
+        rigid = rigid.update(self.backbone_update(single))
+        # Side chain update ...
+        # Loss/metric computation ...
+```
 
 ## 5 Training with Labelled and Unlabelled Data
 
-## 6 Interpreting the Neural Network
+Noisy Student Self-Distillation，用训练好的 AlphaFold2 在 Uniclust30 这个数据集上预测并过滤了 350000 个高置信度序列。然后再重新用 PDB 和这个数据训练一个新的 AlphaFold2，并且做很大的数据增强。最后将 BERT 的训练方法引入训练的过程中。
+
+## 6 Interpreting the Neural 
+
+对于每次 Recycling 的总共 48 个 Encoder，每次都送入 Decoder，一共产生 192 个中间结构。发现每次变动都是比较平缓的。
 
 ## 7 MSA Depth and Cross-chain Contacts
 
+- 对于短链（长度小于 30）的效果还是比较糟糕。
+- 长度超过 100 的增效不明显。
+- 与异型接触的数量相比，对链内或同型接触较少的蛋白质的效果要弱得多。
+
+## Methods
+
+### Training regimen
+
+256 长度的蛋白质、batch size 128、TPU v3 128 块。
