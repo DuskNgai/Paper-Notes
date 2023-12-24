@@ -20,20 +20,68 @@ MaSIF 的三个应用：(1) 配体口袋相似性比较（MaSIF-配体）；(2) 
 
 在网格的每个顶点周围，MaSIF 提取具有测地半径为 $r=9\AA$ 或 $r=12\AA$ 的斑块。斑块半径的选择取决于应用。MaSIF 计算一个离散化的分子表面（即溶剂排除表面），并为网格中的每个顶点分配几何和化学特征。这些特征包括两个几何特征（形状指数和距离依赖的曲率）和三个化学特征（亲水指数、连续电子静力学和自由电子及质子供体的位置）。顶点的坐标是到中心的测地距离和一个幅角。
 
+MaSIF 框架关键组成部分是测地卷积，作用于局部的斑块。在极坐标中，构建了一套高斯核系统，这些核定义在**局部测地极坐标系**中，其参数是可学习的。这些可学习的高斯核局部平均顶点级斑块特征（作为软像素）并产生固定维度的输出，与一组可学习的滤波器相关。这套高斯核被称为学习的软极网格。
 
-
+在斑块上执行 $K$ 次旋转并计算所有旋转的最大值，从而产生斑块位置的测地卷积输出。类似于在图像上的滑动窗口操作，重复于不同的斑块位置，为每个点产生表面指纹描述符，以向量形式嵌入中心点及其邻域的表面模式信息。学习过程包括针对特定应用的训练数据和成本函数最小化局部核和滤波器权重的参数集。
 
 ## 2 Result
 
-
-
-
-
-
-
+#### Discussion
 
 ## 3 Method
 
 ### 3.1 Computation of Molecular Surface
 
+用滚球法计算出对应的 mesh，然后把各种性质放到顶点上。
+
+### 3.2 Decomposition of Protein into Overlapping Radial Patches and Computation of Features
+
+#### Shape Index
+
+用微分几何算出的 Gaussian 曲率和平均曲率得到 $\kappa_1,\kappa_2$，得到 shape index
+$$
+\frac{2}{\pi}\arctan\frac{\kappa_1+\kappa_2}{\kappa_1-\kappa_2}\in(-1,1)
+$$
+
+#### Distance-dependent Curvature
+
+#### Poisson-Boltzmann Continuum Electrostatics
+
+PDB2PQR + APBS 来计算静电场。顶点上的电荷值先截断到 [-30, 30] 再归一化到 [-1, 1]。
+
+#### Free Electrons and Proton Donors
+
+用氢键势计算电子和质子的给体，也就是广义的酸碱性。
+
+#### Hydropathy
+
+Kyte + Doolittle 算氨基酸的亲疏水性。顶点上的数值先截断到 [-4.5, 4.5] 再归一化到 [-1, 1]。
+
+### 3.3 Computation of Geodesic Polar Coordinates
+
+#### Geodesic Distances
+
+转化成有环图的带 L2 权重的最短路径问题，用 Dijkstra 算法求解。
+
+#### Radial Coordinates
+
+最短路径边的权重和。
+
+#### Angular Coordinates
+
+多维度的缩放算法。
+
+### Geometric Deep Learning on A Learned Soft Polar Grid
+
+### MaSIF-ligand:  Ligand Site Prediction and Classification
+
+每次都随机采集 32 个 patch 的原因是：
+1. 每个 patch 覆盖 12 $\AA$ 半径，因此 32 个 patch 很可能覆盖整个口袋的表面；
+2. 数目足够少，因此所有配体类型都至少与这么多 patch 中心接触；
+3. 由于内存限制。
+为了获得更稳定的预测结果，我们对每个口袋进行了 100 次采样，然后对这 100 次采样的预测结果取平均值，得出最终预测结果。
+
+### MaSIF-site: Protein Interaction Site Prediction
+
+### MaSIF-search: Prediction of PPIs Based on Surface Fingerprints
 
