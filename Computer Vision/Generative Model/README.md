@@ -10,17 +10,21 @@
 
 ![generative](images/generative.png)
 
-最好按照下面的顺序阅读：
+我们推荐读者按以下顺序阅读：
 
-## [Maximum Likelihood Estimation](maximum%20likelihood%20estimation.md)
+## [Maximum Likelihood Estimation](1%20Maximum%20Likelihood%20Estimation.md)
 
-## [Expectation Maximization](expectation%20maximization.md)
+## [Expectation Maximization](2%20Expectation%20Maximization.md)
 
-## [Variational Auto-Encoder](variational%20auto-encoder.md)
+## [Variational Auto-Encoder](3%20Variational%20Auto-encoder.md)
 
-## [Diffusion Model](diffusion.md)
+## [Diffusion Model](4%20Diffusion.md)
 
-## [Generative Adversarial Network](generative%20adversarial%20network.md)
+## [Generative Adversarial Network](5%20Generative%20Adversarial%20Network.md)
+
+---
+
+我们还提供了某些 [Gaussian Distribution 相关性质](Fancy%20Gaussian.md)的总结。
 
 ## References
 

@@ -8,7 +8,7 @@ $$
 
 Two Gaussian distribution random variables are independent if and only if they are uncorrelated.
 
-See prove of some properties in [here](Prove%201D.md).
+See prove of some properties in [here](Prove%201D-Gaussian.md).
 
 ### Sum of Gaussian Distributions / Convolution of Gaussian Distribution Functions
 
@@ -43,7 +43,7 @@ $$
 
 A $n$-dimensional Gaussian distribution random variable $(X_1,X_2,\cdots,X_n)$ can be decomposed into $n$ independent $1$-dimensional Gaussian distribution random variables $X_i$.
 
-See prove of some properties in [here](Prove%20nD.md).
+See prove of some properties in [here](Prove%20nD-Gaussian.md).
 
 ### Expectation of the Logarithm Gaussian Distribution
 
