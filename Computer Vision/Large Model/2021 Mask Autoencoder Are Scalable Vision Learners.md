@@ -1,6 +1,6 @@
 # Mask Autoencoder Are Scalable Vision Learners
 
-MAE 最突出的贡献就是提出了预训练视觉大模型。第二个贡献就是纠正了 Linear Probing 的错误观点。
+MAE 最突出的贡献就是提出了生成式的视觉预训练方法。第二个贡献就是纠正了 Linear Probing 的错误观点。
 
 ## 0 Abstract
 

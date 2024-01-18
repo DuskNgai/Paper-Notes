@@ -112,5 +112,3 @@ def octree_attention(x: torch.Tensor, D = 1, K = 32) -> torch.Tensor:
 #### Cross Attention
 
 用 Cross Attention 加入额外的信息。
-
-
