@@ -46,6 +46,51 @@ Our MAE masks random patches from the input image and reconstructs the missing p
 编码器将观察到的信号映射到潜在表示，解码器则从潜在表示重建原始信号。
 An encoder that maps the observed signal to a latent representation, and a decoder that reconstructs the original signal from the latent representation.
 
+```python
+def random_masking(x: torch.Tensor):
+    B, N, C = x.shape
+    len_keep = int(L * (1 - self.mask_ratio))
+
+    ids_shuffle = torch.randperm(B * N).reshape(B, N) % N # [B, N]
+    ids_restore = torch.argsort(ids_shuffle, dim=1)  # [B, N]
+    ids_keep = ids_shuffle[:, :len_keep] # [B, K]
+
+    x_masked = torch.gather(x, dim=1, index=ids_keep.unsqueeze(-1).repeat(1, 1, C)) # [B, K, C]
+
+    mask = torch.ones([N, L])
+    mask[:, :len_keep] = 0
+    mask = torch.gather(mask, dim=1, index=ids_restore)
+    return x_masked, mask, ids_restore
+
+def forward_encoder(self, x: torch.Tensor):
+    x = self.patch_embed(x) # [B, N, C]
+    x = x + self.pos_embed[:, :1]
+
+    x, mask, ids_restore = self.random_masking(x)
+
+    cls_token = (self.cls_token + self.[:, :1]).expand(x.shape[0], -1, -1)
+    x = torch.cat([cls_token, x], dim=1)
+    return self.encoder(x), mask, ids_restore
+
+def forward_decoder(self, x: torch.Tensor, ids_restore: torch.Tensor):
+    x = self.decoder_embed(x) # [B, K, C]
+    mask_tokens = self.mask_tokens.repeat(x.shape[0], ids_restore.shape[1] + 1 - x.shape[1], 1) # [B, N + 1 - K, C]
+    cls_token = x[:, :1]
+
+    x = torch.cat([x[:, 1:], mask_tokens], dim=1) # [B, N, C]
+    # unshuffle
+    x = torch.gather(x, dim=1, index=ids_restore.unsqueeze(-1).repeat(1, 1, x.shape[2])) # [B, N, C]
+    x = torch.cat([cls_token, x], dim=1)
+
+    return self.decoder(x)[:, 1:]
+
+def forward(self, x: torch.Tensor):
+    latent, mask, ids_restore = self.forward_encoder(imgs, mask_ratio)
+    pred = self.forward_decoder(latent, ids_restore)
+    loss = self.forward_loss(x, pred, mask)
+    return loss
+```
+
 ### Masking
 
 按照 ViT 的方法，我们将图像划分为规则的非重叠块。我们按照均匀分布，对随机块进行无替换抽样。
