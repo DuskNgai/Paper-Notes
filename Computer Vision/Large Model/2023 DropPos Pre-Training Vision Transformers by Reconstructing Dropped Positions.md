@@ -9,10 +9,10 @@ Transformer-based 网络架构对于 token 的位置信息，比如 token 的顺
 直观地说，丢弃 Positional Embedding，只利用视觉外观，让模型输出每个 patch 的位置，应该可以学习到图像内容的形状关系和布局，从而提高空间视觉内容的编码能力。但是事实上远不如加入了 Positional Embedding 的模型的效果。造成这一差异的原因可能是：
 1. 如果预训练阶段从来没接触过 Positional Embedding，但调优阶段必须存在 Positional Embedding，因此两个任务的差异就非常大。
 2. ViT 在长程依赖关系建模方面的优势可能会导致他们在解决任务时流于表面，从而产生平凡的解决方案，无法通过解决这一简单任务来学习高度语义表征。
-3. 视觉外观相似的 patch 可能会导致重建目标混淆。
+3. 视觉外观相似的 patch 可能会导致重建目标混淆，无需被精准重建。
 
 DropPos 是这样解决这个问题的：
-1. 不是全部丢弃 Positional Embedding，而是丢弃一部分的 Positional Embedding。
+1. 不是全部丢弃 Positional Embedding，而是丢弃一部分的 Positional Embedding。而且仍旧采取大量的 patch mask。
 2. 我们在预训练过程中只保留了可见 patch 的 Positional Embedding，迫使 ViT 仅通过部分输入来重建每个可见 patch 的位置。
 3. 用位置平滑和贴心的重建策略来放松视觉外观相似的 patch。
 4. 把位置预测问题建模成了分类问题。
@@ -72,3 +72,16 @@ $$
 
 ## 4 Experiments
 
+### 4.1 Ablation Studies
+
+#### Performance on the Position Reconstruction Task
+
+Position 预测准确率和下游任务性能有点正相关，但不绝对。过分关注于预测每一个 patch 的精确的位置，会导致局部最优，对于下游任务不利。
+
+#### Patch Mask Ratio $\gamma$
+
+$\gamma$ 小的话对于预测任务太简单了，反而不利于下游任务。
+
+### 4.3 Analysis
+
+冻结 Moco-v3 和 MAE 的 pre-train 和 finetune 网络权重，用线性探测方法，随机丢弃 75% 的 positional embedding，预测 patch 的位置。结果发现 finetune 网络的准确率远远大于 pre-train 网络。这说明**强大的对位置的建模能力，对于图像分类任务是有益的**。

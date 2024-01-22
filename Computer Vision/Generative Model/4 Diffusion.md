@@ -137,13 +137,72 @@ $$
 &={\color{red}\mathcal{N}\left(\mathbf{x}_{t-1};\frac{(1-\bar{\alpha}_{t-1})\sqrt{\alpha_{t}}\mathbf{x}_{t}+(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{0}}{1-\bar{\alpha}_t},\frac{(1-\alpha_{t})(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}I\right)}
 \end{align*}
 $$
-where
+其中
 $$
 \begin{align*}
 C_1&=\left(\frac{(1-\bar{\alpha}_{t})}{2\pi(1-\alpha_{t})(1-\bar{\alpha}_{t-1})}\right)^{\frac{n}{2}}\\
 C_2&=\left(\frac{(1-\bar{\alpha}_{t})}{2\pi(1-\alpha_{t})(1-\bar{\alpha}_{t-1})}\right)^{\frac{n}{2}}\exp\left(-\frac{\left(\sqrt{\alpha_{t}}(1-\bar{\alpha}_{t-1})\mathbf{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}(1-\alpha_{t})\mathbf{x}_{0}\right)^2}{2(1-\alpha_{t})(1-\bar{\alpha}_{t-1})(1-\bar{\alpha}_t)}\right)
 \end{align*}
 $$
+
+设
+$$
+\boldsymbol{\mu}(t)=\frac{(1-\bar{\alpha}_{t-1})\sqrt{\alpha_{t}}\mathbf{x}_{t}+(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{0}}{1-\bar{\alpha}_t}\quad\sigma^2(t)=\frac{(1-\alpha_{t})(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}
+$$
+可以发现，$\boldsymbol{\mu}(t)$ 是一个与 $\mathbf{x}_{t}$ 有关的函数，是未知的，但是其他变量都是已知的。$\sigma^2(t)$ 也是完全已知的。因为 $q(\mathbf{x}_{t-1}\mid\mathbf{x}_{t},\mathbf{x}_{0})$ 是 Gaussian 分布，因此将 $p_{\theta}(\mathbf{x}_{t-1}\mid\mathbf{x}_{t};\theta)$ 建模为已知方差的 Gaussian 分布：
+$$
+p_{\theta}(\mathbf{x}_{t-1}\mid\mathbf{x}_{t};\theta)=\mathcal{N}(\mathbf{x}_{t-1};\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t),\sigma^2(t)I)
+$$
+再回到 Denoising Matching Term 的 KL 散度上。我们仍然需要找到一组参数 $\theta$，使得其越小越好。因此结合 Gaussian 分布的 KL 散度是解析的特点，可以得到：
+$$
+\begin{align*}
+&\quad\ \ \mathrm{KL}(q(\mathbf{x}_{t-1}\mid\mathbf{x}_{t},\mathbf{x}_{0})\parallel p(\mathbf{x}_{t-1}\mid\mathbf{x}_{t};\theta))\\
+&=\mathrm{KL}(\mathcal{N}(\mathbf{x}_{t-1};\boldsymbol{\mu}(t),\sigma^2(t)I)\parallel\mathcal{N}(\mathbf{x}_{t-1};\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t),\sigma^2(t)I))\\
+&=\frac{1}{2}\left[\log\frac{|\sigma^2(t)I|}{|\sigma^2(t)I|}+\mathrm{trace}((\sigma^2(t)I)^{-1}\sigma^2(t)I)+(\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t))^T(\sigma^2(t)I)^{-1}(\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t))-n\right]\\
+&=\frac{1}{2}\left[\log1+n+(\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t))^T(\sigma^2(t)I)^{-1}(\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t))-n\right]\\
+&=\frac{1}{2}\left[(\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t))^T(\sigma^2(t)I)^{-1}(\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t))\right]\\
+&=\frac{\|\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t,t)\|^2}{2\sigma^2(t)}
+\end{align*}
+$$
+
+为了让 $\boldsymbol{\mu}(t)$ 和 $\boldsymbol{\mu}_{\theta}(\mathbf{x}_{t},t)$ 更加接近，就把 $\boldsymbol{\mu}_{\theta}(\mathbf{x}_{t},t)$ 的形式建模的和 $\boldsymbol{\mu}(t)$ 更加接近，即
+$$
+\boldsymbol{\mu}_{\theta}(\mathbf{x}_{t},t)=\frac{(1-\bar{\alpha}_{t-1})\sqrt{\alpha_{t}}\mathbf{x}_{t}+(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{\theta}(\mathbf{x}_{t},t)}{1-\bar{\alpha}_t}
+$$
+带入二者的表达式
+$$
+\begin{align*}
+&\quad\ \ \mathrm{KL}(q(\mathbf{x}_{t-1}\mid\mathbf{x}_{t},\mathbf{x}_{0})\parallel p(\mathbf{x}_{t-1}\mid\mathbf{x}_{t};\theta))\\
+&=\frac{\|\boldsymbol{\mu}(t)-\boldsymbol{\mu}_{\theta}(\mathbf{x}_t)\|^2}{2\sigma^2(t)}\\
+&=\frac{1}{2\sigma^2(t)}\left\|\frac{(1-\bar{\alpha}_{t-1})\sqrt{\alpha_{t}}\mathbf{x}_{t}+(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{0}}{1-\bar{\alpha}_t}-\frac{(1-\bar{\alpha}_{t-1})\sqrt{\alpha_{t}}\mathbf{x}_{t}+(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{\theta}(\mathbf{x}_{t},t)}{1-\bar{\alpha}_t}\right\|^2\\
+&=\frac{1}{2\sigma^2(t)}\left\|\frac{(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{0}}{1-\bar{\alpha}_t}-\frac{(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{\theta}(\mathbf{x}_{t},t)}{1-\bar{\alpha}_t}\right\|^2\\
+&=\frac{1}{2\sigma^2(t)}\left\|\frac{(1-\alpha_{t})\sqrt{\bar{\alpha}_{t-1}}}{1-\bar{\alpha}_t}(\mathbf{x}_{\theta}(\mathbf{x}_{t},t)-\mathbf{x}_{0})\right\|^2\\
+&=\frac{1}{2\sigma^2(t)}\frac{(1-\alpha_{t})^2\bar{\alpha}_{t-1}}{(1-\bar{\alpha}_t)^2}\left\|\mathbf{x}_{\theta}(\mathbf{x}_{t},t)-\mathbf{x}_{0}\right\|^2
+\end{align*}
+$$
+所以，只要将网络设计成为**在任意噪声条件下，重建出无噪声数据**即可减少 KL 散度！
+
+带入 $\sigma^2(t)$ 的表达式
+$$
+\begin{align*}
+&\quad\ \ \frac{1}{2\sigma^2(t)}\frac{(1-\alpha_{t})^2\bar{\alpha}_{t-1}}{(1-\bar{\alpha}_t)^2}\left\|\mathbf{x}_{\theta}(\mathbf{x}_{t},t)-\mathbf{x}_{0}\right\|^2\\
+&=\frac{1}{2}\frac{1-\bar{\alpha}_t}{(1-\alpha_{t})(1-\bar{\alpha}_{t-1})}\frac{(1-\alpha_{t})^2\bar{\alpha}_{t-1}}{(1-\bar{\alpha}_t)^2}\left\|\mathbf{x}_{\theta}(\mathbf{x}_{t},t)-\mathbf{x}_{0}\right\|^2\\
+&=\frac{1}{2}\frac{(1-\alpha_{t})\bar{\alpha}_{t-1}}{(1-\bar{\alpha}_{t-1})(1-\bar{\alpha}_t)}\left\|\mathbf{x}_{\theta}(\mathbf{x}_{t},t)-\mathbf{x}_{0}\right\|^2\\
+&=\frac{1}{2}\frac{\bar{\alpha}_{t-1}-\bar{\alpha}_{t}}{(1-\bar{\alpha}_{t-1})(1-\bar{\alpha}_t)}\left\|\mathbf{x}_{\theta}(\mathbf{x}_{t},t)-\mathbf{x}_{0}\right\|^2\\
+&=\frac{1}{2}\left(\frac{\bar{\alpha}_{t-1}}{1-\bar{\alpha}_{t-1}}-\frac{\bar{\alpha}_{t}}{1-\bar{\alpha}_t}\right)\left\|\mathbf{x}_{\theta}(\mathbf{x}_{t},t)-\mathbf{x}_{0}\right\|^2
+\end{align*}
+$$
+最后，我们把这个表达式凑到论文的形式。已知
+$$
+q(\mathbf{x}_{t}\mid\mathbf{x}_{0})=\mathcal{N}(\mathbf{x}_{t};\sqrt{\bar{\alpha}_{t}}\mathbf{x}_{0},(1-\bar{\alpha}_{t})I)
+$$
+即
+$$
+\begin{align*}
+\mathbf{x}_{t}&=\sqrt{\bar{\alpha}_{t}}\mathbf{x}_{0}+\sqrt{1-\bar{\alpha}_{t}}\boldsymbol{\epsilon}_0
+\end{align*}
+$$
+
 
 ---
 
