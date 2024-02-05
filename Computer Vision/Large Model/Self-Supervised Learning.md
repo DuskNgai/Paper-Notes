@@ -6,6 +6,12 @@
 
 对比学习主要是找到同一张图像在多个不同的视角下的最大公约数。对比学习最主流的流派是设计各种数据增强的方式。
 
+SimCLR
+
+MoCo v3
+
+DINO
+
 ## Generative Learning
 
 生成学习最主流的流派是图像补全模型（Masked Image Modeling）。此外还有位置预测（Position Prediction）。
@@ -35,13 +41,12 @@ FAIR、何恺明
 
 ### ImageNet-1K
 
-| Model | Genre | Scale | Score | Epoch |
+| Model | Type | Scale | Score | Epoch |
 | :--: | :--: | :--: | :--: | :--: |
 | MAE | Generative | ViT-L | 85.9 | 1600 |
 | DropPos | Generative | ViT-L | 85.8 | 800 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| MoCo v3 | Contrastive | ViT-L | 84.1 | 600 |
+| DINO | Contrastive | ViT-B | 83.2 | 1600 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |

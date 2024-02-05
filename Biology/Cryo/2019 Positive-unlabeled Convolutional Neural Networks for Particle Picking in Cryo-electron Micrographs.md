@@ -8,13 +8,13 @@ Cryo-EM 当前挑选的方法存在假阳率过高、后处理不通用的问题
 
 ## 1 Introduction
 
-第一段的切入是，Cryo-EM 重建需要足量的 micrograph。Micrograph 首要的问题就是噪声过大，需要大量的图像（图像分辨率和颗粒数量存在对数-线性关系），因此颗粒挑选就是主要瓶颈。
+第一段的切入是，Cryo-EM 重建需要足量的 Micrograph。Micrograph 首要的问题就是噪声过大，需要大量的图像（图像分辨率和颗粒数量存在对数-线性关系），因此颗粒挑选就是主要瓶颈。
 
 第二段是对过去方法的介绍。传统方法有 DoG 和模板匹配。存在的问题是假阳率高、形状奇特的颗粒无法挑选、需要手工筛选、可能会移除罕见的颗粒视角和构象。AI 方法有 CNN，会在图中提前标注正负样本区域并且预测未标注区域。存在的问题是标注量大、负样本数据的多样性使得负样本要比正样本多一个数量级。
 
-第三段阐述了 Topaz 中的方法。将颗粒挑选问题建模为正样本-未标记样本（Positive-Unlabeled, PU）学习问题。为了解决 PU 学习中存在的过拟合问题，而且用少样本来训练，作者提出了新的损失函数。此外引入了自编码器来提高 In-Context 学习的能力。
+第三段阐述了 Topaz 中的方法。将颗粒挑选问题建模为正样本-未标记样本（Positive-Unlabeled, PU）学习问题。PU 学习可以得到一个分类器，用来分类正负样本。为了解决 PU 学习中存在的过拟合问题，而且用少样本来训练，作者提出了新的损失函数。此外引入了自编码器来提高 In-Context 学习的能力。
 
-第四、五段是介绍 Topaz 的大致效果，并且提供了新的一套数据集。Topaz 在这套数据集上的分辨率是 3.7 $\AA$，并解析出其他方法无法解析的二级结构。在三个公开数据集上，Topaz 只使用了 1,000 个数据做训练。Topaz 在确定长簇型原始卡德林的单颗粒行为中发挥了关键作用。
+第四、五段是介绍 Topaz 的大致效果，并且提供了新的一套数据集 Toll 受体。Topaz 在这套数据集上的分辨率是 3.7 $\AA$，并解析出其他方法无法解析的二级结构。在三个公开数据集上，Topaz 只使用了 1,000 个数据做训练。Topaz 在确定长簇型原始卡德林的单颗粒行为中发挥了关键作用。
 
 ## 2 Result
 
@@ -23,7 +23,7 @@ Cryo-EM 当前挑选的方法存在假阳率过高、后处理不通用的问题
 ![](images/topaz.png)
 
 1. 可选的 GMM 数据增强。
-2. PU 学习的架构 + CNN + SGD。
+2. PU 学习架构的分类器：CNN + SGD。
 3. 滑动窗口计算像素级的概率 + 非极大值抑制。
 
 #### Classifier Training from Positive and Unlabeled Data
@@ -46,7 +46,12 @@ Cryo-EM 当前挑选的方法存在假阳率过高、后处理不通用的问题
 
 ### Topaz Enables High-resolution Reconstruction with No Post-processing
 
-用 Topaz 多挑出来的颗粒做重建，发现质量一样。
+用 Topaz 多挑出来的颗粒做重建，发现质量一样或者更好。
+
+|            | 10025 | 10028 | 10215 |
+| :--------: | :---: | :---: | :---: |
+| Particles  | 3.22x | 1.72x | 3.68x |
+| Resolution | 2.83  | 3.00  | 2.63  |
 
 ### Topaz Particle Predictions are Well-ranked and Contain Few False Positives
 
@@ -54,7 +59,7 @@ Cryo-EM 当前挑选的方法存在假阳率过高、后处理不通用的问题
 
 ### GE-criteria-based PU Learning Method Outperforms Other General-purpose PU Learning Approaches
 
-说明某个方法的好坏需要做假设检验。
+说明某个方法的好坏需要做假设检验。Topaz 用 Generalized Expectation KL 散度和 Generalized Expectation Binomial 作为损失函数来训练，在 Average Precision 上发现后者更好。用 1000 个标注数据训练得到的 AP 为 0.4。
 
 加入了自编码器增强 In-Context 学习，少标几个有助于学习，但是多标就容易导致过度正则化。测试下来权重 $\gamma=10/N$、$N\le250$ 会比较好。
 
@@ -107,7 +112,7 @@ $$
 |       $P$       |    以颗粒为中心的已标记为正样本的区域     |
 |       $U$       |               未标记的区域                |
 |      $\pi$      |      未标记的区域中正样本区域的比例       |
-|       $g$       |               像素级分类器                |
+|       $g$       |               像素级分类器（Topaz）                |
 | $y_i\in\{0,1\}$ |        0 表示负样本，1 表示正样本         |
 |     $Y(k)$      | 包含了 $k$ 个正样本和任意多个负样本的集合 |
 
@@ -115,7 +120,7 @@ PU 学习的目标函数为
 $$
 \pi\mathbb{E}_{x\sim P}[L(g(x),1)]+(1-\pi)\mathbb{E}_{x\sim U}[L(g(x),0)]
 $$
-这种方法在正样本与未标记数据点完全分离时效果很好，但容易因为对分类目标规范不足而出现过拟合问题。有点类似于 Cross Entropy Loss。（个人觉得这样设计的 Loss 完全没道理。）
+这种方法在正样本与未标记数据点完全分离时效果很好，但容易因为对分类目标规范不足而出现过拟合问题。有点类似于 Cross Entropy Loss。
 
 ### PU Learning with Generalized Expectation Criteria
 
