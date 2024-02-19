@@ -99,40 +99,41 @@ $$
 
 ---
 
-> Gaussian Mixture Model 是由多个 Gaussian 分布组成的模型，总体密度函数为多个 Gaussian 密度函数加权组合。考虑一维情况，假设样本 $x$ 是从 $K$ 个 Gaussian 分布中随机采样得到的，但无法得知是从哪个 Gaussian 分布中采样得到的。引入隐变量 $z\in\{1,\dots,K\}$ 表示样本 $x$ 是从哪个 Gaussian 分布中采样得到的，$z$ 服从多项分布，即 $p(z=k)=\pi_k$，其中 $\pi_k$ 表示由第 $k$ 个 Gaussian 分布生成样本的概率。
+> Gaussian Mixture Model 是由多个 Gaussian 分布组成的模型，总体密度函数为多个 Gaussian 密度函数加权组合。考虑一维情况，假设样本 $x$ 是从 $K$ 个 Gaussian 分布中随机采样得到的，但无法得知是从哪个 Gaussian 分布中采样得到的。引入隐变量 $z\in\{1,\dots,K\}$ 表示样本 $x$ 是从哪个 Gaussian 分布中采样得到的，$z$ 服从多项分布，即 $p(z=k)=\pi_k\ge0$，表示由第 $k$ 个 Gaussian 分布生成样本的概率为 $\pi_k$，并且有 $\sum_{k=1}^{K}\pi_{k}=1$。
 
-该模型中，参数为 $\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}$，显变量为 $\left\{x^{(n)}\right\}_{n=1}^{N}$，隐变量为 $\left\{z^{(k)}\right\}_{k=1}^{K}$。首先获得对数边际似然函数
+该模型中，参数为 $\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}$，显变量为 $\left\{x^{(n)}\right\}_{n=1}^{N}$，隐变量为 $z$。首先获得对数边际似然函数
 $$
 \begin{align*}
-\log p\left(x^{(n)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)&=\log\sum_{k=1}^K p\left(x^{(n)},z^{(k)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)\\
-&=\log\sum_{k=1}^K p\left(x^{(n)}\mid z^{(k)};\boldsymbol{\mu},\boldsymbol{\sigma}\right)p\left(z^{(k)};\boldsymbol{\pi}\right)\\
+\log p\left(x^{(n)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)&=\log\sum_{k=1}^K p\left(x^{(n)},z=k;\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)\\
+&=\log\sum_{k=1}^K p\left(x^{(n)}\mid z=k;\boldsymbol{\mu},\boldsymbol{\sigma}\right)p\left(z=k;\boldsymbol{\pi}\right)\\
 &=\log\sum_{k=1}^K\mathcal{N}\left(x^{(n)};\mu_k,\sigma_k\right)\pi_k
 \end{align*}
 $$
-随后是 E 步，固定参数，求解变分分布，即后验分布
+随后是 E 步，固定参数，求解变分分布，即样本 $x^{(n)}$ 属于第 $k$ 个 Gaussian 分布的后验概率分布
 $$
 \begin{align*}
-q\left(z^{(k)}\right)&=p\left(z^{(k)}\mid x^{(n)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)\\
-&=\frac{p\left(x^{(n)},z^{(k)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}{p\left(x^{(n)};\boldsymbol{\mu},\boldsymbol{\sigma}\right)}\\
-&=\frac{p\left(x^{(n)},z^{(k)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}{\sum_{k=1}^K p\left(x^{(n)},z^{(k)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}\\
+q\left(z=k\mid x^{(n)}\right)&=p\left(z=k\mid x^{(n)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)\\
+&=\frac{p\left(x^{(n)},z=k;\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}{p\left(x^{(n)};\boldsymbol{\mu},\boldsymbol{\sigma}\right)}\\
+&=\frac{p\left(x^{(n)},z=k;\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}{\sum_{k=1}^K p\left(x^{(n)},z=k;\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}\\
 &=\frac{\mathcal{N}\left(x^{(n)};\mu_k,\sigma_k\right)\pi_k}{\sum_{k=1}^K\mathcal{N}\left(x^{(n)};\mu_k,\sigma_k\right)\pi_k}
 \end{align*}
 $$
 随后是 M 步，固定变分分布，更新参数
 $$
 \begin{align*}
-\mathrm{ELBO}\left(q,\left\{x^{(n)}\right\}_{n=1}^{N},\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z^{(k)}\right)\log\frac{p\left(x^{(n)},z^{(k)};\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}{q\left(z^{(k)}\right)}\\
-&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z^{(k)}\right)\log\frac{\mathcal{N}\left(x^{(n)};\mu_k,\sigma_k\right)\pi_k}{q\left(z^{(k)}\right)}\\
-&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z^{(k)}\right)\left[\log\frac{1}{\sqrt{2\pi}}-\log\sigma_k-\frac{\left(x^{(n)}-\mu_k\right)^2}{2\sigma_k^2}+\log\pi_k-\log q\left(z^{(k)}\right)\right]\\
-&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z^{(k)}\right)\left[-\frac{\left(x^{(n)}-\mu_k\right)^2}{2\sigma_k^2}-\log\sigma_k+\log\pi_k\right]+\mathrm{Constant}
+&\quad\ \mathrm{ELBO}\left(q,\left\{x^{(n)}\right\}_{n=1}^{N},\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)\\
+&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z=k\mid x^{(n)}\right)\log\frac{p\left(x^{(n)},z=k;\boldsymbol{\pi},\boldsymbol{\mu},\boldsymbol{\sigma}\right)}{q\left(z=k\mid x^{(n)}\right)}\\
+&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z=k\mid x^{(n)}\right)\log\frac{\mathcal{N}\left(x^{(n)};\mu_k,\sigma_k\right)\pi_k}{q\left(z=k\mid x^{(n)}\right)}\\
+&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z=k\mid x^{(n)}\right)\left[\log\frac{1}{\sqrt{2\pi}}-\log\sigma_k-\frac{\left(x^{(n)}-\mu_k\right)^2}{2\sigma_k^2}+\log\pi_k-\log q\left(z=k\mid x^{(n)}\right)\right]\\
+&=\sum_{n=1}^{N}\sum_{k=1}^K q\left(z=k\mid x^{(n)}\right)\left[-\frac{\left(x^{(n)}-\mu_k\right)^2}{2\sigma_k^2}-\log\sigma_k+\log\pi_k\right]+\mathrm{Constant}
 \end{align*}
 $$
 利用 Lagrange 乘数法，求解参数，得到
 $$
 \begin{align*}
-\mu_k^*&=\frac{\sum_{n=1}^{N}q\left(z^{(k)}\right)x^{(n)}}{\sum_{n=1}^{N}q\left(z^{(k)}\right)}\\
-\sigma_k^*&=\frac{\sum_{n=1}^{N}q\left(z^{(k)}\right)\left(x^{(n)}-\mu_k^*\right)^2}{\sum_{n=1}^{N}q\left(z^{(k)}\right)}\\
-\pi_k^*&=\frac{\sum_{n=1}^{N}q\left(z^{(k)}\right)}{N}
+\mu_k^*&=\frac{\sum_{n=1}^{N}q\left(z=k\mid x^{(n)}\right)x^{(n)}}{\sum_{n=1}^{N}q\left(z=k\mid x^{(n)}\right)}\\
+\sigma_k^*&=\frac{\sum_{n=1}^{N}q\left(z=k\mid x^{(n)}\right)\left(x^{(n)}-\mu_k^*\right)^2}{\sum_{n=1}^{N}q\left(z=k\mid x^{(n)}\right)}\\
+\pi_k^*&=\frac{\sum_{n=1}^{N}q\left(z=k\mid x^{(n)}\right)}{N}
 \end{align*}
 $$
 

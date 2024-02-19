@@ -240,7 +240,7 @@ Easy to get $\det(\text{adj}(A))=[\det(A)]^{n-1}$.
 
 ### THEOREM 2.3.7 Cramer's Rule
 
-If $A\mathbf x =\mathbf b$ is a system of $n$ linear equations in $n$ unknowns such that $\det(A) = 0$, then the system has a unique solution. This solution is
+If $A\mathbf x =\mathbf b$ is a system of $n$ linear equations in $n$ unknowns such that $\det(A)\ne0$, then the system has a unique solution. This solution is
 $$
 x_j=\frac{\det(A_j)}{\det(A)}
 $$

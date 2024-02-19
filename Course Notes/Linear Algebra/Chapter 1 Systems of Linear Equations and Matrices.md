@@ -623,7 +623,7 @@ d_1&0&\cdots&0\\
 \vdots&\vdots&\ddots&\vdots\\
 0&0&\cdots&d_n
 \end{bmatrix}\\
-\exist d_i\ne0
+\exists d_i\ne0
 $$
 A diagonal matrix is invertible if and only if all of its diagonal entries are nonzero
 $$

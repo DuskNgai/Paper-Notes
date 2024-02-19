@@ -6,8 +6,8 @@
 
 An inner product on a **real vector** space $V$ is a function that associates a real number $\langle\mathbf u, \mathbf v\rangle$ with each pair of vectors in $V$ in such a way that the following axioms are satisfied for all vectors $\mathbf u$, $\mathbf v$, and $\mathbf w$ in $V$ and all scalars $k$.
 
-1. $\langle\mathbf u, \mathbf v\rangle=\langle\mathbf v, \mathbf u\rangle$ [ Symmetry axiom]
-2. $\langle\mathbf u+\mathbf v,\mathbf w\rangle=\langle\mathbf u, \mathbf w\rangle+\langle\mathbf v, \mathbf w\rangle$ [ Additivity axiom]
+1. $\langle\mathbf u, \mathbf v\rangle=\langle\mathbf v, \mathbf u\rangle$ [Symmetry axiom]
+2. $\langle\mathbf u+\mathbf v,\mathbf w\rangle=\langle\mathbf u, \mathbf w\rangle+\langle\mathbf v, \mathbf w\rangle$ [Additivity axiom]
 3. $\langle k\mathbf u, \mathbf v\rangle = k\langle\mathbf u, \mathbf v\rangle$ [Homogeneity axiom]
 4. $\langle\mathbf v, \mathbf v\rangle \ge 0$ and $\langle\mathbf v, \mathbf v\rangle = 0$ if and only if $\mathbf v = \mathbf 0$ [Positivity axiom]
 
@@ -42,16 +42,16 @@ If $V$ is an inner product space, then the set of points in V that satisfy $\|\m
 
 let $\mathbf u$ and $\mathbf v$ be vectors in $\mathbb R^n$, $A$ be an invertible $n\times n$ matrix, define
 $$
-\lang\mathbf u,\mathbf v\rang=A\mathbf u\cdot A\mathbf v
+\langle\mathbf u,\mathbf v\rangle=A\mathbf u\cdot A\mathbf v
 $$
 
 1. $$
    \begin{align*}
-   \lang\mathbf u,\mathbf v\rang_i&=(A\mathbf u\cdot A\mathbf v)_i\\
+   \langle\mathbf u,\mathbf v\rangle_i&=(A\mathbf u\cdot A\mathbf v)_i\\
    &=(a_{i1}u_1+\dots+a_{in}u_n)(a_{i1}v_1+\dots+a_{in}v_n)\\
    &=(a_{i1}v_1+\dots+a_{in}v_n)(a_{i1}u_1+\dots+a_{in}u_n)\\
    &=(A\mathbf v\cdot A\mathbf u)_i\\
-   &=\lang\mathbf v,\mathbf u\rang_i
+   &=\langle\mathbf v,\mathbf u\rangle_i
    \end{align*}
    $$
 
@@ -71,7 +71,7 @@ $$
 
 4. $$
    \begin{align*}
-   \lang\mathbf v,\mathbf v\rang&=(A\mathbf v\cdot A\mathbf v)\\
+   \langle\mathbf v,\mathbf v\rangle&=(A\mathbf v\cdot A\mathbf v)\\
    &=\sum_{i=1}^{n}(a^2_{i1}v^2_1+\dots+a^2_{in}v^2_n)\\
    &\ge0
    \end{align*}
@@ -81,13 +81,13 @@ $$
 ### The Standard Inner Product on $M_{nn}$
 
 $$
-\lang U,V\rang=\text{tr}(U^TV)
+\langle U,V\rangle=\text{tr}(U^TV)
 $$
 
 ### The Standard Inner Product on $P_n$
 
 $$
-\lang p,q\rang=\sum_{i=0}^na_ib_i
+\langle p,q\rangle=\sum_{i=0}^na_ib_i
 $$
 
 ###  Integral Inner Product on $C[a, b]$
@@ -148,7 +148,7 @@ k_1\mathbf v_1+\dots+k_n\mathbf v_n=\mathbf 0
 $$
 For each $\mathbf v_i$
 $$
-\lang k_1\mathbf v_1+\dots+k_n\mathbf v_n,\mathbf v_i\rang=\lang\mathbf 0,\mathbf v_i\rang=k_i\lang\mathbf v_i,\mathbf v_i\rang=0
+\langle k_1\mathbf v_1+\dots+k_n\mathbf v_n,\mathbf v_i\rangle=\langle\mathbf 0,\mathbf v_i\rangle=k_i\langle\mathbf v_i,\mathbf v_i\rangle=0
 $$
 Since $\mathbf v_i\ne\mathbf 0$, then $k_i=0$, then $S$ is a linear independent set.
 
@@ -156,7 +156,7 @@ Since $\mathbf v_i\ne\mathbf 0$, then $k_i=0$, then $S$ is a linear independent 
 
 If $S = \{v_1, v_2,\dots, v_n\}$ is an <u>orthogonal basis</u> for an inner product space $V$, and if $\mathbf u$ is any vector in $V$, then
 $$
-\mathbf u=\frac{\lang \mathbf u,\mathbf v_1\rang}{\|\mathbf v_1\|^2}\mathbf v_1+\dots+\frac{\lang \mathbf u,\mathbf v_n\rang}{\|\mathbf v_n\|^2}\mathbf v_n
+\mathbf u=\frac{\langle \mathbf u,\mathbf v_1\rangle}{\|\mathbf v_1\|^2}\mathbf v_1+\dots+\frac{\langle \mathbf u,\mathbf v_n\rangle}{\|\mathbf v_n\|^2}\mathbf v_n
 $$
 
 #### Proof
@@ -167,11 +167,11 @@ $$
 $$
 Then
 $$
-\lang \mathbf u,\mathbf v_i\rang=\lang c_1\mathbf v_1+\dots+c_n\mathbf v_n,\mathbf v_i\rang=c_i\lang \mathbf v_i,\mathbf v_i\rang=c_i\|\mathbf v_i\|^2
+\langle \mathbf u,\mathbf v_i\rangle=\langle c_1\mathbf v_1+\dots+c_n\mathbf v_n,\mathbf v_i\rangle=c_i\langle \mathbf v_i,\mathbf v_i\rangle=c_i\|\mathbf v_i\|^2
 $$
 So
 $$
-c_i=\frac{\lang \mathbf u,\mathbf v_i\rang}{\|\mathbf v_i\|^2}
+c_i=\frac{\langle \mathbf u,\mathbf v_i\rangle}{\|\mathbf v_i\|^2}
 $$
 which completes the proof.
 
@@ -191,7 +191,7 @@ Let $W$ be a finite-dimensional subspace of an inner product space $V$.
 
 If $\{v_1, v_2,\dots, v_r\}$ is an orthogonal basis for $W$, and $\mathbf u$ is any vector in $V$, then
 $$
-\text{proj}_W\mathbf u=\frac{\lang \mathbf u,\mathbf v_1\rang}{\|\mathbf v_1\|^2}\mathbf v_1+\dots+\frac{\lang \mathbf u,\mathbf v_r\rang}{\|\mathbf v_r\|^2}\mathbf v_r
+\text{proj}_W\mathbf u=\frac{\langle \mathbf u,\mathbf v_1\rangle}{\|\mathbf v_1\|^2}\mathbf v_1+\dots+\frac{\langle \mathbf u,\mathbf v_r\rangle}{\|\mathbf v_r\|^2}\mathbf v_r
 $$
 
 ### THEOREM 6.3.5 The Gram–Schmidt Process
@@ -203,8 +203,8 @@ Every nonzero finite-dimensional inner product space has an orthonormal basis.
 > To convert a basis $\{\mathbf u_1, \mathbf u_2,\dots, \mathbf u_r\}$ into an orthogonal basis $\{\mathbf v_1, \mathbf v_2,\dots, \mathbf v_r\}$, perform the following computations:
 >
 > 1. $\mathbf v_1=\mathbf u_1$
-> 2. $\mathbf v_2=\mathbf u_2-\dfrac{\lang \mathbf u_2,\mathbf v_1\rang}{\|\mathbf v_1\|^2}\mathbf v_1$
-> 3. $\mathbf v_3=\mathbf u_3-\dfrac{\lang \mathbf u_3,\mathbf v_1\rang}{\|\mathbf v_1\|^2}\mathbf v_1-\dfrac{\lang \mathbf u_3,\mathbf v_2\rang}{\|\mathbf v_2\|^2}\mathbf v_2$
+> 2. $\mathbf v_2=\mathbf u_2-\dfrac{\langle \mathbf u_2,\mathbf v_1\rangle}{\|\mathbf v_1\|^2}\mathbf v_1$
+> 3. $\mathbf v_3=\mathbf u_3-\dfrac{\langle \mathbf u_3,\mathbf v_1\rangle}{\|\mathbf v_1\|^2}\mathbf v_1-\dfrac{\langle \mathbf u_3,\mathbf v_2\rangle}{\|\mathbf v_2\|^2}\mathbf v_2$
 >
 > (continue for $r$ steps)
 >
@@ -217,7 +217,7 @@ $$
 \begin{align*}
 \mathbf u_2&=\text{proj}_{W_1}\mathbf u_2+\text{proj}_{W_1^\perp}\mathbf u_2\\
 &=\mathbf v_2+\text{proj}_{W_1}\mathbf u_2\\
-&=\mathbf v_2+\dfrac{\lang \mathbf u_2,\mathbf v_1\rang}{\|\mathbf v_1\|^2}\mathbf v_1
+&=\mathbf v_2+\dfrac{\langle \mathbf u_2,\mathbf v_1\rangle}{\|\mathbf v_1\|^2}\mathbf v_1
 \end{align*}
 $$
 Where $W_1=\text{span}(\mathbf u_1)$.

@@ -155,7 +155,7 @@ We index the camera vertex as $x_0$ and the primary vertex as $x_1$. Once the sp
 沿着子路径 $\mathbf{x}_1\cdots\mathbf{x}_n$ 的面积分布可以便宜地近似为：
 The area spread along the subpath $x_1\cdots x_n$ can be cheaply approximated as the sum:
 $$
-a(\mathbf{x}_1\cdots\mathbf{x}_n)=\biggl(\sum_{i=2}^{n}\sqrt{\frac{\|\mathbf{x}_{i-1}-\mathbf{x}_i\|^2}{p(\omega_i|\mathbf{x}_{i-1},\omega)|\cos\theta_i|}}\biggr)^2\tag{3}
+a(\mathbf{x}_1\cdots\mathbf{x}_n)=\left(\sum_{i=2}^{n}\sqrt{\frac{\|\mathbf{x}_{i-1}-\mathbf{x}_i\|^2}{p(\omega_i|\mathbf{x}_{i-1},\omega)|\cos\theta_i|}}\right)^2\tag{3}
 $$
 其中 $p$ 是 BSDF 采样 PDF，$\theta_i$ 是 $\omega_i$ 与 $x_i$ 的表面法线之间的角度。
 where $p$ is the BSDF sampling PDF and $\theta_i$ is the angle between $\omega_i$ and the surface normal at $x_i$.
@@ -189,22 +189,22 @@ Ren et al. showed that solely using the spatio-directional coordinates $(x,\omeg
 
 |      Parameter       |          Symbol           |                    with Encoding                    |
 | :------------------: | :-----------------------: | :-------------------------------------------------: |
-|       Position       |        $x\in\R^3$         |         $\mathrm{freq}(x)\in\R^{3\times12}$         |
-| Scattered direction  |  $\omega\in\mathbb{S}^2$  | $\mathrm{ob}(\mathrm{sph}(\omega))\in\R^{2\times4}$ |
-|    Surface normal    |   $n(x)\in\mathbb{S}^2$   |  $\mathrm{ob}(\mathrm{sph}(n(x)))\in\R^{2\times4}$  |
-|  Surface roughness   |    $r(x,\omega)\in\R$     |      $\mathrm{ob}(1-e^{r(x,\omega)})\in\R^{4}$      |
-| Diffuse reflectance  | $\alpha(x,\omega)\in\R^3$ |              $\alpha(x,\omega)\in\R^3$              |
-| Specular reflectance | $\beta(x,\omega)\in\R^3$  |              $\beta(x,\omega)\in\R^3$               |
+|       Position       |        $x\in\mathbb{R}^3$         |         $\mathrm{freq}(x)\in\mathbb{R}^{3\times12}$         |
+| Scattered direction  |  $\omega\in\mathbb{S}^2$  | $\mathrm{ob}(\mathrm{sph}(\omega))\in\mathbb{R}^{2\times4}$ |
+|    Surface normal    |   $n(x)\in\mathbb{S}^2$   |  $\mathrm{ob}(\mathrm{sph}(n(x)))\in\mathbb{R}^{2\times4}$  |
+|  Surface roughness   |    $r(x,\omega)\in\mathbb{R}$     |      $\mathrm{ob}(1-e^{r(x,\omega)})\in\mathbb{R}^{4}$      |
+| Diffuse reflectance  | $\alpha(x,\omega)\in\mathbb{R}^3$ |              $\alpha(x,\omega)\in\mathbb{R}^3$              |
+| Specular reflectance | $\beta(x,\omega)\in\mathbb{R}^3$  |              $\beta(x,\omega)\in\mathbb{R}^3$               |
 
 ## 4 Fully Fused Neural Networks
 
 我们用 GPU 编程语言从头开始实现了我们的神经网络，以充分利用 GPU 的内存层次结构。
 We implemented our neural network from scratch in a GPU programming language in order to take full advantage of the GPU memory hierarchy.
 
-这样一个神经网络的计算成本随着其宽度的增加而呈二次方扩展，而其内存流量则呈线性扩展。然而，现代 GPU 的计算吞吐量远远大于它们的内存带宽，这意味着对于像我们这样的狭窄的神经网络，线性内存流量是瓶颈。因此，提高性能的关键是尽量减少慢速 "全局" 内存（VRAM 和高层缓存）的流量，并充分利用快速片上内存（低层缓存、"共享" 内存和寄存器）。
+这样一个神经网络的计算成本随着其宽度的增加而呈二次方扩展，而其内存流量则呈线性扩展。然而，现代 GPU 的计算吞吐量远远大于它们的内存带宽，这意味着对于像我们这样的狭窄的神经网络，线性内存流量是瓶颈。因此，提高性能的关键是尽量减少慢速“全局”内存（VRAM 和高层缓存）的流量，并充分利用快速片上内存（低层缓存、“共享”内存和寄存器）。
 The computational cost of such a neural network scales quadratically with its width, whereas its memory traffic scales linearly. Modern GPUs have vastly larger computational throughput than they have memory bandwidth, though, meaning that for narrow neural networks like ours, the linear memory traffic is the bottleneck. The key to improving performance is thus to minimize traffic to slow "global" memory (VRAM and high-level caches) and to fully utilize fast on-chip memory (low-level caches, "shared" memory, and registers).
 
-我们的完全融合方法正是这样做的：我们将整个神经网络实现为一个单一的GPU内核，该内核的设计使得唯一缓慢的全局内存访问是读取和写入网络的输入和输出。
+我们的完全融合方法正是这样做的：我们将整个神经网络实现为一个单一的 GPU 内核，该内核的设计使得唯一缓慢的全局内存访问是读取和写入网络的输入和输出。
 Our fully fused approach does precisely this: we implement the entire neural network as a single GPU kernel that is designed such that the only slow global memory accesses are reading and writing the network inputs and outputs.
 
 ![](images/fully-fused-neural-network.png)
@@ -212,7 +212,7 @@ Our fully fused approach does precisely this: we implement the entire neural net
 使用 CUDA 术语：给定的一批输入向量被划分为块-列段，每个块由一个线程块处理。这些线程块通过交替进行权重矩阵乘法和激活函数的逐元应用，独立评估网络。通过使线程块足够小，从而使所有中间神经元的激活适合于片上共享存储器，慢速全局存储器的流量被最小化。
 Using CUDA terminology: a given batch of input vectors is partitioned into block-column segments that are processed by a single thread block each. The thread blocks independently evaluate the network by alternating between weight-matrix multiplication and element-wise application of the activation function. By making the thread blocks small enough such that all intermediate neuron activations fit into on-chip shared memory, traffic to slow global memory is minimized.
 
-在一个矩阵乘法中，线程块的每捆线程计算单个块行的矩阵乘积（带状区域）。在我们的例子中，$W_i$ 中的带状权重很少，足以放入每捆线程的寄存器中，因此可以在每捆线程中计算的 $H'_{i+1}$ 的每个块中重复使用，产生额外的性能增益。此外，由于每捆线程加载一个不同的权重矩阵块行，整个线程块从全局内存加载权重矩阵正好一次，这就无法进一步减少。
+在一个矩阵乘法中，线程块的每捆线程计算单个块行的矩阵乘积（带状区域）。在我们的例子中，$W_i$ 带状区域上的权重很少，足以放入每捆线程的寄存器中，因此可以在每捆线程中计算的 $H'_{i+1}$ 的每个块中重复使用，产生额外的性能增益。此外，由于每捆线程加载一个不同的权重矩阵块行，整个线程块从全局内存加载权重矩阵正好一次，这就无法进一步减少。
 Within a matrix multiplication, each warp of the thread block computes the matrix product of a single block-row (striped area). In our case, the striped weights in $W_i$ are few enough to fit into the registers of the warp and can thus be re-used for every block of $H'_{i+1}$ that the warp computes, yielding an additional performance gain. Furthermore, since each warp loads a distinct block-row of the weight matrix, the entire thread block loads the weight matrix from global memory exactly once, which cannot be reduced further.
 
 因此，剩下的唯一可能减少全局内存流量的方法是使线程块的数量最小化，使其尽可能大地适合共享内存。在我们的硬件（NVIDIA RTX 3090）和 64 个神经元范围的网络上，当每个线程块处理 128 个元素的批次时，就能满足这个最佳点。因此，每个线程块计算一个 64 乘 64 的权重矩阵与 64 乘 128 的数据块的矩阵乘积。
@@ -274,7 +274,7 @@ While we were able to suppress high-frequency temporal flickering using an expon
 
 #### Volumes
 
-我们注意到，我们的神经缓存参数化并不与表面表征相联系，因此也可以用于体积化渲染。
+我们注意到，我们的神经缓存参数化并不与表面表征相联系，因此也可以用于体渲染。
 We note that our neural cache parameterization is not tied to a surface representation and can thus also be used in volumetric rendering.
 
 #### Path guiding
@@ -284,7 +284,6 @@ We note that our neural cache parameterization is not tied to a surface represen
 #### Denoising
 
 ## 8 Conclusion
-
 
 它可以被描述为在计算方面的浪费 -- 一些神经元对输出的影响很小，但它们的贡献仍然被评估。具有复杂数据结构的竞争技术可以被描述为在内存方面的浪费 -- 由于查询只访问小的（随机的）邻域，内存从未被完全使用。
 It could be characterized as wasteful in terms of compute—some neurons have little impact on the output, yet their contribution is still evaluated. Competing techniques with sophisticated data structures could be characterized as wasteful in terms of memory—the memory is never used in its entirety as queries access only small (random) neighborhoods.

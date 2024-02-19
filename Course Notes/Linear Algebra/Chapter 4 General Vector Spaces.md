@@ -107,7 +107,7 @@ if and only if each vector in $S$ is a linear combination of those in $S'$, and 
 #### Proof
 
 $$
-S\sub S',S'\sub S\Longrightarrow S=S'
+S\subset S',S'\subset S\Longrightarrow S=S'
 $$
 
 ## 4.3 线性无关 Linear Independence
@@ -134,7 +134,7 @@ with $a_j$ are not all $0$. Then $k_j$ are not all $0$.
 
 Suppose $k_j$ are not all $0$, then suppose it is $k_1$, then
 $$
-\mathbf v_1=(-\frac{k_2}{k_1})\mathbf v_2+\dots+(-\frac{k_r}{k_1})\mathbf v_r
+\mathbf v_1=\left(-\frac{k_2}{k_1}\right)\mathbf v_2+\dots+\left(-\frac{k_r}{k_1}\right)\mathbf v_r
 $$
 
 which expresses $\mathbf v_1$ as a linear combination of the other vectors in $S$.
