@@ -17,7 +17,27 @@ FlashAttention 在不同模型和任务上证明了其在加速训练和提升�
 
 ## 1 Introduction
 
+![flash-attention](images/flash-attention.png)
+
 各种 Attention 的近似算法，不管是基于稀疏近似还是基于低秩近似，都不减少实际的运行时间。这是因为它们的关注点在于减少 FLOP 而不是更直接的减少计算时间，甚至可能增加了 IO 开销。
+
+因此 FlashAttention 减少了 HBM 的访问。具体来说，
+1. 计算 Softmax 时候无需访问整个输入（？）
+2. 不为反向传播存储巨大的 Attention 中间结果。
+
+对此在实现层面，FlashAttention
+1. 实现矩阵的分块处理，增量式 Softmax 计算。
+2. 用重新计算代替访问 HBM 来获取中间结果。
+
+- 标准 Attention 的 HBM 访问量：$\Omega(Nd +N^2)$
+- FlashAttention 的 HBM 访问量：$O(N^2d^2M^{-1})$
+- $N$ token 数量，$d$ head 维度，$M$ SRAM 大小。
+
+## 3 FlashAttention: Algorithm, Analysis, and Extensions
+
+### 3.1 An Efficient Attention Algorithm With Tiling and Recomputation
+
+
 
 
 
