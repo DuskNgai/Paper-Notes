@@ -38,14 +38,14 @@ FoldSeek 原本是作为 MSA 的替代品。类似 MAGE，用 VQ-VAE 将蛋白�
 
 ### 3.2 Structure-aware Vocabulary
 
-|       Symbols       |          Descriptions          |
-| :-----------------: | :----------------------------: |
-| $P=(s_1,\dots,s_n)$ |   Protein with $n$ residues    |
-|  $s\in\mathcal{V}$  |  Residues in residue alphabet  |
-| $P=(f_1,\dots,f_n)$ | Protein in structure alphabet  |
-|  $f\in\mathcal{F}$  | Residues in structure alphabet |
-| $P=(s_1f_1,\dots,s_nf_n)$ | Protein in structure-residue alphabet  |
-| $s\#$, $\#f$                    | only residue or structure available                               |
+|          Symbols          |             Descriptions              |
+| :-----------------------: | :-----------------------------------: |
+|    $P=(s_1,\dots,s_n)$    |       Protein with $n$ residues       |
+|     $s\in\mathcal{V}$     |     Residues in residue alphabet      |
+|    $P=(f_1,\dots,f_n)$    |     Protein in structure alphabet     |
+|     $f\in\mathcal{F}$     |    Residues in structure alphabet     |
+| $P=(s_1f_1,\dots,s_nf_n)$ | Protein in structure-residue alphabet |
+|       $s\#$, $\#f$        |  Only residue or structure available  |
 总计 441 个 SA 词汇。
 
 ### 3.3 SaProt

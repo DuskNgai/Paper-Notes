@@ -26,7 +26,7 @@ $$\begin{aligned}
 \end{aligned}$$
 因此第一项计算了两个 token 之间的关系，后面三项都和位置有关。因此各种工作都对后面三项的形式作出了保留、舍弃、修改。相关的工作有
 1. Transformer-XL：修改为 $\mathbf{x}_iW_QW_K^T\mathbf{x}_j^T+\mathbf{x}_iW_QW_{K,R}^T\mathbf{R}_{i-j}^T+\mathbf{u}W_K^T\mathbf{x}_j^T+\mathbf{v}W_{K,R}^T\mathbf{R}_{i-j}^T$，其中 $\mathbf{R}_{i-j}$ 是相对位置向量，$W_{K,R}$ 是编码位置空间的矩阵，$\mathbf{u},\mathbf{v}$ 是合并了 $\mathbf{p}_iW_Q$ 的可学习向量。
-2. T5：修改为 $\mathbf{x}_iW_QW_K^T\mathbf{x}_j^T+\beta_{i,j}$，其中 $\beta_{i-j}$ 是有所设计的可学习向量。
+2. T5：修改为 $\mathbf{x}_iW_QW_K^T\mathbf{x}_j^T+\beta_{i,j}$，其中 $\beta_{i,j}$ 是有所设计的可学习向量。
 3. DeBERTa：修改为 $\mathbf{x}_iW_QW_K^T\mathbf{x}_j^T+\mathbf{x}_iW_QW_K^T\mathbf{R}_{i,j}^T+\mathbf{R}_{j,i}W_QW_K^T\mathbf{x}_j^T$，其中 $\mathbf{R}_{i,j}$ 是一个二元位置向量。
 
 ## Rotary Positional Embedding (RoPE)
@@ -79,22 +79,16 @@ R(\Theta,m,d)=\begin{bmatrix}
 \vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots\\
 0&0&0&0&\cdots&\cos m\theta_{d/2}&-\sin m\theta_{d/2}\\0&0&0&0&\cdots&\sin m\theta_{d/2}&\cos m\theta_{d/2}\end{bmatrix}\
 $$
-其中 $\Theta=\{\theta_i=10000^{-2(i-1)/d}\mid i\in\{1,\dots,d/2\}\}$。带入到 $\mathbf{q}_i\mathbf{k}_j^T$ 得到：
-$$
-\begin{align*}
-\langle f(\mathbf{q}_m,m),f(\mathbf{k}_n,n)\rangle&=\langle R(\Theta,m,d)\mathbf{q}_m,R(\Theta,n,d)\mathbf{k}_n\rangle\\
-&=\mathbf{q}_mR(\Theta,m,d)R(\Theta,n,d)^T\mathbf{k}_n^T\\
-&=\mathbf{q}_mR(\Theta,{\color{red}n-m},d)\mathbf{k}_n^T\\
-&=g(\mathbf{q}_m,\mathbf{k}_n,m-n)
-\end{align*}
-$$
-由于其这个矩阵非常稀疏，因此最好实现方式是展开相乘。
+其中 $$\Theta=\{\theta_i=10000^{-2(i-1)/d}\mid i\in\{1,\dots,d/2\}\}$$，也可以是其他互不相同的数字即可。带入到 $\mathbf{q}_i\mathbf{k}_j^T$ 得到：
+$$\begin{aligned} \langle f(\mathbf{q}_m,m),f(\mathbf{k}_n,n)\rangle&=\langle R(\Theta,m,d)\mathbf{q}_m,R(\Theta,n,d)\mathbf{k}_n\rangle\\ &=\mathbf{q}_mR(\Theta,m,d)R(\Theta,n,d)^T\mathbf{k}_n^T\\ &=\mathbf{q}_mR(\Theta,{\color{red}n-m},d)\mathbf{k}_n^T\\ &=g(\mathbf{q}_m,\mathbf{k}_n,m-n) \end{aligned}$$
+满足所需的形式。由于这个矩阵非常稀疏，因此最好实现方式是展开相乘。
 
-### Advantages
+## Advantages
 
 RoPE 的优势有
+
 1. 灵活的序列长度。
-2. 随着相对距离的增加 token 之间依赖性的衰减。
-3. 为线性自注意力机制配备相对位置编码的能力。
+2. 随着相对距离的增加 token 之间依赖性的衰减。（证明略）
+3. 为线性自注意力机制配备相对位置编码的能力。（证明略）
 
 RoPE 现已被用在 llama2, glm 等 LLM 上。
