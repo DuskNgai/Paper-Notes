@@ -88,6 +88,18 @@ $$
 $$
 实践中，条件概率 $p(\mathbf{x}\mid\mathbf{z};\theta)$ 一般用其他函数来近似，例如 Bernoulli 分布、正态分布等。图像重建任务中，一般用正态分布来近似，可以想象成是对图像的每个像素点都建立了一个正态分布，这样就可以用正态分布的概率密度函数来近似像素点的概率。
 
+## Vector Quantized VAE
+
+Vector Quantized VAE 中，变分分布 $q(z\mid\mathbf{x};\phi)$ 被假设成离散的分布
+$$
+q(z=k\mid\mathbf{x};\phi)=\begin{cases}1&k=\arg\min_j\|\phi(x)-e_{j}\|\\0&\text{otherwise}\end{cases}
+$$
+其中 $\{e_{j}\}_{j=1}^{K}$ 是一系列预设的、可训练的编码。相应的，规定先验分布 $p(\mathbf{z};\theta)$ 是离散均匀分布 $U(1,K)$，则它们的 KL 散度为
+$$
+\mathrm{KL}(q\parallel p)=\sum_{k=1}^{K}q(k)\log\frac{q(k)}{p(k)}=-1\cdot\log\frac{1}{K}+(K-1)\cdot0\cdot\log\frac{1}{K}=\log K
+$$
+是一个常数。最后送入解码器的 $z$ 就是距离编码器得到的结果最近的一个离散编码 $e_k$。
+
 ## Hierarchical VAE
 
 Hierarchical VAE，特别是 Markovian Hierarchical VAE，在潜空间上将多个 VAE 串联起来，每个 VAE 的潜空间都是之前一个的潜空间（除了第一个 VAE 是从数据空间）编码而来。这样的想法和 diffusion 几乎完全一致。
@@ -125,10 +137,9 @@ $$
 
 ```python
 class VariationalAutoEncoder(nn.Module):
-    def __init__(self, n_samples: int) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.n_samplers = n_samples
-        self.encoder = VAEEncoder(self.n_samplers)
+        self.encoder = VAEEncoder()
         self.decoder = VAEDecoder()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -141,3 +152,24 @@ class VariationalAutoEncoder(nn.Module):
         loss = (y - x).square().mean() + KL_wight * KL_divergence(mu, std)
         return y, loss
 ```
+
+> VQ-VAE 的伪代码。
+
+```python
+class VectorQuantizedVariationalAutoEncoder(nn.Module):
+    def __init__(self, codebook_dim: int) -> None:
+        super().__init__()
+        self.encoder = VAEEncoder()
+        self.codebook = nn.Parameter(torch.rand(codebook_dim, self.encoder.out_dim))
+        self.decoder = VAEDecoder()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        latent = self.encoder(x)
+        index = find_closest(latent, self.codebook)
+        z = gather(self.codebook, index)
+
+        y = self.decoder(z)
+        loss = (y - x).square().mean() + loss_codebook(latent, z)
+        return y, loss
+```
+

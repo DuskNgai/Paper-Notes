@@ -36,20 +36,3 @@ Nature 正刊的切入点会特别大。
 4. RETFound：用 SSL-ImageNet 的权重再在视网膜数据集上训练。
 
 除了 MAE，还尝试了其他的基础模型（SimCLR, SwAV, DINO, MoCo-v3）。
-
-## 2 Result
-
-### 2.1 Ocular Disease Diagnosis
-
-### 2.2 Ocular Disease Prognosis
-
-### 2.3 Systemic Diseases Predition
-
-### 2.4 Label Efficiency for Disease Detection
-
-### 2.5 SSL Strategies for RETFound
-
-### 2.6 Model Interpretation
-
-### 2.7 Robustness to Age Distribution Shifts
-
