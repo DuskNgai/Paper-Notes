@@ -2,6 +2,8 @@
 
 视觉的自监督学习最主要的任务就是如何只用图像就产生合适的自监督信号。合适的信号不仅能够指导模型的预训练，还能无缝地和下游任务地调优衔接。视觉的自监督学习分成两大流派，对比学习（Contrastive Learning）和生成学习（Generative Learning）。
 
+但是我隐约感到，Scaling Law 在这之中占的分量还是特别重。
+
 ## Contrastive Learning
 
 对比学习主要是找到同一张图像在多个不同的视角下的最大公约数。对比学习最主流的流派是设计各种数据增强的方式。
@@ -57,6 +59,7 @@ FAIR、何恺明。敢于把 mask 率提高到 75%，且在 encoder 阶段丢弃
 | BEiT-v1 | Generative  | ViT-L | 85.2  |  800  |
 |   MAE   | Generative  | ViT-L | 84.8  |  800  |
 | MoCo-v3 | Contrastive | ViT-L | 84.1  |  600  |
+|   MAE   | Generative  | ViT-B | 83.6  |  800  |
 | BEiT-v1 | Generative  | ViT-B | 83.2  |  800  |
 | DropPos | Generative  | ViT-L | 83.2  |  800  |
 |  DINO   | Contrastive | ViT-B | 83.2  | 1600  |

@@ -16,33 +16,34 @@ Scalars are small letter $a$; Vectors are small bold letter $\mathbf{a}$; Matrix
 
 **分母布局 Numerator layout:**
 $$
-\frac{\mathrm{d}y}{\mathrm{d}x}\quad
-\frac{\mathrm{d}\mathbf{y}}{\mathrm{d}x}=\begin{bmatrix}\dfrac{\mathrm{d}y_1}{\mathrm{d}x}\\\vdots\\\dfrac{\mathrm{d}y_m}{\mathrm{d}x}\end{bmatrix}\quad
-\frac{\mathrm{d}\mathbf{Y}}{\mathrm{d}x}=\begin{bmatrix}\dfrac{\mathrm{d}y_{11}}{\mathrm{d}x}&\cdots&\dfrac{\mathrm{d}y_{1n}}{\mathrm{d}x}\\\vdots&\ddots&\vdots\\\dfrac{\mathrm{d}y_{m1}}{\mathrm{d}x}&\cdots&\dfrac{\mathrm{d}y_{mn}}{\mathrm{d}x}\end{bmatrix}
+\frac{\mathrm{d}y}{\mathrm{d}x}\in\mathbb{R}^{1 \times 1}\quad
+\frac{\mathrm{d}\mathbf{y}}{\mathrm{d}x}=\begin{bmatrix}\dfrac{\mathrm{d}y_1}{\mathrm{d}x}\\\vdots\\\dfrac{\mathrm{d}y_m}{\mathrm{d}x}\end{bmatrix}\in\mathbb{R}^{m \times 1}\quad
+\frac{\mathrm{d}\mathbf{Y}}{\mathrm{d}x}=\begin{bmatrix}\dfrac{\mathrm{d}y_{11}}{\mathrm{d}x}&\cdots&\dfrac{\mathrm{d}y_{1n}}{\mathrm{d}x}\\\vdots&\ddots&\vdots\\\dfrac{\mathrm{d}y_{m1}}{\mathrm{d}x}&\cdots&\dfrac{\mathrm{d}y_{mn}}{\mathrm{d}x}\end{bmatrix}\in\mathbb{R}^{m \times n}
 $$
 
 $$
-\frac{\partial{y}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_1}}&\cdots&\dfrac{\partial{y}}{\partial{x_n}}\end{bmatrix}\quad
-\frac{\partial{\mathbf{y}}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y_1}}{\partial{x_1}}&\cdots&\dfrac{\partial{y_1}}{\partial{x_n}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y_m}}{\partial{x_1}}&\cdots&\dfrac{\partial{y_m}}{\partial{x_n}}\end{bmatrix}
+\frac{\partial{y}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_1}}&\cdots&\dfrac{\partial{y}}{\partial{x_n}}\end{bmatrix}\in\mathbb{R}^{1 \times n}\quad
+\frac{\partial{\mathbf{y}}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y_1}}{\partial{x_1}}&\cdots&\dfrac{\partial{y_1}}{\partial{x_n}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y_m}}{\partial{x_1}}&\cdots&\dfrac{\partial{y_m}}{\partial{x_n}}\end{bmatrix}\in\mathbb{R}^{m \times n}
 $$
 
 $$
-\frac{\partial{y}}{\partial{\mathbf{X}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_{11}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{m1}}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y}}{\partial{x_{1n}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{mn}}}\end{bmatrix}
+\frac{\partial{y}}{\partial{\mathbf{X}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_{11}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{m1}}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y}}{\partial{x_{1n}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{mn}}}\end{bmatrix}\in\mathbb{R}^{n \times m}
 $$
 
 分子布局 Denominator layout:
 $$
-\frac{\mathrm{d}y}{\mathrm{d}x}\quad
-\frac{\mathrm{d}\mathbf{y}}{\mathrm{d}x}=\begin{bmatrix}\dfrac{\mathrm{d}y_1}{\mathrm{d}x}&\cdots&\dfrac{\mathrm{d}y_m}{\mathrm{d}x}\end{bmatrix}
+\frac{\mathrm{d}y}{\mathrm{d}x}\in\mathbb{R}^{1 \times 1}\quad
+\frac{\mathrm{d}\mathbf{y}}{\mathrm{d}x}=\begin{bmatrix}\dfrac{\mathrm{d}y_1}{\mathrm{d}x}&\cdots&\dfrac{\mathrm{d}y_m}{\mathrm{d}x}\end{bmatrix}\in\mathbb{R}^{1 \times m}\quad
+\cancel{\frac{\mathrm{d}\mathbf{Y}}{\mathrm{d}x}}
 $$
 
 $$
-\frac{\partial{y}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_1}}\\\vdots\\\dfrac{\partial{y}}{\partial{x_n}}\end{bmatrix}\quad
-\frac{\partial{\mathbf{y}}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y_1}}{\partial{x_1}}&\cdots&\dfrac{\partial{y_m}}{\partial{x_1}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y_1}}{\partial{x_n}}&\cdots&\dfrac{\partial{y_m}}{\partial{x_n}}\end{bmatrix}
+\frac{\partial{y}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_1}}\\\vdots\\\dfrac{\partial{y}}{\partial{x_n}}\end{bmatrix}\in\mathbb{R}^{n \times 1}\quad
+\frac{\partial{\mathbf{y}}}{\partial{\mathbf{x}}}=\begin{bmatrix}\dfrac{\partial{y_1}}{\partial{x_1}}&\cdots&\dfrac{\partial{y_m}}{\partial{x_1}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y_1}}{\partial{x_n}}&\cdots&\dfrac{\partial{y_m}}{\partial{x_n}}\end{bmatrix}\in\mathbb{R}^{n \times m}
 $$
 
 $$
-\frac{\partial{y}}{\partial{\mathbf{X}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_{11}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{1n}}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y}}{\partial{x_{m1}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{mn}}}\end{bmatrix}
+\frac{\partial{y}}{\partial{\mathbf{X}}}=\begin{bmatrix}\dfrac{\partial{y}}{\partial{x_{11}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{1n}}}\\\vdots&\ddots&\vdots\\\dfrac{\partial{y}}{\partial{x_{m1}}}&\cdots&\dfrac{\partial{y}}{\partial{x_{mn}}}\end{bmatrix}\in\mathbb{R}^{m \times n}
 $$
 
 ## Consequence

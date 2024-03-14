@@ -61,7 +61,7 @@ def octree_attention(x: torch.Tensor, D = 1, K = 32) -> torch.Tensor:
 
     # Window partition
     N, C = x.shape
-    Nz = (k * D) - N % (K * D)
+    Nz = (K * D) - N % (K * D)
     x = torch.cat([x, x.new_zeros(Nz, c)]) # [N + Nz, C]
     x = x.reshape(-1, K, D, C).transpose(1, 2).flatten(0, 1) # [B * D, K, C]
 
