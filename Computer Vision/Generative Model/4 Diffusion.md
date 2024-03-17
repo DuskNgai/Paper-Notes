@@ -182,7 +182,7 @@ $$
 $$
 \begin{align*}
 \mathrm{KL}(q(\mathbf{x}_{t-1}\mid\mathbf{x}_{t},\mathbf{x}_{0})\parallel p(\mathbf{x}_{t-1}\mid\mathbf{x}_{t};\theta))&=\frac{\|\boldsymbol{\mu}(t)-\boldsymbol{\mu}(\mathbf{x}_t,t;\theta)\|^2}{2\sigma^2(t)}\\
-&=\frac{1}{2\sigma^2(t)}\frac{(1-\alpha_{t})^2\bar{\alpha}_{t-1}}{(1-\bar{\alpha}_t)^2}\left\|\mathbf{x}_{0}-\mathbf{x}(\mathbf{x}_t,t;\theta)\right\|^2
+&={\color{red}\frac{1}{2\sigma^2(t)}\frac{(1-\alpha_{t})^2\bar{\alpha}_{t-1}}{(1-\bar{\alpha}_t)^2}\left\|\mathbf{x}_{0}-\mathbf{x}(\mathbf{x}_t,t;\theta)\right\|^2}
 \end{align*}
 $$
 所以，只要将网络设计成为**在任意噪声条件下，重建出无噪声数据**即可减少 KL 散度！
@@ -228,7 +228,7 @@ $$
 $$
 \begin{align*}
 \mathrm{KL}(q(\mathbf{x}_{t-1}\mid\mathbf{x}_{t},\mathbf{x}_{0})\parallel p(\mathbf{x}_{t-1}\mid\mathbf{x}_{t};\theta))&=\frac{\|\boldsymbol{\mu}(t)-\boldsymbol{\mu}(\mathbf{x}_t,t;\theta)\|^2}{2\sigma^2(t)}\\
-&=\frac{1}{2\sigma^2(t)}\frac{(1-\alpha_{t})^2}{(1-\bar{\alpha}_{t})\alpha_{t}}\left\|\boldsymbol{\epsilon}_{0}-\boldsymbol{\epsilon}(\mathbf{x}_{t},t;\theta)\right\|^2
+&={\color{red}\frac{1}{2\sigma^2(t)}\frac{(1-\alpha_{t})^2}{(1-\bar{\alpha}_{t})\alpha_{t}}\left\|\boldsymbol{\epsilon}_{0}-\boldsymbol{\epsilon}(\mathbf{x}_{t},t;\theta)\right\|^2}
 \end{align*}
 $$
 和论文形式一致。因此模型**只要输入 $t$ 时刻和对应的加噪图像，输出一个噪声去接近 $t=1$ 时刻加入的噪声**即可。
