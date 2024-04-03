@@ -11,6 +11,8 @@
 
 > VAE 解决了自编码器中非正则化潜空间的问题。自编码器中，数据被压缩到潜空间中的部分区域，在这部分区域外的采样无法生成有意义的数据。VAE 的编码器输出的是潜空间的分布参数，并且强迫潜空间为 Gaussian 分布，这样就确保了潜空间的正则性。
 
+EM 算法解决了获取数据分布的问题。因此我们可以通过已知的数据分布
+
 回顾一下 EM 算法中的核心公式
 $$
 \log p(\mathbf{x};\theta)=\mathrm{ELBO}(q,\mathbf{x};\theta)+\mathrm{KL}\left(q(\mathbf{z})\parallel p(\mathbf{z}\mid\mathbf{x};\theta)\right)
@@ -152,24 +154,3 @@ class VariationalAutoEncoder(nn.Module):
         loss = (y - x).square().mean() + KL_wight * KL_divergence(mu, std)
         return y, loss
 ```
-
-> VQ-VAE 的伪代码。
-
-```python
-class VectorQuantizedVariationalAutoEncoder(nn.Module):
-    def __init__(self, codebook_dim: int) -> None:
-        super().__init__()
-        self.encoder = VAEEncoder()
-        self.codebook = nn.Parameter(torch.rand(codebook_dim, self.encoder.out_dim))
-        self.decoder = VAEDecoder()
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        latent = self.encoder(x)
-        index = find_closest(latent, self.codebook)
-        z = gather(self.codebook, index)
-
-        y = self.decoder(z)
-        loss = (y - x).square().mean() + loss_codebook(latent, z)
-        return y, loss
-```
-
