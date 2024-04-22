@@ -204,13 +204,17 @@ Suppose that a smooth surface $\mathbb{S}$ is defined by the zero-level set of t
 该方案采样 $n$ 个点 $\{\mathbf{p}_i=\mathbf{o}+t_i\mathbf{v}\mid i\in\{1, \dots,n\},t_{i}< t_{i+1}\}$ 沿射线计算射线的近似像素颜色为
 This scheme samples $n$ points $\{\mathbf{p}_i=\mathbf{o}+t_i\mathbf{v}\mid i\in\{1, \dots,n\},t_{i}<t_{i+1}\}$ along the ray to compute the approximate pixel color of the ray as
 $$
-\hat{C}=\sum_{i=1}^{n}T_{i}\alpha_{i}c_{i}\\
-T_i=\prod_{j=1}^{i-1}(1-\alpha_{j})\\
+\begin{align*}
+\hat{C}&=\sum_{i=1}^{n}T_{i}\alpha_{i}c_{i}\\
+T_i&=\prod_{j=1}^{i-1}(1-\alpha_{j})
+\end{align*}
 $$
 
 $$
-\alpha_{i}=1-\exp\left(-\int_{t_{i}}^{t_{i+1}}\rho(t)\mathrm{d}t\right)\Rightarrow\\
-\alpha_{i}=\max\left(\frac{\Phi_{s}(f(\mathbf{p}(t_{i})))-\Phi_{s}(f(\mathbf{p}(t_{i+1})))}{\Phi_{s}(f(\mathbf{p}(t_i)))},0\right)
+\begin{align*}
+\alpha_{i}&=1-\exp\left(-\int_{t_{i}}^{t_{i+1}}\rho(t)\mathrm{d}t\right)\\
+\Rightarrow\alpha_{i}&=\max\left(\frac{\Phi_{s}(f(\mathbf{p}(t_{i})))-\Phi_{s}(f(\mathbf{p}(t_{i+1})))}{\Phi_{s}(f(\mathbf{p}(t_i)))},0\right)
+\end{align*}
 $$
 
 （此部分在 Supplementary A。）
@@ -285,10 +289,6 @@ $$
 **定理 1**：假设光线从表面的外部进入内部。因此，我们有 $-(\nabla{f}(\mathrm{p}(t))\cdot\mathbf{v})>0$，因为按照惯例，SDF $f(x)$ 在外部为正，表面内部为负。
 **Theorem 1**: Suppose that the ray is going from outside to inside of the surface. Hence, we have $-(\nabla{f}(\mathrm{p}(t))\cdot\mathbf{v})>0$, because by convention the signed distance function $f(x)$ is positive outside and negative inside of the surface.
 
-
-
-
-
 ### B.2 Bias in Naive Solution
 
 证明 $w(t)=\sigma(t)T(t)$ 的最大点小于 $\sigma(t)=\phi(f(\mathbf{p}(t)))$ 的最大点。
@@ -311,12 +311,3 @@ $$
 $$
 \frac{\mathrm{d}\sigma}{\mathrm{d}t}(t^*)=0\Longrightarrow\sigma^2(t^*)>0\Longrightarrow\mathrm{d}w/\mathrm{d}t<0
 $$
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,19 @@
-# Property of Gaussian Distribution
+# Property of Some Distribution
+
+## Property of $n$-Dimensional Discrete Classification Distribution
+
+### Kullback–Leibler Divergence of Discrete Classification Distribution
+
+Let $X_1\sim P(x)$ and $X_2\sim Q(x)$, where $P,Q$ are $N$ class ($\{0,\dots,N-1\}$) discrete distribution, and $Q(x=k)=\frac{1}{N}$
+
+$$
+\begin{align*}
+\mathrm{KL}[P\parallel Q]&=\mathbb{E}_{x\sim P(x)}[\log P(x)]-\mathbb{E}_{x\sim P(x)}[\log Q(x)]\\
+&=\sum_{k=0}^{N-1}P(X=k)[\log P(X=k)-\log Q(X=k)]\\
+&=\sum_{k=0}^{N-1}P(X=k)[\log P(X=k)+\log N]\\
+&=\sum_{k=0}^{N-1}P(X=k)\log P(X=k)+N\log N
+\end{align*}
+$$
 
 ## Property of $1$-Dimensional Gaussian Distribution
 

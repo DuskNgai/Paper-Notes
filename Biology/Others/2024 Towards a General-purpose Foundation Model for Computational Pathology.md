@@ -7,3 +7,6 @@
 ## 1 Introduction
 
 UNI 的架构是 ViT-L，用 DINO-v2 做预训练。
+
+## 3 Method
+
