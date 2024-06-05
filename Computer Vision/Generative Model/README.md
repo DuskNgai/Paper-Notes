@@ -24,7 +24,7 @@
 
 ---
 
-我们还提供了某些 [Gaussian Distribution 相关性质](Fancy%20Gaussian.md)的总结。
+我们还提供了某些[概率分布相关性质](appendix/Fancy%20Distribution.md)的总结。
 
 ## References
 

@@ -19,8 +19,8 @@ $$
 &=\mathbb{E}_{\mathbf{x}\sim\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)}\left[\mathrm{trace}((\mathbf{x}-\boldsymbol{\mu}_2)^T\Sigma_2^{-1}(\mathbf{x}-\boldsymbol{\mu}_2))\right]&&a=\mathrm{trace}(a)\\
 &=\mathbb{E}_{\mathbf{x}\sim\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)}\left[\mathrm{trace}(\Sigma_2^{-1}(\mathbf{x}-\boldsymbol{\mu}_2)^T(\mathbf{x}-\boldsymbol{\mu}_2))\right]&&\mathrm{trace}(AB)=\mathrm{trace}(BA)\\
 &=\mathrm{trace}\left(\Sigma_2^{-1}\mathbb{E}_{\mathbf{x}\sim\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)}\left[(\mathbf{x}-\boldsymbol{\mu}_2)^T(\mathbf{x}-\boldsymbol{\mu}_2)\right]\right)&&\text{trace is linear}\\
-&=\mathrm{trace}\left(\Sigma_2^{-1}\mathbb{E}_{\mathbf{x}\sim\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)}\left[\mathbf{x}^T\mathbf{x}-\boldsymbol{\mu}_2^T\mathbf{x}-\mathbf{x}^T\boldsymbol{\mu}_2+\boldsymbol{\mu}_2^T\boldsymbol{\mu}_2\right]\right)&&\text{prove below}\\
-&=\mathrm{trace}\left(\Sigma_2^{-1}\left(\mathbb{E}_{\mathbf{x}\sim\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)}\left[\mathbf{x}^T\mathbf{x}\right]-\boldsymbol{\mu}_2^T\boldsymbol{\mu}_1-\boldsymbol{\mu}_1^T\boldsymbol{\mu}_2+\boldsymbol{\mu}_2^T\boldsymbol{\mu}_2\right)\right)\\
+&=\mathrm{trace}\left(\Sigma_2^{-1}\mathbb{E}_{\mathbf{x}\sim\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)}\left[\mathbf{x}^T\mathbf{x}-\boldsymbol{\mu}_2^T\mathbf{x}-\mathbf{x}^T\boldsymbol{\mu}_2+\boldsymbol{\mu}_2^T\boldsymbol{\mu}_2\right]\right)\\
+&=\mathrm{trace}\left(\Sigma_2^{-1}\left(\mathbb{E}_{\mathbf{x}\sim\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)}\left[\mathbf{x}^T\mathbf{x}\right]-\boldsymbol{\mu}_2^T\boldsymbol{\mu}_1-\boldsymbol{\mu}_1^T\boldsymbol{\mu}_2+\boldsymbol{\mu}_2^T\boldsymbol{\mu}_2\right)\right)&&\text{prove below}\\
 &=\mathrm{trace}\left(\Sigma_2^{-1}\left(\Sigma_1+\boldsymbol{\mu}_1^T\boldsymbol{\mu}_1-\boldsymbol{\mu}_2^T\boldsymbol{\mu}_1-\boldsymbol{\mu}_1^T\boldsymbol{\mu}_2+\boldsymbol{\mu}_2^T\boldsymbol{\mu}_2\right)\right)\\
 &=\mathrm{trace}\left(\Sigma_2^{-1}\Sigma_1+\Sigma_2^{-1}\left(\boldsymbol{\mu}_1-\boldsymbol{\mu}_2\right)^T\left(\boldsymbol{\mu}_1-\boldsymbol{\mu}_2\right)\right)\\
 &=\mathrm{trace}\left(\Sigma_2^{-1}\Sigma_1+\left(\boldsymbol{\mu}_1-\boldsymbol{\mu}_2\right)^T\Sigma_2^{-1}\left(\boldsymbol{\mu}_1-\boldsymbol{\mu}_2\right)\right)\\
@@ -49,3 +49,33 @@ $$
 \end{align*}
 $$
 
+## Moment-generating Function of the Gaussian Distribution
+
+$$
+\begin{align*}
+M(\mathbf{t};\mathbf{x})&= \mathbb{E}[\exp(\mathbf{t}^T\mathbf{x})]\\
+&= \int_{\mathbb{R}^n}\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\exp(\mathbf{t}^T\mathbf{x})\exp\left(-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})\right)\mathrm{d}\mathbf{x}\\
+&= \int_{\mathbb{R}^n}\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})+\mathbf{t}^T\mathbf{x}\right)\mathrm{d}\mathbf{x}\\
+&= \int_{\mathbb{R}^n}\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}\left[\mathbf{x}^T\Sigma^{-1}\mathbf{x}-2\boldsymbol{\mu}^T\Sigma^{-1}\mathbf{x}-\mathbf{x}^T\Sigma^{-1}\boldsymbol{\mu}+\boldsymbol{\mu}^T\Sigma^{-1}\boldsymbol{\mu}-2\mathbf{t}^T\mathbf{x}\right]\right)\mathrm{d}\mathbf{x}\\
+&= \int_{\mathbb{R}^n}\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}\left[\mathbf{x}^T\Sigma^{-1}\mathbf{x}-2(\boldsymbol{\mu}+\Sigma\mathbf{t})^T\Sigma^{-1}\mathbf{x}+\boldsymbol{\mu}^T\Sigma^{-1}\boldsymbol{\mu}\right]\right)\mathrm{d}\mathbf{x}\\
+&= \int_{\mathbb{R}^n}\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}\left[\mathbf{x}^T\Sigma^{-1}\mathbf{x}-2(\boldsymbol{\mu}+\Sigma\mathbf{t})^T\Sigma^{-1}\mathbf{x}+(\boldsymbol{\mu}+\Sigma\mathbf{t})^T\Sigma^{-1}(\boldsymbol{\mu}+\Sigma\mathbf{t})-2\mathbf{t}^T\boldsymbol{\mu}-\mathbf{t}^T\Sigma\mathbf{t}\right]\right)\mathrm{d}\mathbf{x}\\
+&= \int_{\mathbb{R}^n}\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}[\mathbf{x}-(\boldsymbol{\mu}+\Sigma\mathbf{t})]^T\Sigma^{-1}[\mathbf{x}-(\boldsymbol{\mu}+\Sigma\mathbf{t})]+\mathbf{t}^T\boldsymbol{\mu}+\frac{1}{2}\mathbf{t}^T\Sigma\mathbf{t}\right)\mathrm{d}\mathbf{x}\\
+&= \exp\left(\mathbf{t}^T\boldsymbol{\mu}+\frac{1}{2}\mathbf{t}^T\Sigma\mathbf{t}\right)\int_{\mathbb{R}^n}\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}[\mathbf{x}-(\boldsymbol{\mu}+\Sigma\mathbf{t})]^T\Sigma^{-1}[\mathbf{x}-(\boldsymbol{\mu}+\Sigma\mathbf{t})]\right)\mathrm{d}\mathbf{x}\\
+&= \exp\left[\mathbf{t}^T\boldsymbol{\mu}+\frac{1}{2}\mathbf{t}^T\Sigma\mathbf{t}\right]
+\end{align*}
+$$
+
+## Linear Transform of Gaussian Distribution
+
+We prove by moment-generating function:
+$$
+\begin{align*}
+M(\mathbf{t};\mathbf{y})&= \mathbb{E}[\exp(\mathbf{t}^T\mathbf{y})]\\
+&= \mathbb{E}[\exp(\mathbf{t}^T(\mathcal{A}\mathbf{x}+\mathbf{b}))]\\
+&= \mathbb{E}[\exp(\mathbf{t}^T\mathcal{A}\mathbf{x}+\mathbf{t}^T\mathbf{b})]\\
+&= \mathbb{E}[\exp(\mathbf{t}^T\mathcal{A}\mathbf{x})\exp(\mathbf{t}^T\mathbf{b})]\\
+&= M(\mathcal{A}^T\mathbf{t};\mathbf{x})\exp(\mathbf{t}^T\mathbf{b})\\
+&= \exp\left[\mathbf{t}^T\left(\mathcal{A}\boldsymbol{\mu}+\mathbf{b}\right)+\frac{1}{2}\mathbf{t}^T\left(\mathcal{A}\Sigma\mathcal{A}^T\right)\mathbf{t}\right]
+\end{align*}
+$$
+Then $Y=\mathcal{A}X+\mathbf{b}$ is also multi-dimensional Gaussian distribution with mean $A\boldsymbol{\mu}+\mathbf{b}$ and covariance $\mathcal{A}\Sigma\mathcal{A}^T$.

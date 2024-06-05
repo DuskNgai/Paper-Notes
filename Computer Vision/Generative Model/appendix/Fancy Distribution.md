@@ -4,7 +4,7 @@
 
 ### Kullback–Leibler Divergence of Discrete Classification Distribution
 
-Let $X_1\sim P(x)$ and $X_2\sim Q(x)$, where $P,Q$ are $N$ class ($\{0,\dots,N-1\}$) discrete distribution, and $Q(x=k)=\frac{1}{N}$
+Let $X_1\sim P(x)$ and $X_2\sim Q(x)$, where $P,Q$ are $N$ class ($\{0,\dots,N-1\}$) discrete distribution, and $Q(x=k)=\frac{1}{N}$, then
 
 $$
 \begin{align*}
@@ -74,67 +74,13 @@ $$
 \mathrm{KL}\left[\mathcal{N}(\boldsymbol{\mu}_1,\Sigma_1)\parallel\mathcal{N}(\boldsymbol{\mu}_2,\Sigma_2)\right]=\frac{1}{2}\left(\log\frac{|\Sigma_2|}{|\Sigma_1|}+\mathrm{trace}\left(\Sigma_2^{-1}\Sigma_1\right)+\left(\boldsymbol{\mu}_1-\boldsymbol{\mu}_2\right)^T\Sigma_2^{-1}\left(\boldsymbol{\mu}_1-\boldsymbol{\mu}_2\right)-n\right)
 $$
 
+### Moment-generating Function of the Gaussian Distribution
 
----
-
-
-
+The moment-generation function of $\mathcal{N}(\boldsymbol{\mu},\Sigma)$ is
 $$
-V=\begin{bmatrix}a&b&c\\b&d&e\\c&e&f\end{bmatrix}
+M(\mathbf{t};\mathbf{x})=\exp\left[\mathbf{t}^T\boldsymbol{\mu}+\frac{1}{2}\mathbf{t}^T\Sigma\mathbf{t}\right]
 $$
 
-$$
-|V|=adf+2bce-ae^2-b^2f-c^2d
-$$
+### Affine Transform of Gaussian Distribution
 
-$$
-V^{-1}=\frac{1}{|V|}\begin{bmatrix}df-e^2&ce-bf&be-cd\\ce-bf&af-c^2&bc-ae\\be-cd&bc-ae&ad-b^2\end{bmatrix}:=\begin{bmatrix}A&B&C\\B&D&E\\C&E&F\end{bmatrix}=\Lambda
-$$
-
-$$
-\begin{align*}
-G^{3}_{V}&=\frac{1}{(2\pi)^{3/2}|V|^{1/2}}e^{-\frac{1}{2}\mathbf{x}^TV^{-1}\mathbf{x}}\\
-&=\frac{|\Lambda|^{1/2}}{(2\pi)^{3/2}}\exp\left(-\frac{1}{2}\mathbf{x}^T\Lambda\mathbf{x}\right)
-\end{align*}
-$$
-
-$$
-\begin{align*}
-\mathbf{x}^T\Lambda\mathbf{x}&=Ax^2+Dy^2+Fz^2+2Bxy+2Cxz+2Eyz\\
-&=Ax^2+Dy^2+2Bxy+Fz^2+2Cxz+2Eyz
-\end{align*}
-$$
-
-$$
-\begin{align*}
-\int_{-\infty}^{+\infty}G^{3}_{V}\ \mathrm{d}z&=\int_{-\infty}^{+\infty}\frac{|\Lambda|^{1/2}}{(2\pi)^{3/2}}\exp\left(-\frac{1}{2}\mathbf{x}^T\Lambda\mathbf{x}\right)\ \mathrm{d}z\\
-&=\int_{-\infty}^{+\infty}\frac{|\Lambda|^{1/2}}{(2\pi)^{3/2}}\exp\left(-\frac{1}{2}(Ax^2+Dy^2+2Bxy+Fz^2+2Cxz+2Eyz)\right)\ \mathrm{d}z\\
-&=\frac{|\Lambda|^{1/2}}{(2\pi)^{3/2}}\exp\left(-\frac{1}{2}(Ax^2+Dy^2+2Bxy)\right)\int_{-\infty}^{+\infty}\exp\left(-\frac{1}{2}(Fz^2+2Cxz+2Eyz)\right)\ \mathrm{d}z\\
-&=\frac{|\Lambda|^{1/2}}{2\pi}\sqrt{\frac{1}{F}}\exp\left(-\frac{1}{2}(Ax^2+Dy^2+2Bxy)+\frac{(Cx+Ey)^2}{2F}\right)\\
-&=\frac{1}{2\pi}\sqrt{\frac{|\Lambda|}{F}}\exp\left(-\frac{1}{2}\left(\left(A-\frac{C^2}{F}\right)x^2+\left(D-\frac{E^2}{F}\right)y^2+2\left(B-\frac{CE}{F}\right)xy\right)\right)\\
-&=\frac{1}{2\pi}\sqrt{\frac{1}{ad-b^2}}\exp\left(-\frac{1}{2}\left(\frac{d}{ad-b^2}x^2+\frac{a}{ad-b^2}y^2+2\frac{b}{ad-b^2}xy\right)\right)\\
-&=\frac{1}{2\pi\begin{vmatrix}a&b\\b&d\end{vmatrix}^{1/2}}\exp\left(-\frac{1}{2}\begin{bmatrix}x\\y\end{bmatrix}^T\begin{vmatrix}a&b\\b&d\end{vmatrix}^{-1}\begin{bmatrix}x\\y\end{bmatrix}\right)\\
-\end{align*}
-$$
-
-$$
-\begin{align*}
-&\ \ \int_{-\infty}^{+\infty}\exp\left(-\frac{1}{2}(Fz^2+2Cxz+2Eyz)\right)\ \mathrm{d}z\\
-&=\exp\left(\frac{(Cx+Ey)^2}{2F}\right)\int_{-\infty}^{+\infty}\exp\left(-\frac{1}{2}F\left(z+\frac{(Cx+Ey)}{F}\right)^2\right)\ \mathrm{d}z\\
-&=\exp\left(\frac{(Cx+Ey)^2}{2F}\right)\sqrt{\frac{2\pi}{F}}
-\end{align*}
-$$
-
-其中
-$$
-A-\frac{C^2}{F}=\frac{AF-C^2}{F}=\frac{(df-e^2)(ad-b^2)-(be-cd)^2}{|V|(ad-b^2)}=\frac{d}{ad-b^2}
-$$
-
-$$
-D-\frac{E^2}{F}=\frac{DF-E^2}{F}=\frac{(af-c^2)(ad-b^2)-(bc-ae)^2}{|V|(ad-b^2)}=\frac{a}{ad-b^2}
-$$
-
-$$
-B-\frac{CE}{F}=\frac{BF-CE}{F}=\frac{(ce-bf)(ad-b^2)-(bc-ae)(be-cd)}{|V|(ad-b^2)}=\frac{b}{ad-b^2}
-$$
-
+Let $X\sim\mathcal{N}(\boldsymbol{\mu},\Sigma)$, $\mathcal{A}\in\mathbb{R}^{n}\mapsto\mathbb{R}^{m}$ is any linear map, and $\mathbf{b}$ is the translation vector, then $Y=\mathcal{A}X+\mathbf{b}$ is also multi-dimensional Gaussian distribution with mean $A\boldsymbol{\mu}+\mathbf{b}$ and covariance $\mathcal{A}\Sigma\mathcal{A}^T$.
