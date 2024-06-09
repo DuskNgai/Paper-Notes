@@ -43,11 +43,30 @@ $$
 
 ### 2D Case
 
-假设 $\mathbf{q}_i$ 和 $\mathbf{k}_j$ 是 2D 向量，我们把它看成是两个复数，那么内积就可以表示为
+假设 $\mathbf{q}_m$ 和 $\mathbf{k}_n$ 是 2D 向量，我们把它看成是两个复数，那么内积就可以表示为
 $$
-\langle\mathbf{q}_i,\mathbf{k}_j\rangle=\Re[\mathbf{q}_i\mathbf{k}_j^\dagger]
+\langle\mathbf{q}_m,\mathbf{k}_n\rangle=\Re[\mathbf{q}_m\mathbf{k}_n^\dagger]
 $$
-其中 $\dagger$ 表示转置共轭。这个公式表示说：两个二维向量的内积，等于把它们当复数看时，一个复数与另一个复数的共轭的乘积实部。作者在这里想到了一个形式简单的函数 $f(\mathbf{x},m)=\mathbf{x}\exp(im\theta)$，既可以简单的添加位置信息，也可以得到形式简单的 $g$：
+其中 $\dagger$ 表示转置共轭。这个公式表示说：两个二维向量的内积，等于把它们当复数看时，一个复数与另一个复数的共轭的乘积实部。那么就有：
+$$
+\mathfrak{R}[f(\mathbf{q}_m,m)f^{\dagger}(\mathbf{k}_n,n)]=g(\mathbf{q}_m,\mathbf{k}_n,m-n)
+$$
+假设存在复数的 $g(\mathbf{q}_m,\mathbf{k}_n,m-n)$，那么可以把 $\mathfrak{R}$ 拿掉，并且改写为复数的幅角形式
+$$
+\begin{align*}
+f(\mathbf{q}_m,m)f^{\dagger}(\mathbf{k}_n,n)&=f_{\text{abs}}(\mathbf{q}_m,m)\exp(if_{\text{angle}}(\mathbf{q}_m,m))f_{\text{abs}}(\mathbf{k}_n,n)\exp(-if_{\text{angle}}(\mathbf{k}_n,n))\\
+&=f_{\text{abs}}(\mathbf{q}_m,m)f_{\text{abs}}(\mathbf{k}_n,n)\exp(i[f_{\text{angle}}(\mathbf{q}_m,m)-f_{\text{angle}}(\mathbf{k}_n,n)])\\
+&=g_{\text{abs}}(\mathbf{q}_m,\mathbf{k}_n,m-n)\exp(ig_{\text{angle}}(\mathbf{q}_m,\mathbf{k}_n,m-n))
+\end{align*}
+$$
+因此就有：
+$$
+\begin{align*}
+f_{\text{abs}}(\mathbf{q}_m,m)f_{\text{abs}}(\mathbf{k}_n,n)&=g_{\text{abs}}(\mathbf{q}_m,\mathbf{k}_n,m-n)\\
+f_{\text{angle}}(\mathbf{q}_m,m)-f_{\text{angle}}(\mathbf{k}_n,n)&=g_{\text{angle}}(\mathbf{q}_m,\mathbf{k}_n,m-n)
+\end{align*}
+$$
+作者在这里想到了一个形式简单的函数 $f(\mathbf{x},m)=\mathbf{x}\exp(im\theta)$，既可以简单的添加位置信息，也可以得到形式简单的 $g$：
 $$
 \begin{align*}
 \langle f(\mathbf{q}_m,m),f(\mathbf{k}_n,n)\rangle&=\langle \mathbf{q}_m\exp(im\theta),\mathbf{k}_n\exp(in\theta)\rangle\\
