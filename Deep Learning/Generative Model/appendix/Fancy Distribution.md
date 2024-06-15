@@ -83,4 +83,7 @@ $$
 
 ### Affine Transform of Gaussian Distribution
 
-Let $X\sim\mathcal{N}(\boldsymbol{\mu},\Sigma)$, $\mathcal{A}\in\mathbb{R}^{n}\mapsto\mathbb{R}^{m}$ is any linear map, and $\mathbf{b}$ is the translation vector, then $Y=\mathcal{A}X+\mathbf{b}$ is also multi-dimensional Gaussian distribution with mean $A\boldsymbol{\mu}+\mathbf{b}$ and covariance $\mathcal{A}\Sigma\mathcal{A}^T$.
+Let $X\sim\mathcal{N}(\boldsymbol{\mu},\Sigma)$, $\mathcal{A}\in\mathbb{R}^{n}\mapsto\mathbb{R}^{m}$ is any linear map, and $\mathbf{b}$ is the translation vector, then
+$$
+Y=\mathcal{A}X+\mathbf{b}\sim\mathcal{N}(\mathcal{A}\boldsymbol{\mu}+\mathbf{b},\mathcal{A}\Sigma\mathcal{A}^T)
+$$

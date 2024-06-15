@@ -75,7 +75,8 @@ M(\mathbf{t};\mathbf{y})&= \mathbb{E}[\exp(\mathbf{t}^T\mathbf{y})]\\
 &= \mathbb{E}[\exp(\mathbf{t}^T\mathcal{A}\mathbf{x}+\mathbf{t}^T\mathbf{b})]\\
 &= \mathbb{E}[\exp(\mathbf{t}^T\mathcal{A}\mathbf{x})\exp(\mathbf{t}^T\mathbf{b})]\\
 &= M(\mathcal{A}^T\mathbf{t};\mathbf{x})\exp(\mathbf{t}^T\mathbf{b})\\
+&= \exp\left[\left(\mathcal{A}^T\mathbf{t}\right)^T\boldsymbol{\mu}+\frac{1}{2}\left(\mathcal{A}^T\mathbf{t}\right)^T\Sigma\mathcal{A}^T\mathbf{t}\right]\exp(\mathbf{t}^T\mathbf{b})\\
 &= \exp\left[\mathbf{t}^T\left(\mathcal{A}\boldsymbol{\mu}+\mathbf{b}\right)+\frac{1}{2}\mathbf{t}^T\left(\mathcal{A}\Sigma\mathcal{A}^T\right)\mathbf{t}\right]
 \end{align*}
 $$
-Then $Y=\mathcal{A}X+\mathbf{b}$ is also multi-dimensional Gaussian distribution with mean $A\boldsymbol{\mu}+\mathbf{b}$ and covariance $\mathcal{A}\Sigma\mathcal{A}^T$.
+Then $Y\sim\mathcal{N}(\mathcal{A}\boldsymbol{\mu}+\mathbf{b},\mathcal{A}\Sigma\mathcal{A}^T)$.

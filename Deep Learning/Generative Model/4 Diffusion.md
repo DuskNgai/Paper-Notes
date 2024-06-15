@@ -1,16 +1,17 @@
 # Diffusion
 
-|      Symbol      |               Description               |
-| :--------------: | :-------------------------------------: |
-|       $q$        | probabilty function in forward process  |
-|       $p$        | probabilty function in reversed process |
-| $\mathbf{x}_{0}$ |                raw data                 |
+|      Symbol      |                     Description                     |
+| :--------------: | :-------------------------------------------------: |
+|     $t$/$T$      |                  step/total steps                   |
+|       $q$        | probabilistic function in forward/diffusion process |
+|       $p$        |     probabilistic function in reversed process      |
+| $\mathbf{x}_{0}$ |                      raw data                       |
 
-其他记号同 [Variational Auto-Encoder](variational%20auto-encoder.md)。
+其他记号同 [Variational Autoencoder](3%20Variational%20Autoencoder.md)
 
 ---
 
-Diffusion 模型可以看作 Markovian Hierarchical Variational Auto-Encoder 的特例，即
+Diffusion 模型可以看作 Markovian Hierarchical Variational Autoencoder 的特例，即
 
 1. 每个潜空间的维度都是相同的
 2. 每个潜空间的先验分布都是线性变换的高斯分布
@@ -29,7 +30,7 @@ q(\mathbf{x}_{t}\mid\mathbf{x}_{t-1})&=\mathcal{N}(\mathbf{x}_{t};\sqrt{1-\beta_
 &=\mathcal{N}(\mathbf{x}_{t};\sqrt{\alpha_{t}}\mathbf{x}_{t-1},(1-\alpha_{t})I)
 \end{align*}
 $$
-这里的 $\beta_t$ 是一个超参数，可以是一个常数，也可以是一个随着 $t$ 变化的函数，$\alpha_{t}=1-\beta_{t}$。这样设计加噪过程的目的是，噪声的方差保持不变，这样可以保证模型的稳定性。
+这里的 $\beta_t$ 是一个超参数，可以是一个常数，也可以是一个随着 $t$ 变化的函数，$\alpha_{t}=1-\beta_{t}$。这样设计加噪过程的目的是，噪声的方差可以随着时间的推移而增大，这样可以保证最后的潜空间的分布是一个标准高斯分布。
 
 前向过程的重要性质是，$\mathbf{x}_t$ 的分布可以由 $\mathbf{x}_{0}$ 直接得到，即
 $$
@@ -42,7 +43,7 @@ $$
 \begin{align*}
 \mathbf{x}_{t}&=\sqrt{\alpha_{t}}\mathbf{x}_{t-1}+\sqrt{1-\alpha_{t}}\boldsymbol{\epsilon}_{t-1}\\
 &=\sqrt{\alpha_{t}}\left(\sqrt{\alpha_{t-1}}\mathbf{x}_{t-2}+\sqrt{1-\alpha_{t-1}}\hat{\boldsymbol{\epsilon}}_{t-2}\right)+\sqrt{1-\alpha_{t}}\boldsymbol{\epsilon}_{t-1}\\
-&=\sqrt{\alpha_{t}}\sqrt{\alpha_{t-1}}\mathbf{x}_{t-2}+\sqrt{\alpha_{t}}\sqrt{1-\alpha_{t-1}}\hat{\boldsymbol{\epsilon}}_{t-2}+\sqrt{1-\alpha_{t}}\boldsymbol{\epsilon}_{t-1}&&\text{Add of two Gaussian}\\
+&=\sqrt{\alpha_{t}}\sqrt{\alpha_{t-1}}\mathbf{x}_{t-2}+\sqrt{\alpha_{t}}\sqrt{1-\alpha_{t-1}}\hat{\boldsymbol{\epsilon}}_{t-2}+\sqrt{1-\alpha_{t}}\boldsymbol{\epsilon}_{t-1}&&\text{Addition of Two Gaussians}\\
 &=\sqrt{\alpha_{t}\alpha_{t-1}}\mathbf{x}_{t-2}+\sqrt{\alpha_{t}(1-\alpha_{t-1})+(1-\alpha_{t})}\boldsymbol{\epsilon}_{t-2}\\
 &=\sqrt{\alpha_{t}\alpha_{t-1}}\mathbf{x}_{t-2}+\sqrt{1-\alpha_{t}\alpha_{t-1}}\boldsymbol{\epsilon}_{t-2}\\
 &=...\\

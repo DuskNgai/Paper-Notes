@@ -12,4 +12,5 @@ It marks down the books of each course.
     - Mathematical Methods for Physics, Qiao Gu.
 - Optics
     - Optics, Eugene Hecht.
-
+- Stochastic Differential Equation
+    - An Introduction to Stochastic Differential Equations, Lawrence C. Evans.
