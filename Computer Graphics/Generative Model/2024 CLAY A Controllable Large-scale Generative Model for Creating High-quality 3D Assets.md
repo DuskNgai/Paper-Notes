@@ -25,11 +25,12 @@ CLAY 是一个 3D 几何和材质生成器。几何生成支持文字、图片�
 
 ## 3 Large-Scale 3D Generative Model
 
-CLAY 具体尝试了将几何和材质分离的道路，并且直接生成 3D 几何，材质？
+CLAY 具体尝试了将几何和材质分离的道路，并且直接生成 3D 几何。
 
 ## 3.1 Representation and Model Architecture
 
-
+首先拓展了 3DShape2VecSet：
+1. 
 
 
 

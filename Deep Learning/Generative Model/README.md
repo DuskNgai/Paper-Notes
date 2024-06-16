@@ -20,7 +20,7 @@
 
 ## [Expectation Maximization](2%20Expectation%20Maximization.md)
 
-## [Variational Auto-Encoder](3%20Variational%20Auto-encoder.md)
+## [Variational Autoencoder](3%20Variational%20Autoencoder.md)
 
 ## [Diffusion Model](4%20Diffusion.md)
 
