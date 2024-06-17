@@ -52,7 +52,7 @@ $$
 \begin{align*}
 &\quad\ q(\mathbf{x}_{t-1}\mid\mathbf{x}_{t},\mathbf{x}_{0})\\
 &=\frac{q(\mathbf{x}_{t}\mid\mathbf{x}_{t-1})q(\mathbf{x}_{t-1}\mid\mathbf{x}_{0})}{q(\mathbf{x}_{t}\mid\mathbf{x}_{0})}\\
-&=\frac{\mathcal{N}(\mathbf{x}_{t};\sqrt{\alpha_{t}}\mathbf{x}_{t-1},(1-\alpha_{t})I)\mathcal{N}(\mathbf{x}_{t-1};\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{0},(1-\bar{\alpha}_{t-1})I)}{\mathcal{N}(\mathbf{x}_{t};\sqrt{\bar{\alpha}_{t}}\mathbf{x}_{0},(1-\bar{\alpha}_{t})I)}\\
+&=\frac{\mathcal{N}(\mathbf{x}_{t};\sqrt{\alpha_{t}}\mathbf{x}_{t-1},(1-\alpha_{t})\mathbf{I})\mathcal{N}(\mathbf{x}_{t-1};\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{0},(1-\bar{\alpha}_{t-1})\mathbf{I})}{\mathcal{N}(\mathbf{x}_{t};\sqrt{\bar{\alpha}_{t}}\mathbf{x}_{0},(1-\bar{\alpha}_{t})\mathbf{I})}\\
 &=C_1\exp\left(-\frac{1}{2}\left(\frac{\left(\mathbf{x}_{t}-\sqrt{\alpha_{t}}\mathbf{x}_{t-1}\right)^{2}}{1-\alpha_{t}}+\frac{\left(\mathbf{x}_{t-1}-\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{0}\right)^{2}}{1-\bar{\alpha}_{t-1}}-\frac{\left(\mathbf{x}_{t}-\sqrt{\bar{\alpha}_{t}}\mathbf{x}_{0}\right)^{2}}{1-\bar{\alpha}_{t}}\right)\right)\\
 &=C_1\exp\left(-\frac{1}{2}\left(\frac{\mathbf{x}_{t}^{2}-2\sqrt{\alpha_{t}}\mathbf{x}_{t}\mathbf{x}_{t-1}+\alpha_{t}\mathbf{x}_{t-1}^{2}}{1-\alpha_{t}}+\frac{\mathbf{x}_{t-1}^{2}-2\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{t-1}\mathbf{x}_{0}+\bar{\alpha}_{t-1}\mathbf{x}_{0}^{2}}{1-\bar{\alpha}_{t-1}}-\frac{\mathbf{x}_{t}^{2}-2\sqrt{\bar{\alpha}_{t}}\mathbf{x}_{t}\mathbf{x}_{0}+\bar{\alpha}_{t}\mathbf{x}_{0}^{2}}{1-\bar{\alpha}_{t}}\right)\right)\\
 &=C_2\exp\left(-\frac{1}{2}\left(\frac{-2\sqrt{\alpha_{t}}\mathbf{x}_{t}\mathbf{x}_{t-1}+\alpha_{t}\mathbf{x}_{t-1}^{2}}{1-\alpha_{t}}+\frac{\mathbf{x}_{t-1}^{2}-2\sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_{t-1}\mathbf{x}_{0}}{1-\bar{\alpha}_{t-1}}\right)\right)\\
@@ -68,5 +68,47 @@ $$
 \begin{align*}
 C_1&=\left(\frac{1-\bar{\alpha}_{t}}{2\pi(1-\alpha_{t})(1-\bar{\alpha}_{t-1})}\right)^{\frac{n}{2}}\\
 C_2&=\left(\frac{1-\bar{\alpha}_{t}}{2\pi(1-\alpha_{t})(1-\bar{\alpha}_{t-1})}\right)^{\frac{n}{2}}\exp\left(-\frac{\left(\sqrt{\alpha_{t}}(1-\bar{\alpha}_{t-1})\mathbf{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}(1-\alpha_{t})\mathbf{x}_{0}\right)^2}{2(1-\alpha_{t})(1-\bar{\alpha}_{t-1})(1-\bar{\alpha}_t)}\right)
+\end{align*}
+$$
+
+## Matching Mean
+
+$$
+\begin{align*}
+& \quad\ \ \mathrm{KL}[q(\mathbf{x}_{t-1} \mid \mathbf{x}_{t}, \mathbf{x}_{0}) \parallel p(\mathbf{x}_{t-1} \mid \mathbf{x}_{t}; \theta)] \\
+&= \mathrm{KL}[\mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_{q}(t), \sigma_{q}^2(t) \mathbf{I}) \parallel \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}(\mathbf{x}_t, t; \theta), \sigma_{q}^2(t) \mathbf{I})] \\
+&= \frac{1}{2} \left[ \log \frac{|\sigma_{q}^2(t) \mathbf{I}|}{|\sigma_{q}^2(t) \mathbf{I}|} + \mathrm{trace}([\sigma_{q}^2(t) \mathbf{I}]^{-1} [\sigma_{q}^2(t) \mathbf{I}]) + [\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta)]^T [\sigma_{q}^2(t) \mathbf{I}]^{-1} [\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta)] - n \right] \\
+&= \frac{1}{2} \left[ \log 1 + n + [\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta)]^T [\sigma_{q}^2(t) \mathbf{I}]^{-1} [\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta)] - n \right] \\
+&= \frac{1}{2} [\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta)]^T [\sigma_{q}^2(t) \mathbf{I}]^{-1} [\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta)] \\
+&= \frac{ \|\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta) \|^2}{2 \sigma_{q}^2(t)}
+\end{align*}
+$$
+
+## Matching Clean Data
+
+$$
+\begin{align*}
+&\quad\ \ \mathrm{KL}[q(\mathbf{x}_{t-1} \mid \mathbf{x}_{t}, \mathbf{x}_{0}) \parallel p(\mathbf{x}_{t-1} \mid \mathbf{x}_{t}; \theta)] \\
+&= \frac{ \|\boldsymbol{\mu}_{q}(t) - \boldsymbol{\mu}(\mathbf{x}_t, t; \theta) \|^2}{2 \sigma_{q}^2(t)} \\
+&= \frac{1}{2 \sigma_{q}^2(t)} \frac{(1-\alpha_{t})^2 \bar{\alpha}_{t-1}}{(1-\bar{\alpha}_t)^2} \left\| \mathbf{x}_{0} - \mathbf{x}(\mathbf{x}_t, t; \theta) \right\|^2 \\
+&= \frac{1}{2} \frac{1-\bar{\alpha}_t}{(1-\alpha_{t})(1-\bar{\alpha}_{t-1})} \frac{(1-\alpha_{t})^2 \bar{\alpha}_{t-1}}{(1-\bar{\alpha}_t)^2} \left\| \mathbf{x}_{0} - \mathbf{x}(\mathbf{x}_t, t; \theta) \right\|^2 \\
+&= \frac{1}{2} \frac{(1-\alpha_{t}) \bar{\alpha}_{t-1}}{(1-\bar{\alpha}_{t-1})(1-\bar{\alpha}_t)} \left\| \mathbf{x}_{0} - \mathbf{x}(\mathbf{x}_t, t; \theta) \right\|^2 \\
+&= \frac{1}{2} \frac{\bar{\alpha}_{t-1} - \bar{\alpha}_{t}}{(1-\bar{\alpha}_{t-1})(1-\bar{\alpha}_t)} \left\| \mathbf{x}_{0} - \mathbf{x}(\mathbf{x}_t, t; \theta) \right\|^2 \\
+&= \frac{1}{2} \left( \frac{\bar{\alpha}_{t-1}}{1-\bar{\alpha}_{t-1}} - \frac{\bar{\alpha}_{t}}{1-\bar{\alpha}_t} \right) \left\| \mathbf{x}_{0} - \mathbf{x}(\mathbf{x}_t, t; \theta) \right\|^2
+\end{align*}
+$$
+
+## Learning Noise
+
+
+$$
+\begin{align*}
+\boldsymbol{\mu}_{q}(t) &= \frac{(1-\bar{\alpha}_{t-1}) \sqrt{\alpha_{t}} \mathbf{x}_{t} + (1-\alpha_{t}) \sqrt{\bar{\alpha}_{t-1}} \mathbf{x}_{0}}{1-\bar{\alpha}_t} \\
+&= \frac{(1-\bar{\alpha}_{t-1}) \sqrt{\alpha_{t}} \mathbf{x}_{t} + (1-\alpha_{t}) \sqrt{\bar{\alpha}_{t-1}} \left(\frac{1}{\sqrt{\bar{\alpha}_{t}}} \mathbf{x}_{t} - \frac{\sqrt{1-\bar{\alpha}_{t}}}{\sqrt{\bar{\alpha}_{t}}} \boldsymbol{\epsilon}_{0}\right)}{1-\bar{\alpha}_t} \\
+&= \frac{(1-\bar{\alpha}_{t-1}) \sqrt{\alpha_{t}} \mathbf{x}_{t} + (1-\alpha_{t}) \left(\frac{1}{\sqrt{\alpha}_{t}} \mathbf{x}_{t} - \frac{\sqrt{1-\bar{\alpha}_{t}}}{\sqrt{\alpha}_{t}} \boldsymbol{\epsilon}_{0}\right)}{1-\bar{\alpha}_t} \\
+&= \frac{(1-\bar{\alpha}_{t-1}) \alpha_{t} \mathbf{x}_{t} + (1-\alpha_{t})(\mathbf{x}_{t} - \sqrt{1-\bar{\alpha}_{t}} \boldsymbol{\epsilon}_{0})}{(1-\bar{\alpha}_t) \sqrt{\alpha}_{t}} \\
+&= \frac{(1-\bar{\alpha}_{t-1}) \alpha_{t} \mathbf{x}_{t} + (1-\alpha_{t}) \mathbf{x}_{t} - (1-\alpha_{t}) \sqrt{1-\bar{\alpha}_{t}} \boldsymbol{\epsilon}_{0}}{(1-\bar{\alpha}_t) \sqrt{\alpha}_{t}} \\
+&= \frac{(1-\bar{\alpha}_{t}) \mathbf{x}_{t} - (1-\alpha_{t}) \sqrt{1-\bar{\alpha}_{t}} \boldsymbol{\epsilon}_{0}}{(1-\bar{\alpha}_t) \sqrt{\alpha}_{t}} \\
+&= \frac{1}{\sqrt{\alpha}_{t}} \mathbf{x}_{t} - \frac{(1-\alpha_{t})}{\sqrt{1-\bar{\alpha}_{t}} \sqrt{\alpha}_{t}} \boldsymbol{\epsilon}_{0}
 \end{align*}
 $$
