@@ -92,13 +92,13 @@ $$
 
 拓展到任意维度 $d$ 的时候，创建一个这样的矩阵即可：
 $$
-R(\Theta,m,d)=\begin{bmatrix}
+R(m; \Theta, d) = \begin{bmatrix}
 \cos m\theta_1&-\sin m\theta_1&0&0&\cdots&0&0\\\sin m\theta_1&\cos m\theta_1&0&0&\cdots&0&0\\
 0&0&\cos m\theta_2&-\sin m\theta_2&\cdots&0&0\\0&0&\sin m\theta_2&\cos m\theta_2&\cdots&0&0\\
 \vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots\\
-0&0&0&0&\cdots&\cos m\theta_{d/2}&-\sin m\theta_{d/2}\\0&0&0&0&\cdots&\sin m\theta_{d/2}&\cos m\theta_{d/2}\end{bmatrix}\
+0&0&0&0&\cdots&\cos m\theta_{d/2}&-\sin m\theta_{d/2}\\0&0&0&0&\cdots&\sin m\theta_{d/2}&\cos m\theta_{d/2}\end{bmatrix}
 $$
-其中 $$\Theta=\{\theta_i=10000^{-2(i-1)/d}\mid i\in\{1,\dots,d/2\}\}$$，也可以是其他互不相同的数字即可。带入到 $\mathbf{q}_i\mathbf{k}_j^T$ 得到：
+其中 $\Theta=\{\theta_i=10000^{-2(i-1)/d}\mid i\in\{1,\dots,d/2\}\}$。带入到 $\mathbf{q}_i\mathbf{k}_j^T$ 得到：
 $$\begin{aligned} \langle f(\mathbf{q}_m,m),f(\mathbf{k}_n,n)\rangle&=\langle R(\Theta,m,d)\mathbf{q}_m,R(\Theta,n,d)\mathbf{k}_n\rangle\\ &=\mathbf{q}_mR(\Theta,m,d)R(\Theta,n,d)^T\mathbf{k}_n^T\\ &=\mathbf{q}_mR(\Theta,{\color{red}n-m},d)\mathbf{k}_n^T\\ &=g(\mathbf{q}_m,\mathbf{k}_n,m-n) \end{aligned}$$
 满足所需的形式。由于这个矩阵非常稀疏，因此最好实现方式是展开相乘。
 
