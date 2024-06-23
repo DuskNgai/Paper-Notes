@@ -1,6 +1,6 @@
 # DPM-Solver: A Fast ODE Solver for Diffusion Probabilistic Model Sampling in Around 10 Steps
 
-## Claimation
+## Claim
 
 - 将 ODE 拆分为线性部分和非线性部分，解析求解了线性部分；对非线性部分做换元，尽可能求出解析解。
 - 提出了 DPM-Solver，一种具有收敛阶次保证的扩散 ODE 快速专用高阶求解器。
@@ -95,4 +95,13 @@ $$
 
 ![](images/dpm-solver-3.png)
 
+---
+
+采样时候的方法：
+- 均匀采样：$[\lambda_{T},\lambda_{0}]$ 均匀分割，即 $\lambda_{t_{i}}=\lambda_{T}+i/M(\lambda_{0}-\lambda_{T})$。
+- 先定了 Number of Function Evaluations (NFE)：先用 DPM-Solver-3，再用 2 和 1。
+- 如果用连续时间去采样离散 DPM，直接输入连续时间就行了，网络会自己插值时间的 embedding。
+
 ## Results
+
+![](images/dpm-result.png)
