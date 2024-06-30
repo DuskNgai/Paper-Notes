@@ -1,4 +1,4 @@
-# 2022 Diffusion Models: A Comprehensive Survey of Methods and Applications
+# Diffusion Models: A Comprehensive Survey of Methods and Applications
 
 ## 2 Foundations of Diffusion Models
 

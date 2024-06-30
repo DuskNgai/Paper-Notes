@@ -90,9 +90,17 @@ $$
 
 首先优化 $n=10$，需要早停，因为 KLUB 是一个上界，而不是 loss 本身。然后稳定了就优化 $n=20, 40$，细分区间也有要求。
 
+![](images/ays-algorithm.png)
+
 ## Result
 
----
+![](images/ays-1d-output.png)
+
+![](images/ays-result.png)
+
+![](images/ays-sampler.png)
+
+## Derivation
 
 先从一个 Case Study 出发。假设数据分布是 $\mathbb{P}_{\text{data}}(\mathbf{x})\sim\mathcal{N}(\mathbf{0}, c^2\mathbf{I})$、$s(t) = 1, \sigma(t) = t$，则前向 SDE 和反向 ODE 分别是：
 $$
