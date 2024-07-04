@@ -189,13 +189,13 @@ $$
 $$
 \mathrm{d}\mathbf{x}_{\pm} = \left(\pm\beta(t) - \dot{\sigma}(t)\sigma(t) \right) \nabla_{\mathbf{x}} \log \mathbb{P}(\mathbf{x}) \mathrm{d}t + \sqrt{2\beta(t)}\sigma(t) \mathrm{d}\mathbf{w}_{t}
 $$
-于是 $\beta(t)$ 就是控制采样时候噪声注入的超参数。因此，SDE 求解器就是在 ODE 求解器的基础上加上了噪声项，见最前面的伪代码。
+于是 $\beta(t)$ 就是控制采样时候噪声注入的超参数。因此，SDE 求解器就是在 ODE 求解器的基础上加上了噪声项，见最前面的伪代码。隐含的 Langevin 扩散会在给定时间内将样本推向所需的边际分布，积极纠正先前采样步骤中的任何误差。
 
 ### Preconditioning and Training
 
 如果直接用网络表达分数，那数值就会特别大，不利于网络训练。因此 EDM 将网络改写为：
 $$
-D_{\theta}(\mathbf{x}; \sigma) = c_{\text{skip}}(\sigma)\mathbf{x} + c_{\text{out}}(\sigma) F_{\theta}(c_{\text{in}}(\sigma)\mathbf{x}); c_{\text{noise}}(\sigma)
+D_{\theta}(\mathbf{x}; \sigma) = c_{\text{skip}}(\sigma)\mathbf{x} + c_{\text{out}}(\sigma) F_{\theta}(c_{\text{in}}(\sigma)\mathbf{x}; c_{\text{noise}}(\sigma))
 $$
 其中 $F_{\theta}$ 是网络，$c_{\text{skip}}$ 是跳跃连接，$c_{\text{in}}, c_{\text{out}}$ 是输入和输出的缩放，$c_{\text{noise}}$ 是噪声注入。这样就可以避免数值过大的问题。
 

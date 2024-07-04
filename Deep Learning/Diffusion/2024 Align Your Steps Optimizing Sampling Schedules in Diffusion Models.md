@@ -28,7 +28,7 @@ $$
     <img src="images/ays-1d.png" width="50%">
 </table>
 
-从一个 Case Study 开始。假设数据分布为 $\mathbb{P}_{\text{data}}(\mathbf{x}) \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$，定义前向 SDE 和反向 ODE 分别是：
+从一个 Case Study 开始。假设数据分布为 $\mathbb{P}_{\text{data}}(\mathbf{x}) \sim \mathcal{N}(\mathbf{0}, c^{2}\mathbf{I})$，定义前向 SDE 和反向 ODE 分别是：
 $$
 \begin{cases}
 \text{Noise Schedule:} & \mathbf{x}_{t} = \mathbf{x}_{0} + t\boldsymbol{\epsilon} \in \mathbb{R}^{d} \\
