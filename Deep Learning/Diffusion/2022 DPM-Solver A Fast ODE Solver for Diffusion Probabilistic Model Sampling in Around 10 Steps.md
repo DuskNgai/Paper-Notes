@@ -105,3 +105,17 @@ $$
 ## Results
 
 ![](images/dpm-result.png)
+
+## Appendix
+
+一阶线性 ODE：
+$$
+\begin{cases}
+\dfrac{\mathrm{d} x}{\mathrm{d} t} + P(t) x &= Q(t) \\
+x(0) &= x_{0}
+\end{cases}
+$$
+的解析解：
+$$
+x(t) = x_{0} \exp \left( -\int_{0}^{t} P(u) \mathrm{d} u \right) + \int_{0}^{t} Q(u) \exp \left( -\int_{u}^{t} P(v) \mathrm{d} v \right) \mathrm{d} u
+$$

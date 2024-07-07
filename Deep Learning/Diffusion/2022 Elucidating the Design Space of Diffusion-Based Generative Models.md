@@ -147,7 +147,7 @@ $$
 
 对 ODE 做离散求积，其截断误差和 $\mathrm{d}\mathbf{x}_{t}/\mathrm{d}t$ 的曲率成正比。EDM 认为，在噪声水平较低和较高的情况下，$\mathrm{d}\mathbf{x}_{t}/\mathrm{d}t$ 的曲率比较小，可以用较大的步长。而在中间的情况下，$\mathrm{d}\mathbf{x}_{t}/\mathrm{d}t$ 的曲率比较大，需要用较小的步长。此外，ODE 的累计误差与步数成正比，而每一步产生的误差与步长成超线性关系，因此步数越多，误差越小。
 
-在 RTX3090 上，用 EDM 提供的模型，每秒钟生成～张图像。
+在 RTX3090 上，用 EDM 提供的模型，每秒钟生成 16 张图像。
 
 ### Stochastic Sampling
 
