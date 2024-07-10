@@ -47,11 +47,11 @@ $$
 \text{SDE 2:} & \mathrm{d}\mathbf{x}_{t} = \mathbf{f}_{2}(\mathbf{x}_{0\to t}, t)\mathrm{d}t + g(t)\mathrm{d}\mathbf{w}_{t}
 \end{cases}
 $$
-$\mathbf{x}_{0\to t}$ 表示从时刻 $0$ 到时刻 $t$ 的全体轨迹。令 $\mathbb{P}_{1}$ 和 $\mathbb{P}_{2}$ 分别为在 $T$ 时刻的两个 SDE 的分布，二者的 KL 散度为：
+$\mathbf{x}_{0\to t}$ 表示从时刻 $0$ 到时刻 $t$ 的轨迹。令 $\mathbb{P}_{1}$ 和 $\mathbb{P}_{2}$ 分别为在 $T$ 时刻的两个 SDE 的分布，二者的 KL 散度为：
 $$
 \text{KL}[\mathbb{P}_{1} \parallel \mathbb{P}_{2}] \le \text{KLUB}[0, T] := \frac{1}{2} \mathbb{E}_{\mathbb{P}_{1}^{\text{paths}}} \left[\int_{0}^{T} \frac{\left\|\mathbf{f}_{1}(\mathbf{x}_{0\to t}, t) - \mathbf{f}_{2}(\mathbf{x}_{0\to t}, t)\right\|^{2}}{g(t)^2} \mathrm{d}t\right]
 $$
-其中 $\mathbb{P}_{1}^{\text{paths}}$ 是 SDE 1 生成出来路径的分布。
+其中 $\mathbb{P}_{1}^{\text{paths}}$ 是 SDE 1 生成出来全体路径的分布。
 
 ---
 
