@@ -303,9 +303,9 @@ $$
 &= \beta_{\min}t + \frac{1}{2}t^{2}(\beta_{\max} - \beta_{\min})
 \end{aligned}
 $$
-此外还有：
+此外 VP SDE 满足：
 $$
-s(t) = \frac{1}{\sqrt{\sigma(t)^2 + 1}}
+s(t)\sqrt{\sigma(t)^2 + 1} = 1
 $$
 
 ### Variance Exploding Formulation
