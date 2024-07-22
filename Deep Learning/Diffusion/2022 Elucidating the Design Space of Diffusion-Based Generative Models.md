@@ -54,39 +54,34 @@ $$
 $$
 反向 SDE 为：
 $$
-\mathrm{d}\mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - 2 s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p(\mathbf{x}_{t})\right] \mathrm{d}t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)} \mathrm{d}\mathbf{w}_{t}
+\mathrm{d}\mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - 2 s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d}t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)} \mathrm{d}\mathbf{w}_{t}
 $$
-其中 $p(\mathbf{x}_{t})$ 是 $\mathbf{x}_{t}$ 的边际概率分布。对应的概率流 ODE 为：
+其中 $p_{t}(\mathbf{x}_{t})$ 是 $t$ 时刻 $\mathbf{x}_{t}$ 的边际概率分布。对应的概率流 ODE 为：
 $$
-\mathrm{d}\mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p(\mathbf{x}_{t})\right] \mathrm{d}t
+\mathrm{d}\mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d}t
 $$
 
-$p(\mathbf{x}_{t})$ 与 $\mathbb{P}(\mathbf{x}; \sigma)$ 的关系为：
+$p_{t}(\mathbf{x}_{t})$ 与 $\mathbb{P}(\mathbf{x}; \sigma)$ 的关系为：
 $$
 \begin{aligned}
-p(\mathbf{x}_{t}) &= \int_{\mathbb{R}^{d}} \mathcal{N}\left(\mathbf{x}_{t}; s(t)\mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \mathbf{I}\right) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0} \\
+p_{t}(\mathbf{x}_{t}) &= \int_{\mathbb{R}^{d}} \mathcal{N}\left(\mathbf{x}_{t}; s(t)\mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \mathbf{I}\right) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0} \\
 &= \int_{\mathbb{R}^{d}} s(t)^{-d} \mathcal{N}\left(s(t)^{-1}\mathbf{x}_{t}; \mathbf{x}_{0}, \sigma(t)^{2} \mathbf{I}\right) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0} \\
 &= s(t)^{-d} \left[\mathcal{N}\left(\mathbf{0}, \sigma(t)^{2} \mathbf{I}\right) * \mathbb{P}_{\text{data}}\right](s(t)^{-1}\mathbf{x}_{t}) \\
 &= s(t)^{-d} \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right)
 \end{aligned}
 $$
-带入到概率流 ODE 中：
+$p_{t}(\mathbf{x}_{t})$ 的分数为：
 $$
 \begin{aligned}
-\mathrm{d} \mathbf{x}_{t} &= \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log \left\{ s(t)^{-d} \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right) \right\}\right] \mathrm{d}t \\
-&=\left[ \frac{\dot{s}(t)}{s(t)}\mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right) \right] \mathrm{d}t \\
-&=\left[ \frac{\dot{s}(t)}{s(t)}\mathbf{x}_{t} - s(t)\dot{\sigma}(t)\sigma(t) \nabla_{s(t)^{-1}\mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right) \right] \mathrm{d}t
-\end{aligned}
-$$
-其中：
-$$
-\begin{aligned}
-\nabla_{\mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right) &= \frac{\mathrm{d} }{\mathrm{d} \mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right) \\
-&= \frac{\mathrm{d} }{\mathrm{d} \mathbf{u}_{t}} \log \mathbb{P}\left(\mathbf{u}_{t}; \sigma(t)\right) \frac{\mathrm{d} \mathbf{u}_{t}}{\mathrm{d} \mathbf{x}_{t}} && \mathbf{u}_{t} = s(t)^{-1}\mathbf{x}_{t} \\
+\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) &= \nabla_{\mathbf{x}_{t}} \log s(t)^{-d} \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right) \\
+&= \nabla_{\mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right) \\
 &= s(t)^{-1} \nabla_{s(t)^{-1}\mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right)
 \end{aligned}
 $$
-
+带入到概率流 ODE 中，有：
+$$
+\mathrm{d}\mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)\dot{\sigma}(t)\sigma(t) \nabla_{s(t)^{-1}\mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right)\right] \mathrm{d}t
+$$
 取 $s(t) = 1$，则有：
 $$
 \mathrm{d} \mathbf{x}_{t} = - \dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t}; \sigma(t)) \mathrm{d}t
@@ -96,43 +91,43 @@ $$
 
 设 $D_{\theta}:\mathbb{R}^{d} \times \mathbb{R} \mapsto \mathbb{R}^{d}$ 是去噪神经网络，训练的目标是恢复原始数据，即它最小化了任意加噪后的数据与原始数据的 L2 loss：
 $$
-\mathcal{L} = \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})}\|D_{\theta}(\mathbf{x} + \sigma\boldsymbol{\epsilon}; \sigma) - \mathbf{x}_{0}\|_{2}^{2}
+\mathcal{L} = \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})}\|D_{\theta}(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}; \sigma) - \mathbf{x}_{0}\|_{2}^{2}
 $$
 设 $\mathbf{y} = s\mathbf{x}_{0} + s\sigma \boldsymbol{\epsilon}$，$\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$。要让 $\mathcal{L}$ 最小，则求 $\mathcal{L}$ 关于 $D_{\theta}$ 变分的零点：
 $$
 \begin{aligned}
 0 &= \delta_{D_{\theta}}\mathcal{L} \\
-0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \delta_{D_{\theta}} \|D_{\theta}(\mathbf{x} + \sigma\boldsymbol{\epsilon}; \sigma) - \mathbf{x}_{0}\|_{2}^{2}\\
-0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{s^{-1}\mathbf{y} \sim \mathcal{N}(\mathbf{x}_{0}, \sigma^{2} \mathbf{I})} \delta_{D_{\theta}} \|D_{\theta}(s^{-1}\mathbf{y}; \sigma) - \mathbf{x}_{0}\|_{2}^{2} \\
-0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{s^{-1}\mathbf{y} \sim \mathcal{N}(\mathbf{x}_{0}, \sigma^{2} \mathbf{I})} \left[D_{\theta}(s^{-1}\mathbf{y}; \sigma) - \mathbf{x}_{0}\right] \\
-0 &= \mathbb{E}_{s^{-1}\mathbf{y} \sim \mathcal{N}(\mathbf{x}_{0}, \sigma^{2} \mathbf{I})} \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[D_{\theta}(s^{-1}\mathbf{y}; \sigma) - \mathbf{x}_{0}\right] \\
-0 &= \int_{\mathbb{R}^{d}} \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \left(D_{\theta}(s^{-1}\mathbf{y}; \sigma) - \mathbf{x}_{0}\right)\right] \mathrm{d}s^{-1}\mathbf{y} \\
-0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \left(D_{\theta}(s^{-1}\mathbf{y}; \sigma) - \mathbf{x}_{0}\right)\right]
+0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \delta_{D_{\theta}} \|D_{\theta}(\mathbf{y}; \sigma) - \mathbf{x}_{0}\|_{2}^{2}\\
+0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\mathbf{y} \sim \mathcal{N}(s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I})} \delta_{D_{\theta}} \|D_{\theta}(\mathbf{y}; \sigma) - \mathbf{x}_{0}\|_{2}^{2} \\
+0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\mathbf{y} \sim \mathcal{N}(s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I})} \left[D_{\theta}(\mathbf{y}; \sigma) - \mathbf{x}_{0}\right] \\
+0 &= \mathbb{E}_{\mathbf{y} \sim \mathcal{N}(s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I})} \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[D_{\theta}(\mathbf{y}; \sigma) - \mathbf{x}_{0}\right] \\
+0 &= \int_{\mathbb{R}^{d}} \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \left(D_{\theta}(\mathbf{y}; \sigma) - \mathbf{x}_{0}\right)\right] \mathrm{d}\mathbf{y} \\
+0 &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \left(D_{\theta}(\mathbf{y}; \sigma) - \mathbf{x}_{0}\right)\right]
 \end{aligned}
 $$
 可以解得：
 $$
 \begin{aligned}
-D_{\theta}(s^{-1}\mathbf{y}; \sigma) &= \frac{\mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathbf{x}_{0} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I})\right]}{\mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I})\right]} \\
-&= \frac{\int_{\mathbb{R}^{d}} \mathbf{x}_{0} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{\int_{\mathbb{R}^{d}} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
-&= s^{-1}\mathbf{y} - \frac{\int_{\mathbb{R}^{d}} (s^{-1}\mathbf{y} - \mathbf{x}_{0}) \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{\int_{\mathbb{R}^{d}} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
-&= s^{-1}\mathbf{y} + \frac{\int_{\mathbb{R}^{d}} \sigma^{2}[\nabla_{s^{-1}\mathbf{y}} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I})] \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{\int_{\mathbb{R}^{d}} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
-&= s^{-1}\mathbf{y} + \frac{\sigma^{2} \nabla_{s^{-1}\mathbf{y}} \int_{\mathbb{R}^{d}} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{\int_{\mathbb{R}^{d}} \mathcal{N}(s^{-1}\mathbf{y}; \mathbf{x}_{0}, \sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
-&= s^{-1}\mathbf{y} + \sigma^{2} \frac{\nabla_{s^{-1}\mathbf{y}} \mathbb{P}(s^{-1}\mathbf{y}; \sigma)}{\mathbb{P}(s^{-1}\mathbf{y}; \sigma)} \\
-&= s^{-1}\mathbf{y} + \sigma^{2} \nabla_{s^{-1}\mathbf{y}} \log \mathbb{P}(s^{-1}\mathbf{y}; \sigma)
+D_{\theta}(\mathbf{y}; \sigma) &= \frac{\mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathbf{x}_{0} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I})\right]}{\mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \left[\mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I})\right]} \\
+&= \frac{\int_{\mathbb{R}^{d}} \mathbf{x}_{0} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{\int_{\mathbb{R}^{d}} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
+&= s^{-1}\mathbf{y} + \frac{\int_{\mathbb{R}^{d}} (s\mathbf{x}_{0} - \mathbf{y}) \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{s \int_{\mathbb{R}^{d}} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
+&= s^{-1}\mathbf{y} + \frac{\int_{\mathbb{R}^{d}} s^{2}\sigma^{2}[\nabla_{\mathbf{y}} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I})] \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{s \int_{\mathbb{R}^{d}} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
+&= s^{-1}\mathbf{y} + \frac{s\sigma^{2} \nabla_{\mathbf{y}} \int_{\mathbb{R}^{d}} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}}{\int_{\mathbb{R}^{d}} \mathcal{N}(\mathbf{y}; s\mathbf{x}_{0}, s^{2}\sigma^{2} \mathbf{I}) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}} \\
+&= s^{-1}\mathbf{y} + s\sigma^{2} \frac{\nabla_{\mathbf{y}} p_{t}(\mathbf{y})}{p_{t}(\mathbf{y})} \\
+&= s^{-1}\mathbf{y} + s\sigma^{2} \nabla_{\mathbf{y}} \log p_{t}(\mathbf{y})
 \end{aligned}
 $$
-因此，$\nabla_{s^{-1}\mathbf{y}} \log \mathbb{P}(s^{-1}\mathbf{y}; \sigma)$ 和 $D_{\theta}(s^{-1}\mathbf{y}; \sigma)$ 的关系为：
+因此，$\nabla_{\mathbf{y}} \log p_{t}(\mathbf{y})$ 和 $D_{\theta}(\mathbf{y}; \sigma)$ 的关系为：
 $$
-\nabla_{s^{-1}\mathbf{y}} \log \mathbb{P}(s^{-1}\mathbf{y}; \sigma) = \frac{D_{\theta}(s^{-1}\mathbf{y}; \sigma) - s^{-1}\mathbf{y}}{\sigma^{2}}
+\nabla_{\mathbf{y}} \log p_{t}(\mathbf{y}) = \frac{D_{\theta}(\mathbf{y}; \sigma) - s^{-1}\mathbf{y}}{s\sigma^{2}}
 $$
-定义 $\epsilon_{\theta}(s^{-1}\mathbf{y}; \sigma) = \left[s^{-1}\mathbf{y} - D_{\theta}(s^{-1}\mathbf{y}; \sigma)\right] / \sigma$，则此时的优化目标是：
+定义 $\epsilon_{\theta}(\mathbf{y}; \sigma) = \left[s^{-1}\mathbf{y} - D_{\theta}(\mathbf{y}; \sigma)\right] / \sigma$，则此时的优化目标是：
 $$
-\|D_{\theta}(s^{-1}\mathbf{y}; \sigma) - \mathbf{x}_{0}\|_{2}^{2} = \|D_{\theta}(s^{-1}\mathbf{y}; \sigma) - s^{-1}\mathbf{y} + \sigma\boldsymbol{\epsilon}\|_{2}^{2} = \sigma^{2} \|\epsilon_{\theta}(s^{-1}\mathbf{y}; \sigma) - \boldsymbol{\epsilon}\|_{2}^{2}
+\|D_{\theta}(\mathbf{y}; \sigma) - \mathbf{x}_{0}\|_{2}^{2} = \|D_{\theta}(\mathbf{y}; \sigma) - s^{-1}\mathbf{y} + \sigma \boldsymbol{\epsilon}\|_{2}^{2} = \sigma^{2} \|\epsilon_{\theta}(\mathbf{y}; \sigma)\|_{2}^{2}
 $$
-可见 $\epsilon_{\theta}(s^{-1}\mathbf{y}; \sigma)$ 同样最小化了 $\mathcal{L}$，且 $\nabla_{s^{-1}\mathbf{y}} \log \mathbb{P}(s^{-1}\mathbf{y}; \sigma)$ 和 $\epsilon_{\theta}(s^{-1}\mathbf{y}; \sigma)$ 的关系为：
+可见 $\epsilon_{\theta}(\mathbf{y}; \sigma)$ 同样最小化了 $\mathcal{L}$，且 $\nabla_{\mathbf{y}} \log p_{t}(\mathbf{y}; \sigma)$ 和 $\epsilon_{\theta}(\mathbf{y}; \sigma)$ 的关系为：
 $$
-\nabla_{s^{-1}\mathbf{y}} \log \mathbb{P}(s^{-1}\mathbf{y}; \sigma) = -\frac{\epsilon_{\theta}(s^{-1}\mathbf{y}; \sigma)}{\sigma}
+\nabla_{\mathbf{y}} \log p_{t}(\mathbf{y}; \sigma) = -\frac{\epsilon_{\theta}(\mathbf{y}; \sigma)}{s\sigma}
 $$
 
 ### Time-dependent Signal Scaling
@@ -140,10 +135,11 @@ $$
 将用神经网络表达的分数带入到 ODE 中，得到：
 $$
 \begin{aligned}
-\mathrm{d} \mathbf{x}_{t} &= \left[\frac{\dot{s}(t)}{s(t)}\mathbf{x}_{t} - s(t)\dot{\sigma}(t)\sigma(t) \nabla_{s(t)^{-1}\mathbf{x}_{t}} \log \mathbb{P}\left(s(t)^{-1}\mathbf{x}_{t}; \sigma(t)\right)\right] \mathrm{d}t \\
-&= \left[ \frac{\dot{s}(t)}{s(t)}\mathbf{x}_{t} - \frac{s(t)\dot{\sigma}(t)}{\sigma(t)} \left(D_{\theta}\left(\frac{\mathbf{x}_{t}}{s(t)}; \sigma(t)\right) - \frac{\mathbf{x}_{t}}{s(t)}\right)\right] \mathrm{d}t \\
-&= \left[ \left(\frac{\dot{s}(t)}{s(t)} + \frac{\dot{\sigma}(t)}{\sigma(t)}\right)\mathbf{x}_{t} - \frac{s(t)\dot{\sigma}(t)}{\sigma(t)}D_{\theta}\left(\frac{\mathbf{x}_{t}}{s(t)}; \sigma(t)\right)\right] \mathrm{d}t \\
-&= \left[ \frac{\dot{s}(t)}{s(t)}\mathbf{x}_{t} - s(t)\dot{\sigma}(t)\epsilon_{\theta}\left(\frac{\mathbf{x}_{t}}{s(t)}; \sigma(t)\right)\right] \mathrm{d}t
+\mathrm{d}\mathbf{x}_{t} &= \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d}t
+\\
+&= \left[ \frac{\dot{s}(t)}{s(t)}\mathbf{x}_{t} - \frac{s(t)\dot{\sigma}(t)}{\sigma(t)} \left(D_{\theta}(\mathbf{x}_{t}; \sigma(t)) - \frac{\mathbf{x}_{t}}{s(t)}\right)\right] \mathrm{d}t \\
+&= \left[ \left(\frac{\dot{s}(t)}{s(t)} + \frac{\dot{\sigma}(t)}{\sigma(t)}\right)\mathbf{x}_{t} - \frac{s(t)\dot{\sigma}(t)}{\sigma(t)}D_{\theta}(\mathbf{x}_{t}; \sigma(t))\right] \mathrm{d}t \\
+&= \left[ \frac{\dot{s}(t)}{s(t)}\mathbf{x}_{t} - s(t)\dot{\sigma}(t)\epsilon_{\theta}(\mathbf{x}_{t}; \sigma(t))\right] \mathrm{d}t
 \end{aligned}
 $$
 可以通过数值求解，如 Euler 法或 Runge-Kutta 等方法，EDM 采用的是 2 阶 Heun 方法，即梯形方法。见最前面的伪代码。
@@ -224,9 +220,9 @@ $$
 其中 $F_{\theta}$ 是网络，$c_{\text{skip}}$ 是跳跃连接，$c_{\text{in}}, c_{\text{out}}$ 是输入和输出的缩放，$c_{\text{noise}}$ 是噪声注入。带入到训练目标中，有：
 $$
 \begin{aligned}
-\mathcal{L} &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\sigma \sim \mathbb{P}_{\text{train}}} \mathbb{E}_{\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \left[\lambda(\sigma) \|D_{\theta}(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}; \sigma) - \mathbf{x}_{0}\|_{2}^{2}\right] \\
-&= \mathbb{E}_{\mathbf{x}_{0}, \sigma, \boldsymbol{\epsilon}} \left[\lambda(\sigma) \|c_{\text{skip}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}) + c_{\text{out}}(\sigma) F_{\theta}(c_{\text{in}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}); c_{\text{noise}}(\sigma)) - \mathbf{x}_{0}\|_{2}^{2}\right] \\
-&= \mathbb{E}_{\mathbf{x}_{0}, \sigma, \boldsymbol{\epsilon}} \left[\lambda(\sigma) c_{\text{out}}(\sigma)^{2} \left\|F_{\theta}(c_{\text{in}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}); c_{\text{noise}}(\sigma)) - \frac{1}{c_{\text{out}}(\sigma)}(\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}))\right\|_{2}^{2}\right]
+\mathcal{L} &= \mathbb{E}_{\mathbf{x}_{0} \sim \mathbb{P}_{\text{data}}} \mathbb{E}_{\sigma \sim \mathbb{P}_{\text{train}}} \mathbb{E}_{\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \left[\lambda(\sigma) \|D_{\theta}(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}; \sigma) - \mathbf{x}_{0}\|_{2}^{2}\right] \\
+&= \mathbb{E}_{\mathbf{x}_{0}, \sigma, \boldsymbol{\epsilon}} \left[\lambda(\sigma) \|c_{\text{skip}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}) + c_{\text{out}}(\sigma) F_{\theta}(c_{\text{in}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}); c_{\text{noise}}(\sigma)) - \mathbf{x}_{0}\|_{2}^{2}\right] \\
+&= \mathbb{E}_{\mathbf{x}_{0}, \sigma, \boldsymbol{\epsilon}} \left[\lambda(\sigma) c_{\text{out}}(\sigma)^{2} \left\|F_{\theta}(c_{\text{in}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}); c_{\text{noise}}(\sigma)) - \frac{1}{c_{\text{out}}(\sigma)}(\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}))\right\|_{2}^{2}\right]
 \end{aligned}
 $$
 其中 $\lambda(\sigma)$ 是一项权重项，用于调整不同噪声水平的重要性。在训练时，$\lambda(\sigma) = 1 / c_{\text{out}}(\sigma)^{2}$。$p_{\text{train}}(\sigma)$ 也需要经验性地选择，在中等噪声水平下才能显著降低损失；在极低的噪声水平下，很难辨别出极小的噪声成分；而在高噪声水平下，训练目标总是与接近数据集平均值的正确答案相差甚远。因此，$p_{\text{train}}(\sigma)$ 就经验性地设置为 $\log\sigma \sim \mathcal{U}(P_{\text{mean}}, P_{\text{std}})$。
@@ -234,33 +230,33 @@ $$
 一般来说，网络的输入满足方差为 1 会比较好，因此：
 $$
 \begin{aligned}
-1 & =\mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}}[c_{\text{in}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon})] \\
-&= c_{\text{in}}(\sigma)^{2} \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}}[\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}] \\
-&= c_{\text{in}}(\sigma)^{2} (\sigma_{\text{data}}^{2} + \sigma^{2}) \\
-c_{\text{in}}(\sigma) &= \frac{1}{\sqrt{\sigma_{\text{data}}^{2} + \sigma^{2}}}
+1 & =\mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}}[c_{\text{in}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon})] \\
+&= c_{\text{in}}(\sigma)^{2} \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}}[s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}] \\
+&= c_{\text{in}}(\sigma)^{2} (s^{2}\sigma_{\text{data}}^{2} + s^{2}\sigma^{2}) \\
+c_{\text{in}}(\sigma) &= \frac{1}{\sqrt{s^{2}\sigma_{\text{data}}^{2} + s^{2}\sigma^{2}}}
 \end{aligned}
 $$
 同时，目标也满足方差为 1 会比较好，因此：
 $$
 \begin{aligned}
-1 & = \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\frac{1}{c_{\text{out}}(\sigma)}(\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}))\right] \\
-&= \frac{1}{c_{\text{out}}(\sigma)^{2}} \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon})\right] \\
-c_{\text{out}}(\sigma)^{2} &= \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[(1 - c_{\text{skip}}(\sigma))\mathbf{x}_{0} - c_{\text{skip}}(\sigma)\sigma\boldsymbol{\epsilon}\right] \\
-&= (1 - c_{\text{skip}}(\sigma))^{2} \sigma_{\text{data}}^{2} + c_{\text{skip}}(\sigma)^{2} \sigma^{2} \\
+1 & = \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\frac{1}{c_{\text{out}}(\sigma)}(\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}))\right] \\
+&= \frac{1}{c_{\text{out}}(\sigma)^{2}} \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon})\right] \\
+c_{\text{out}}(\sigma)^{2} &= \mathbb{Var}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[(1 - sc_{\text{skip}}(\sigma))\mathbf{x}_{0} - c_{\text{skip}}(\sigma)s\sigma\boldsymbol{\epsilon}\right] \\
+&= (1 - sc_{\text{skip}}(\sigma))^{2} \sigma_{\text{data}}^{2} + c_{\text{skip}}(\sigma)^{2} s^{2}\sigma^{2}
 \end{aligned}
 $$
 需要选择能让 $c_{\text{out}}(\sigma)$ 最小的那个 $c_{\text{skip}}(\sigma)$：
 $$
 \begin{aligned}
 0 &= \frac{\partial c_{\text{out}}(\sigma)^{2}}{\partial c_{\text{skip}}(\sigma)} \\
-0 &= 2(1 - c_{\text{skip}}(\sigma))\sigma_{\text{data}}^{2} - 2c_{\text{skip}}(\sigma)\sigma^{2} \\
-c_{\text{skip}}(\sigma) &= \frac{\sigma_{\text{data}}^{2}}{\sigma_{\text{data}}^{2} + \sigma^{2}}
+0 &= 2s(1 - sc_{\text{skip}}(\sigma))\sigma_{\text{data}}^{2} - 2c_{\text{skip}}(\sigma)s^{2}\sigma^{2} \\
+c_{\text{skip}}(\sigma) &= \frac{\sigma_{\text{data}}^{2}}{s(\sigma_{\text{data}}^{2} + \sigma^{2})}
 \end{aligned}
 $$
 对应的 $c_{\text{out}}(\sigma)$ 为：
 $$
 \begin{aligned}
-c_{\text{out}}(\sigma)^{2} &= (1 - c_{\text{skip}}(\sigma))^{2} \sigma_{\text{data}}^{2} + c_{\text{skip}}(\sigma)^{2} \sigma^{2} \\
+c_{\text{out}}(\sigma)^{2} &= (1 - sc_{\text{skip}}(\sigma))^{2} \sigma_{\text{data}}^{2} + c_{\text{skip}}(\sigma)^{2} s^{2}\sigma^{2} \\
 &= \left(1 - \frac{\sigma_{\text{data}}^{2}}{\sigma_{\text{data}}^{2} + \sigma^{2}}\right)^{2} \sigma_{\text{data}}^{2} + \left(\frac{\sigma_{\text{data}}^{2}}{\sigma_{\text{data}}^{2} + \sigma^{2}}\right)^{2} \sigma^{2} \\
 &= \frac{(\sigma^{4} \sigma_{\text{data}}^{2} + \sigma^{2} \sigma_{\text{data}}^{4})}{(\sigma^{2} + \sigma_{\text{data}}^{2})^{2}} \\
 c_{\text{out}}(\sigma) &= \frac{\sigma \sigma_{\text{data}}}{\sqrt{\sigma^{2} + \sigma_{\text{data}}^{2}}}
@@ -270,11 +266,11 @@ $$
 $$
 \lambda(\sigma) = \frac{1}{c_{\text{out}}(\sigma)^{2}} = \frac{\sigma^{2} + \sigma_{\text{data}}^{2}}{(\sigma \sigma_{\text{data}})^{2}}
 $$
-假如我们零初始化网络 $F_{\theta}$，那么对于某个固定的 $\sigma$，有：
+假如我们零初始化网络 $F_{\theta}$，那么在训练初始阶段，对于某个固定的 $\sigma$，有：
 $$
 \begin{aligned}
-&\quad\ \ \mathbb{E}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\lambda(\sigma) c_{\text{out}}(\sigma)^{2} \left\|F_{\theta}(c_{\text{in}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}); c_{\text{noise}}(\sigma)) - \frac{1}{c_{\text{out}}(\sigma)}(\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon}))\right\|_{2}^{2}\right] \\
-&= \mathbb{E}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\frac{\sigma^{2} + \sigma_{\text{data}}^{2}}{(\sigma \sigma_{\text{data}})^{2}} \left\|\mathbf{x}_{0} - \frac{\sigma_{\text{data}}^{2}}{\sigma_{\text{data}}^{2} + \sigma^{2}}(\mathbf{x}_{0} + \sigma\boldsymbol{\epsilon})\right\|_{2}^{2}\right] \\
+&\quad\ \ \mathbb{E}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\lambda(\sigma) c_{\text{out}}(\sigma)^{2} \left\|F_{\theta}(c_{\text{in}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}); c_{\text{noise}}(\sigma)) - \frac{1}{c_{\text{out}}(\sigma)}(\mathbf{x}_{0} - c_{\text{skip}}(\sigma)(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon}))\right\|_{2}^{2}\right] \\
+&= \mathbb{E}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\frac{\sigma^{2} + \sigma_{\text{data}}^{2}}{(\sigma \sigma_{\text{data}})^{2}} \left\|\mathbf{x}_{0} - \frac{\sigma_{\text{data}}^{2}}{s(\sigma_{\text{data}}^{2} + \sigma^{2})}(s\mathbf{x}_{0} + s\sigma\boldsymbol{\epsilon})\right\|_{2}^{2}\right] \\
 &= \mathbb{E}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\frac{\sigma^{2} + \sigma_{\text{data}}^{2}}{(\sigma \sigma_{\text{data}})^{2}} \left\|\frac{\sigma^{2}}{\sigma_{\text{data}}^{2} + \sigma^{2}}\mathbf{x}_{0} - \frac{\sigma_{\text{data}}^{2}}{\sigma_{\text{data}}^{2} + \sigma^{2}}\sigma\boldsymbol{\epsilon}\right\|_{2}^{2}\right] \\
 &= \mathbb{E}_{\mathbf{x}_{0}, \boldsymbol{\epsilon}} \left[\frac{1}{\sigma^{2} + \sigma_{\text{data}}^{2}} \left\|\frac{\sigma}{\sigma_{\text{data}}}\mathbf{x}_{0} - \sigma_{\text{data}}\boldsymbol{\epsilon}\right\|_{2}^{2}\right] \\
 &= \frac{1}{\sigma^{2} + \sigma_{\text{data}}^{2}} \left[\left(\frac{\sigma}{\sigma_{\text{data}}}\right)^{2} \sigma_{\text{data}}^{2} + \sigma_{\text{data}}^{2}\right] \\
@@ -282,7 +278,7 @@ $$
 \end{aligned}
 $$
 
-总的来说，这些操作不是改善 FID 本身，而是使训练更加稳健。
+总的来说，这些操作不是为了改善指标，而是使训练更加稳健。
 
 ### Variance Perserving Formulation
 

@@ -58,9 +58,9 @@ $$
 $$
 \mathbf{x}_{t} = s(t) \mathbf{x}_{0} + s(t) \sigma(t) \boldsymbol{\epsilon}
 $$
-用概率形式表达：
+用概率形式表达 $t$ 时刻 $\mathbf{x}_{t}$ 的分布：
 $$
-\mathbb{P}(\mathbf{x}_{t}) = \mathcal{N}\left(\mathbf{x}_{t}; s(t)\mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \mathbf{I}\right)
+p_{t}(\mathbf{x}_{t}) = \mathcal{N}\left(\mathbf{x}_{t}; s(t)\mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \mathbf{I}\right)
 $$
 其中 $t\in[0, T]$，这是一个离散的过程。现在考虑时间连续的情况，即 $t \in [0, 1]$ 的加噪过程。考虑一个时间步微元 $\Delta t$，则有：
 $$
@@ -94,37 +94,41 @@ $$
 $$
 用概率形式表达：
 $$
-\mathbb{P}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t}) = \mathcal{N}\left(\mathbf{x}_{t + \Delta t}; \mathbf{x}_{t} + f(t)\mathbf{x}_{t} \Delta t, g(t)^{2} \Delta t \mathbf{I}\right)
+p_{t + \Delta t \mid t}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t}) = \mathcal{N}\left(\mathbf{x}_{t + \Delta t}; \mathbf{x}_{t} + f(t)\mathbf{x}_{t} \Delta t, g(t)^{2} \Delta t \mathbf{I}\right)
 $$
-为了得到反向的 SDE，就要得到 $\mathbb{P}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t})$。用 Bayes 公式展开：
+为了得到反向的 SDE，就要得到 $p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t})$。用 Bayes 公式展开：
 $$
 \begin{aligned}
-\mathbb{P}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) &= \frac{\mathbb{P}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t}) \mathbb{P}(\mathbf{x}_{t})}{\mathbb{P}(\mathbf{x}_{t + \Delta t})} \\
-&= \mathbb{P}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t}) \exp\left(\log \mathbb{P}(\mathbf{x}_{t}) - \log \mathbb{P}(\mathbf{x}_{t + \Delta t})\right) \\
-&\propto \exp \left( -\frac{\|\mathbf{x}_{t + \Delta t} - \mathbf{x}_{t} - f(t)\mathbf{x}_{t} \Delta t\|^{2}_{2}}{2 g(t)^{2} \Delta t} + \log \mathbb{P}(\mathbf{x}_{t}) - \log \mathbb{P}(\mathbf{x}_{t + \Delta t}) \right)
+p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) &= \frac{p_{t + \Delta t \mid t}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t}) p_{t}(\mathbf{x}_{t})}{p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})} \\
+&= p_{t + \Delta t \mid t}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t}) \exp\left(\log p_{t}(\mathbf{x}_{t}) - \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})\right) \\
+&\propto \exp \left( -\frac{\|\mathbf{x}_{t + \Delta t} - \mathbf{x}_{t} - f(t)\mathbf{x}_{t} \Delta t\|^{2}_{2}}{2 g(t)^{2} \Delta t} + \log p_{t}(\mathbf{x}_{t}) - \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t}) \right)
 \end{aligned}
 $$
-用 Taylor 公式在 $\mathbf{x}_{t}$ 处展开 $\log \mathbb{P}(\mathbf{x}_{t + \Delta t})$：
+用 Taylor 公式在 $\mathbf{x}_{t}$ 处展开 $\log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})$：
 $$
-\log \mathbb{P}(\mathbf{x}_{t + \Delta t}) = \log \mathbb{P}(\mathbf{x}_{t}) + (\mathbf{x}_{t + \Delta t} - \mathbf{x}_{t})^{\top} \nabla_{\mathbf{x_{t}}} \log \mathbb{P}(\mathbf{x}_{t}) + \Delta t \frac{\partial}{\partial t} \log \mathbb{P}(\mathbf{x}_{t}) + \cdots
+\log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t}) = \log p_{t}(\mathbf{x}_{t}) + (\mathbf{x}_{t + \Delta t} - \mathbf{x}_{t})^{\top} \nabla_{\mathbf{x_{t}}} \log p_{t}(\mathbf{x}_{t}) + \Delta t \frac{\partial}{\partial t} \log p_{t}(\mathbf{x}_{t}) + \cdots
 $$
 带回得到：
 $$
-\mathbb{P}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) \propto \exp \left( -\frac{\|\mathbf{x}_{t + \Delta t} - \mathbf{x}_{t} - [f(t)\mathbf{x}_{t} - g(t)^{2}\nabla_{\mathbf{x_{t}}} \log \mathbb{P}(\mathbf{x}_{t})] \Delta t \|^{2}_{2} }{2 g(t)^{2} \Delta t} + O(\Delta t) \right)
+p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) \propto \exp \left( -\frac{\|\mathbf{x}_{t + \Delta t} - \mathbf{x}_{t} - [f(t)\mathbf{x}_{t} - g(t)^{2}\nabla_{\mathbf{x_{t}}} \log p_{t}(\mathbf{x}_{t})] \Delta t \|^{2}_{2} }{2 g(t)^{2} \Delta t} + O(\Delta t) \right)
 $$
 注意到上面的式子很多都是和 $\mathbf{x}_{t}$ 有关的，但实际上已知的是 $\mathbf{x}_{t + \Delta t}$，所以要重写为 $\mathbf{x}_{t + \Delta t}$ 的形式。注意到当 $\Delta t \to 0$ 时，$O(\Delta t) \to 0$，$t \approx t + \Delta t$，所以：
 $$
-\mathbb{P}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) \approx \exp \left( -\frac{\left\|\mathbf{x}_{t} - \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log \mathbb{P}(\mathbf{x}_{t + \Delta t})\right] \Delta t \right\|^{2}_{2} }{2 g(t + \Delta t)^{2} \Delta t} \right)
+p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) \approx \exp \left( -\frac{\left\|\mathbf{x}_{t} - \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})\right] \Delta t \right\|^{2}_{2} }{2 g(t + \Delta t)^{2} \Delta t} \right)
 $$
 因此：
 $$
-\mathbb{P}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) = \mathcal{N}(\mathbf{x}_{t}; \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log \mathbb{P}(\mathbf{x}_{t + \Delta t})\right] \Delta t, g(t + \Delta t)^{2} \Delta t \mathbf{I})
+p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) = \mathcal{N}\left(\mathbf{x}_{t}; \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})\right] \Delta t, g(t + \Delta t)^{2} \mathbf{I} \Delta t\right)
 $$
-取 $\Delta t \to 0$，对应的 SDE 为：
+取 $\Delta t \to 0$，得到：
+$$
+\mathbf{x}_{t} = \mathbf{x}_{t + \Delta t} + \left[f(t)\mathbf{x}_{t} - g(t)^{2}\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \Delta t + g(t) \sqrt{\Delta t} \boldsymbol{\epsilon}
+$$
+对应的 SDE 为：
 $$
 \begin{aligned}
-\mathrm{d} \mathbf{x}_{t} &= [f(t)\mathbf{x} - g(t)^{2} \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t})] \mathrm{d} t + g(t) \mathrm{d} \bar{\mathbf{w}} \\
-&= \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - 2 s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t})\right] \mathrm{d} t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)} \mathrm{d}\bar{\mathbf{w}}
+\mathrm{d} \mathbf{x}_{t} &= [f(t)\mathbf{x} - g(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})] \mathrm{d} t + g(t) \mathrm{d} \bar{\mathbf{w}} \\
+&= \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - 2 s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d} t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)} \mathrm{d}\bar{\mathbf{w}}
 \end{aligned}
 $$
 其中 $\bar{\mathbf{w}}$ 也是标准维纳过程，但时间从 $1$ 到 $0$，$\mathrm{d} t$ 是负的时间微元。
@@ -134,36 +138,36 @@ $$
 这里省略 Fokker-Planck 方程的介绍。前向 SDE对应的 Fokker-Planck 方程为：
 $$
 \begin{aligned}
-\frac{\partial \mathbb{P}(\mathbf{x}_{t})}{\partial t} &= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}\mathbb{P}(\mathbf{x}_{t})\right] + \frac{1}{2} \nabla_{\mathbf{x}_{t}} \cdot \nabla_{\mathbf{x}_{t}} \left[g(t)^{2} \mathbb{P}(\mathbf{x}_{t})\right] \\
-&= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}\mathbb{P}(\mathbf{x}_{t}) - \frac{1}{2} g(t)^{2} \nabla_{\mathbf{x}_{t}} \mathbb{P}(\mathbf{x}_{t})\right] \\
-&= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}\mathbb{P}(\mathbf{x}_{t}) - \frac{1}{2} g(t)^{2} \mathbb{P}(\mathbf{x}_{t}) \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t})\right] \\
-&= -\nabla_{\mathbf{x}_{t}} \cdot \left\{\left[f(t)\mathbf{x}_{t} - \frac{1}{2} g(t)^{2} \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t})\right] \mathbb{P}(\mathbf{x}_{t}) \right\}
+\frac{\partial p_{t}(\mathbf{x}_{t})}{\partial t} &= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}p_{t}(\mathbf{x}_{t})\right] + \frac{1}{2} \nabla_{\mathbf{x}_{t}} \cdot \nabla_{\mathbf{x}_{t}} \left[g(t)^{2} p_{t}(\mathbf{x}_{t})\right] \\
+&= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}p_{t}(\mathbf{x}_{t}) - \frac{1}{2} g(t)^{2} \nabla_{\mathbf{x}_{t}} p_{t}(\mathbf{x}_{t})\right] \\
+&= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}p_{t}(\mathbf{x}_{t}) - \frac{1}{2} g(t)^{2} p_{t}(\mathbf{x}_{t}) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \\
+&= -\nabla_{\mathbf{x}_{t}} \cdot \left\{\left[f(t)\mathbf{x}_{t} - \frac{1}{2} g(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] p_{t}(\mathbf{x}_{t}) \right\}
 \end{aligned}
 $$
 观察这个式子，发现它是另外一个 SDE：
 $$
 \begin{aligned}
-\mathrm{d} \mathbf{x}_{t} &= \left[f(t) - \frac{1}{2} [g(t)^{2} - h(t)^{2}] \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t})\right] \mathrm{d} t + \frac{1}{2} h(t)^{2} \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t}) \mathrm{d} \mathbf{w}_{t} \\
-&= \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - \frac{1}{2} [2s(t)^{2}\dot{\sigma}(t)\sigma(t) - h(t)^{2}] \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t})\right] \mathrm{d} t + \frac{1}{2} h(t)^{2} \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t}) \mathrm{d} \mathbf{w}_{t}
+\mathrm{d} \mathbf{x}_{t} &= \left[f(t) - \frac{1}{2} [g(t)^{2} - h(t)^{2}] \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d} t + \frac{1}{2} h(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) \mathrm{d} \mathbf{w}_{t} \\
+&= \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - \frac{1}{2} [2s(t)^{2}\dot{\sigma}(t)\sigma(t) - h(t)^{2}] \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d} t + \frac{1}{2} h(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) \mathrm{d} \mathbf{w}_{t}
 \end{aligned}
 $$
-的 Fokker-Planck 方程，$h(t)$ 是任意满足 $h(t)^{2} < g(t)^{2}$ 的函数。这个 SDE 和前向 SDE 的 Fokker-Planck 方程是一样的，因此这个两个 SDE 解得的边缘概率密度 $\mathbb{P}(\mathbf{x}_{t})$ 是完全等价的。当 $h(t)\equiv0$ 的时候，就得到了概率流 ODE：
+的 Fokker-Planck 方程，$h(t)$ 是任意满足 $h(t)^{2} < g(t)^{2}$ 的函数。这个 SDE 和前向 SDE 的 Fokker-Planck 方程是一样的，因此这个两个 SDE 解得的边缘概率密度 $p_{t}(\mathbf{x}_{t})$ 是完全等价的。当 $h(t)\equiv0$ 的时候，就得到了概率流 ODE：
 $$
-\mathrm{d} \mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log \mathbb{P}(\mathbf{x}_{t})\right] \mathrm{d} t
+\mathrm{d} \mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d} t
 $$
 当 $h(t)=g(t)$ 的时候，就得到了前向和反向 SDE。
 
 ### Controlable Generation
 
-对于带条件的概率分布 $\mathbb{P}(\mathbf{x}_{t} \mid \mathbf{y})$，可以直接带入逆时 SDE 中：
+对于带条件的概率分布 $p_{t}(\mathbf{x}_{t} \mid \mathbf{y})$，可以直接带入逆时 SDE 中：
 $$
 \begin{aligned}
-\mathrm{d}\mathbf{x} &= \left[f(t) \mathbf{x} - g(t)^{2} \nabla_{\mathbf{x}} \log \mathbb{P}(\mathbf{x} \mid \mathbf{y})\right] \mathrm{d}t + g(t) \mathrm{d}\bar{\mathbf{w}}_{t} \\
-&= \left[f(t) \mathbf{x} - g(t)^{2} \nabla_{\mathbf{x}} \log \frac{\mathbb{P}(\mathbf{x}) \mathbb{P}(\mathbf{y} \mid \mathbf{x})}{\mathbb{P}(\mathbf{y})}\right] \mathrm{d}t + g(t) \mathrm{d}\bar{\mathbf{w}}_{t} \\
-&= \left\{f(t) \mathbf{x} - g(t)^{2} \left[\nabla_{\mathbf{x}} \log \mathbb{P}(\mathbf{x}) + \nabla_{\mathbf{x}} \log \mathbb{P}(\mathbf{y} \mid \mathbf{x})\right]\right\} \mathrm{d}t + g(t) \mathrm{d}\bar{\mathbf{w}}_{t}
+\mathrm{d}\mathbf{x}_{t} &= \left[f(t) \mathbf{x}_{t} - g(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t} \mid \mathbf{y})\right] \mathrm{d}t + g(t) \mathrm{d}\bar{\mathbf{w}}_{t} \\
+&= \left[f(t) \mathbf{x}_{t} - g(t)^{2} \nabla_{\mathbf{x}_{t}} \log \frac{p_{t}(\mathbf{x}_{t}) p_{t}(\mathbf{y} \mid \mathbf{x}_{t})}{p_{t}(\mathbf{y})}\right] \mathrm{d}t + g(t) \mathrm{d}\bar{\mathbf{w}}_{t} \\
+&= \left\{f(t) \mathbf{x}_{t} - g(t)^{2} \left[\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) + \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{y} \mid \mathbf{x}_{t})\right]\right\} \mathrm{d}t + g(t) \mathrm{d}\bar{\mathbf{w}}_{t}
 \end{aligned}
 $$
-其中 $\mathbb{P}(\mathbf{y} \mid \mathbf{x})$ 可以用 Classifier Guidance 的方式获取。
+其中 $p_{t}(\mathbf{y} \mid \mathbf{x}_{t})$ 可以用 Classifier Guidance 的方式获取。
 
 ### Variance Preserve SDE
 
@@ -171,7 +175,7 @@ DDPM 类型的 Diffusion：
 $$
 \mathrm{d}\mathbf{x} = -\frac{1}{2} \beta(t)\mathbf{x}\mathrm{d}t + \sqrt{\beta(t)}\mathrm{d}\mathbf{w}_{t}
 $$
-其中 $\beta(i/N) = N\beta_{i}$，$N$ 是总时间，$\beta_{i}$ 是 DDPM 预设的参数，$\beta_{\min} = 1\times10^{-4}$, $\beta_{\max} = 0.02$, $\beta_{i} = \beta_{\min} + (\beta_{\max} - \beta_{\min})i/N$。VP SDE 之所以叫 VP 是因为，如果 $\mathbb{P}_{\text{data}}$ 的方差为 1 的话，那么 $\mathbb{P}(\mathbf{x}_{t})$ 的方差也是 1。
+其中 $\beta(i/N) = N\beta_{i}$，$N$ 是总时间，$\beta_{i}$ 是 DDPM 预设的参数，$\beta_{\min} = 1\times10^{-4}$, $\beta_{\max} = 0.02$, $\beta_{i} = \beta_{\min} + (\beta_{\max} - \beta_{\min})i/N$。VP SDE 之所以叫 VP 是因为，如果 $\mathbb{P}_{\text{data}}$ 的方差为 1 的话，那么 $p_{t}(\mathbf{x}_{t})$ 的方差也是 1。
 
 ### Variance Explode SDE
 
