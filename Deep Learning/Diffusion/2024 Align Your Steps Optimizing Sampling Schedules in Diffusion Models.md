@@ -28,15 +28,15 @@ $$
     <img src="images/ays-1d.png" width="50%">
 </table>
 
-从一个 Case Study 开始。假设数据分布为 $\mathbb{P}_{\text{data}}(\mathbf{x}) \sim \mathcal{N}(\mathbf{0}, c^{2}\mathbf{I})$，定义前向 SDE 和反向 ODE 分别是：
+从一个 Case Study 开始。假设数据分布为 $\mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \sim \mathcal{N}(\mathbf{0}, c^{2}\mathbf{I})$，定义前向 SDE 和反向 ODE 分别是：
 $$
 \begin{cases}
 \text{Noise Schedule:} & \mathbf{x}_{t} = \mathbf{x}_{0} + t\boldsymbol{\epsilon} \in \mathbb{R}^{d} \\
-\text{Forward SDE:} & \mathrm{d}\mathbf{x} = \sqrt{2t}\mathrm{d}\mathbf{w} \\
-\text{Reverse ODE:} & \mathrm{d}\mathbf{x} = -t\nabla_{\mathbf{x}}\log p(\mathbf{x}, t)\mathrm{d}t
+\text{Forward SDE:} & \mathrm{d}\mathbf{x}_{t} = \sqrt{2t}\mathrm{d}\mathbf{w} \\
+\text{Reverse ODE:} & \mathrm{d}\mathbf{x}_{t} = -t\nabla_{\mathbf{x}}\log p_{t}(\mathbf{x}_{t})\mathrm{d}t
 \end{cases}
 $$
-取 $[t_{\min}, t_{\max}]$ 为采样范围，将其分成 $n$ 个区间 $t_{\min} = t_{0} < t_{1} < \cdots < t_{n} = t_{\max}$，并使用前向 Euler 法得到采样结果 $\hat{\mathbf{x}}_{t_{\min}}$。$\hat{\mathbf{x}}_{t_{\min}}$ 的分布应与真实结果分布 $\mathbb{P}(\mathbf{x}_{t_{\min}})$ 之间的 KL 散度最小。在这个 Case 中，最优采样时间表满足 $\{\alpha_{i} = \arctan(t_{i}/c)\}_{i=0}^{n}$ 为等差数列，其中 $\alpha_{\min} = \arctan(t_{\min}/c), \alpha_{\max} = \arctan(t_{\max}/c)$。可以发现，**采样点的选取与数据分布有关**。
+取 $[t_{\min}, t_{\max}]$ 为采样范围，将其分成 $n$ 个区间 $t_{\min} = t_{0} < t_{1} < \cdots < t_{n} = t_{\max}$，并使用前向 Euler 法得到采样结果 $\hat{\mathbf{x}}_{t_{\min}}$。$\hat{\mathbf{x}}_{t_{\min}}$ 的分布应与真实结果分布 $p_{t_{\min}}(\mathbf{x}_{t_{\min}})$ 之间的 KL 散度最小。在这个 Case 中，最优采样时间表满足 $\{\alpha_{i} = \arctan(t_{i}/c)\}_{i=0}^{n}$ 为等差数列，其中 $\alpha_{\min} = \arctan(t_{\min}/c), \alpha_{\max} = \arctan(t_{\max}/c)$。可以发现，**采样点的选取与数据分布有关**。
 
 ---
 
@@ -55,23 +55,27 @@ $$
 
 ---
 
-令 $\mathbf{D}_{\theta}(\mathbf{x}, t)$ 是一个神经网络去噪器，和分数的关系为 $\nabla_{\mathbf{x}} \log \mathbb{P}(\mathbf{x}, t) = (\mathbf{D}_{\theta}(\mathbf{x}, t) - \mathbf{x})/\sigma(t)^2$，则反向 SDE 可以写成：
+令 $\mathbf{D}_{\theta}(\mathbf{x}, s, \sigma)$ 是一个神经网络去噪器，和分数的关系为
 $$
-\mathrm{d}\mathbf{x}_{t} = \left[\left(\frac{\dot{s}(t)}{s(t)} + \frac{2s(t)^2\dot{\sigma}(t)}{\sigma(t)}\right)\mathbf{x}_{t} - \frac{2s(t)^2\dot{\sigma}(t)}{\sigma(t)}\mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t}}{s(t)}, t\right)\right]\mathrm{d}t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)}\mathrm{d}\mathbf{w}
+\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) = \frac{\mathbf{D}_{\theta}(\mathbf{x}, s(t), \sigma(t)) - \mathbf{x}_{t}/s(t)}{s(t)\sigma(t)^2}
+$$
+则反向 SDE 可以写成：
+$$
+\mathrm{d}\mathbf{x}_{t} = \left[\left(\frac{\dot{s}(t)}{s(t)} + 2\frac{\dot{\sigma}(t)}{\sigma(t)}\right)\mathbf{x}_{t} - 2\frac{s(t)\dot{\sigma}(t)}{\sigma(t)}\mathbf{D}_{\theta}(\mathbf{x}_{t}, s(t), \sigma(t))\right]\mathrm{d}t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)}\mathrm{d}\mathbf{w}
 $$
 分段近似的话，就是让 $t_{i}$ 带入 $\mathbf{D}_{\theta}(\mathbf{x}, t)$，让这个 SDE 变成一个线性 SDE：
 $$
-\mathrm{d}\mathbf{x}_{t} = \left[\left(\frac{\dot{s}(t)}{s(t)} + \frac{2s(t)^2\dot{\sigma}(t)}{\sigma(t)}\right)\mathbf{x}_{t} - \frac{2s(t)^2\dot{\sigma}(t)}{\sigma(t)}\mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t_{i}}}{s(t_{i})}, t_{i}\right)\right]\mathrm{d}t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)}\mathrm{d}\mathbf{w}
+\mathrm{d}\mathbf{x}_{t} = \left[\left(\frac{\dot{s}(t)}{s(t)} + 2\frac{\dot{\sigma}(t)}{\sigma(t)}\right)\mathbf{x}_{t} - 2\frac{s(t)\dot{\sigma}(t)}{\sigma(t)}\mathbf{D}_{\theta}(\mathbf{x}_{t_{i}}, s(t_{i}), \sigma(t_{i}))\right]\mathrm{d}t + s(t)\sqrt{2\dot{\sigma}(t)\sigma(t)}\mathrm{d}\mathbf{w}
 $$
 这个 SDE 在小区间 $t_{i}\to t_{i-1}$ 上有解析解。
 
 第一个公式是真实的 SDE，第二个是离散化后的近似的 SDE，在 $t_{i}\to t_{i-1}$ 上应用 KLUB 可以得到：
 $$
-\text{KL}[\mathbb{P}^{\text{True}}_{t_{i}\to t_{i-1}} \parallel \mathbb{P}^{\text{Approx}}_{t_{i}\to t_{i-1}}] \le \mathbb{E}_{\mathbb{P}_{t_{i}\to t_{i-1}}^{\text{True paths}}} \left[\int_{t_{i}}^{t_{i-1}} \frac{s(t)^2\dot{\sigma}(t)}{\sigma(t)^3}\left\|\mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t}}{s(t)}, t\right) - \mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t_{i}}}{s(t_{i})}, t_{i}\right)\right\|^{2} \mathrm{d}t\right]
+\text{KL}[\mathbb{P}^{\text{True}}_{t_{i}\to t_{i-1}} \parallel \mathbb{P}^{\text{Approx}}_{t_{i}\to t_{i-1}}] \le \mathbb{E}_{\mathbb{P}_{t_{i}\to t_{i-1}}^{\text{True paths}}} \left[\int_{t_{i}}^{t_{i-1}} \frac{\dot{\sigma}(t)}{\sigma(t)^3}\left\|\mathbf{D}_{\theta}(\mathbf{x}_{t}, s(t), \sigma(t)) - \mathbf{D}_{\theta}(\mathbf{x}_{t_{i}}, s(t_{i}), \sigma(t_{i}))\right\|^{2} \mathrm{d}t\right]
 $$
 如果网络拟合地足够好，那么 $\mathbb{P}_{t_{i}\to t_{i-1}}^{\text{True paths}}$ 就是真实的 SDE 生成的路径的分布，且 $\mathbb{P}^{\text{True}}_{t_{i}\to t_{i-1}} = \mathbb{P}(\mathbf{x}_{t_{i}}, t_{i})$。因此假设网络拟合得足够好，那么采样近似：
 $$
-\text{KL}[\mathbb{P}^{\text{True}}_{t_{i}\to t_{i-1}} \parallel \mathbb{P}^{\text{Approx}}_{t_{i}\to t_{i-1}}] \le \int_{t_{i}}^{t_{i-1}} \frac{s(t)^2\dot{\sigma}(t)}{\sigma(t)^3} \mathbb{E}_{\mathbf{x}_{t}\sim\mathbb{P}(\mathbf{x}_{t}, t), \mathbf{x}_{t_{i}}\sim\mathbb{P}(\mathbf{x}_{t_{i}} \mid \mathbf{x}_{t})} \left\|\mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t}}{s(t)}, t\right) - \mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t_{i}}}{s(t_{i})}, t_{i}\right)\right\|^{2} \mathrm{d}t
+\text{KL}[\mathbb{P}^{\text{True}}_{t_{i}\to t_{i-1}} \parallel \mathbb{P}^{\text{Approx}}_{t_{i}\to t_{i-1}}] \le \int_{t_{i}}^{t_{i-1}} \frac{\dot{\sigma}(t)}{\sigma(t)^3} \mathbb{E}_{\mathbf{x}_{t}\sim\mathbb{P}(\mathbf{x}_{t}, t), \mathbf{x}_{t_{i}}\sim\mathbb{P}(\mathbf{x}_{t_{i}} \mid \mathbf{x}_{t})} \left\|\mathbf{D}_{\theta}(\mathbf{x}_{t}, s(t), \sigma(t)) - \mathbf{D}_{\theta}(\mathbf{x}_{t_{i}}, s(t_{i}), \sigma(t_{i}))\right\|^{2} \mathrm{d}t
 $$
 在整个 $[t_{\min}, t_{\max}]$ 上的 KL 散度可以看作是分段 KL 散度的和。所以最优采样时间表的优化目标就是找到 $t_{1}, \dots, t_{n-1}$ 使得 KL 散度最小。
 
@@ -79,11 +83,11 @@ $$
 
 既然要 Monte Carlo 估计 KL 散度，那么就要有一个关于 $t$ 的重要性采样器。这里假设数据满足 $\mathbb{P}_{\text{data}}(\mathbf{x}) = \mathcal{N}(\mathbf{0}, c^2\mathbf{I})$，假设网络拟合得足够好，则对于每一个 $t < t_{i}$，有：
 $$
-\mathbb{E}_{\mathbf{x}_{t}\sim\mathbb{P}(\mathbf{x}_{t}, t), \mathbf{x}_{t_{i}}\sim\mathbb{P}(\mathbf{x}_{t_{i}} \mid \mathbf{x}_{t})} \left\|\mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t}}{s(t)}, t\right) - \mathbf{D}_{\theta}\left(\frac{\mathbf{x}_{t_{i}}}{s(t_{i})}, t_{i}\right)\right\|^{2} = c^{4} \left(\frac{1}{\sigma(t)^2 + c^2} - \frac{1}{\sigma(t_{i})^2 + c^2}\right)
+\mathbb{E}_{\mathbf{x}_{t}\sim\mathbb{P}(\mathbf{x}_{t}, t), \mathbf{x}_{t_{i}}\sim\mathbb{P}(\mathbf{x}_{t_{i}} \mid \mathbf{x}_{t})} \left\|\mathbf{D}_{\theta}(\mathbf{x}_{t}, s(t), \sigma(t)) - \mathbf{D}_{\theta}(\mathbf{x}_{t_{i}}, s(t_{i}), \sigma(t_{i}))\right\|^{2} = c^{4} \left(\frac{1}{\sigma(t)^2 + c^2} - \frac{1}{\sigma(t_{i})^2 + c^2}\right)
 $$
 因此：
 $$
-\text{KLUB} \propto \sum_{i=1}^{n} \int_{t_{i}}^{t_{i-1}} \frac{s(t)^2\dot{\sigma}(t)}{\sigma(t)^3} \left(\frac{1}{\sigma(t)^2 + c^2} - \frac{1}{\sigma(t_{i})^2 + c^2}\right) \mathrm{d}t
+\text{KLUB} \propto \sum_{i=1}^{n} \int_{t_{i}}^{t_{i-1}} \frac{\dot{\sigma}(t)}{\sigma(t)^3} \left(\frac{1}{\sigma(t)^2 + c^2} - \frac{1}{\sigma(t_{i})^2 + c^2}\right) \mathrm{d}t
 $$
 
 ---
