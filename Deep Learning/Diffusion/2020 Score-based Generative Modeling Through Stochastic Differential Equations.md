@@ -58,31 +58,37 @@ $$
 $$
 \mathbf{x}_{t} = s(t) \mathbf{x}_{0} + s(t) \sigma(t) \boldsymbol{\epsilon}
 $$
-用概率形式表达 $t$ 时刻 $\mathbf{x}_{t}$ 的分布：
+我们对于 $s(t)$ 的要求是 $s(0) = 1$，$s(t)$ 是不变号的；对 $\sigma(t)$ 的要求是 $\sigma(0) = 0$，$\sigma(t)$ 是单调递增的。
+
+由于我们的噪声满足 Gaussian 分布，所以可以用概率形式表达 $t$ 时刻 $\mathbf{x}_{t}$ 的分布：
 $$
-p_{t}(\mathbf{x}_{t}) = \mathcal{N}\left(\mathbf{x}_{t}; s(t)\mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \mathbf{I}\right)
+p_{t}(\mathbf{x}_{t}) = \int_{\mathbb{R}^{d}} \mathcal{N}\left(\mathbf{x}_{t}; s(t)\mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \mathbf{I}\right) \mathbb{P}_{\text{data}}(\mathbf{x}_{0}) \mathrm{d}\mathbf{x}_{0}
 $$
-其中 $t\in[0, T]$，这是一个离散的过程。现在考虑时间连续的情况，即 $t \in [0, 1]$ 的加噪过程。考虑一个时间步微元 $\Delta t$，则有：
+考虑时间连续的情况，在一个时间步微元 $\Delta t$ 内，有：
 $$
 \begin{aligned}
-\mathbf{x}_{t + \Delta t} - \mathbf{x}_{t} &= [s(t + \Delta t) - s(t)]\mathbf{x}_{0} + \sqrt{s(t + \Delta t)^{2}\sigma(t + \Delta t)^{2} - s(t)^{2}\sigma(t)^{2}} \boldsymbol{\epsilon} \\
-&= [s(t + \Delta t) - s(t)]\left(\frac{\mathbf{x}_{t}}{s(t)} - \sigma(t)\boldsymbol{\epsilon}\right) + \sqrt{s(t + \Delta t)^{2}\sigma(t + \Delta t)^{2} - s(t)^{2}\sigma(t)^{2}} \boldsymbol{\epsilon} \\
-&= \frac{s(t + \Delta t) - s(t)}{s(t)} \mathbf{x}_{t} - \sqrt{s(t + \Delta t)^{2}\sigma(t + \Delta t)^{2} - s(t)^{2}\sigma(t)^{2} - [s(t + \Delta t) - s(t)]^{2}\sigma(t)^{2}} \boldsymbol{\epsilon}
+\mathbf{x}_{t + \Delta t} &= s(t + \Delta t) \left[\mathbf{x}_{0} + \sigma(t + \Delta t) \boldsymbol{\epsilon}_{t + \Delta t}\right] \\
+&= s(t + \Delta t) \left[\frac{\mathbf{x}_{t}}{s(t)} - \sigma(t) \boldsymbol{\epsilon}_{t} + \sigma(t + \Delta t) \boldsymbol{\epsilon}_{t + \Delta t}\right] \\
+&= s(t + \Delta t) \left[\frac{\mathbf{x}_{t}}{s(t)} + \sqrt{\sigma(t + \Delta t)^{2} - \sigma(t)^{2}} \boldsymbol{\epsilon}\right] \\
+&= \frac{s(t + \Delta t)}{s(t)} \mathbf{x}_{t} + s(t + \Delta t) \sqrt{\sigma(t + \Delta t)^{2} - \sigma(t)^{2}} \boldsymbol{\epsilon}
 \end{aligned}
 $$
-当 $\Delta t \to 0$ 时，我们有：
+即：
+$$
+p_{t + \Delta t \mid t}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t}) = \mathcal{N}\left(\mathbf{x}_{t + \Delta t}; \frac{s(t + \Delta t)}{s(t)} \mathbf{x}_{t}, s(t + \Delta t)^{2} \left[\sigma(t + \Delta t)^{2} - \sigma(t)^{2}\right] \mathbf{I}\right)
+$$
+因此我们证明了任意时间间隔 $\Delta t$ 下，$p_{t + \Delta t \mid t}(\mathbf{x}_{t + \Delta t} \mid \mathbf{x}_{t})$ 是一个 Gaussian 分布。当 $\Delta t \to 0$ 时，我们有：
 $$
 \begin{aligned}
 \mathrm{d} \mathbf{x}_{t} &= \lim_{\Delta t \to 0} \mathbf{x}_{t + \Delta t} - \mathbf{x}_{t} \\
-&= \lim_{\Delta t \to 0} \frac{s(t + \Delta t) - s(t)}{s(t)} \mathbf{x}_{t} - \sqrt{s(t + \Delta t)^{2}\sigma(t + \Delta t)^{2} - s(t)^{2}\sigma(t)^{2} - [s(t + \Delta t) - s(t)]^{2}\sigma(t)^{2}} \boldsymbol{\epsilon} \\
-&= \lim_{\Delta t \to 0} \frac{\mathrm{d}s(\xi)}{\mathrm{d}t} \frac{1}{s(t)} \mathbf{x}_{t} \Delta t - \sqrt{\frac{\mathrm{d}s(\eta)^{2}\sigma(\eta)^{2}}{\mathrm{d}t} - \left(\frac{\mathrm{d}s(\xi)}{\mathrm{d}t}\right)^{2}\sigma(t)^{2}} \sqrt{\Delta t}\boldsymbol{\epsilon} \\
-&= \frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} \mathrm{d}t - \sqrt{2 s(t)\sigma(t)[\dot{s}(t)\sigma(t) + s(t)\dot{\sigma}(t)] - 2 \dot{s}(t)s(t)\sigma(t)^{2}} \mathrm{d}\mathbf{w}_{t} \\
+&= \lim_{\Delta t \to 0} \frac{s(t + \Delta t) - s(t)}{s(t)} \mathbf{x}_{t} + s(t + \Delta t) \sqrt{\sigma(t + \Delta t)^{2} - \sigma(t)^{2}} \boldsymbol{\epsilon} \\
+&= \lim_{\Delta t \to 0} \frac{\mathrm{d}s}{\mathrm{d}t}(\xi) \frac{1}{s(t)} \Delta t \mathbf{x}_{t} + s(t + \Delta t) \sqrt{\frac{\mathrm{d}\sigma^{2}}{\mathrm{d}t}(\eta)} \sqrt{\Delta t} \boldsymbol{\epsilon} \\
 &= \frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} \mathrm{d}t + s(t) \sqrt{2\dot{\sigma}(t)\sigma(t)} \mathrm{d}\mathbf{w}_{t}
 \end{aligned}
 $$
-其中 $\xi, \eta \in [t, t + \Delta t]$。因此连续的前向过程（扩散过程）可以用 Ito SDE 描述：
+其中 $\xi, \eta \in (t, t + \Delta t)$。因此连续的前向过程（扩散过程）可以用 Ito SDE 描述：
 $$
-\mathrm{d}\mathbf{x}_{t} = \underbrace{\frac{\dot{s}(t)}{s(t)}}_{f(t)} \mathbf{x}_{t} + \underbrace{s(t) \sqrt{2\dot{\sigma}(t)\sigma(t)}}_{g(t)} \mathrm{d}\mathbf{w}_{t}
+\mathrm{d}\mathbf{x}_{t} = \underbrace{\frac{\dot{s}(t)}{s(t)}}_{f(t)} \mathbf{x}_{t} \mathrm{d}t + \underbrace{s(t) \sqrt{2\dot{\sigma}(t)\sigma(t)}}_{g(t)} \mathrm{d}\mathbf{w}_{t}
 $$
 其中 $f:\mathbb{R} \mapsto \mathbb{R}$ 是 SDE 的漂移系数（drift coefficient），$g:\mathbb{R} \mapsto \mathbb{R}$ 是 SDE 的扩散系数（diffusion coefficient），$\mathbf{w}_{t}$ 是标准维纳过程。当系数在状态空间和时间上是 Lipschitz 连续的时候，Ito SDE 有唯一解。
 
@@ -114,13 +120,13 @@ p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) \propto \
 $$
 注意到上面的式子很多都是和 $\mathbf{x}_{t}$ 有关的，但实际上已知的是 $\mathbf{x}_{t + \Delta t}$，所以要重写为 $\mathbf{x}_{t + \Delta t}$ 的形式。注意到当 $\Delta t \to 0$ 时，$O(\Delta t) \to 0$，$t \approx t + \Delta t$，所以：
 $$
-p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) \approx \exp \left( -\frac{\left\|\mathbf{x}_{t} - \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})\right] \Delta t \right\|^{2}_{2} }{2 g(t + \Delta t)^{2} \Delta t} \right)
+p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) \propto \exp \left( -\frac{\left\|\mathbf{x}_{t} - \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})\right] \Delta t \right\|^{2}_{2} }{2 g(t + \Delta t)^{2} \Delta t} \right)
 $$
-因此：
+即：
 $$
-p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) = \mathcal{N}\left(\mathbf{x}_{t}; \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})\right] \Delta t, g(t + \Delta t)^{2} \mathbf{I} \Delta t\right)
+p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t}) = \mathcal{N}\left(\mathbf{x}_{t}; \mathbf{x}_{t + \Delta t} + \left[f(t + \Delta t)\mathbf{x}_{t + \Delta t} - g(t + \Delta t)^{2}\nabla_{\mathbf{x_{t + \Delta t}}} \log p_{t + \Delta t}(\mathbf{x}_{t + \Delta t})\right] \Delta t, g(t + \Delta t)^{2} \Delta t \mathbf{I}\right)
 $$
-取 $\Delta t \to 0$，得到：
+因此我们证明了，在时间间隔 $\Delta t$ 足够小的时候，$p_{t \mid t + \Delta t}(\mathbf{x}_{t} \mid \mathbf{x}_{t + \Delta t})$ 是一个 Gaussian 分布。取 $\Delta t \to 0$，得到：
 $$
 \mathbf{x}_{t} = \mathbf{x}_{t + \Delta t} + \left[f(t)\mathbf{x}_{t} - g(t)^{2}\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \Delta t + g(t) \sqrt{\Delta t} \boldsymbol{\epsilon}
 $$
@@ -138,7 +144,7 @@ $$
 这里省略 Fokker-Planck 方程的介绍。前向 SDE对应的 Fokker-Planck 方程为：
 $$
 \begin{aligned}
-\frac{\partial p_{t}(\mathbf{x}_{t})}{\partial t} &= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}p_{t}(\mathbf{x}_{t})\right] + \frac{1}{2} \nabla_{\mathbf{x}_{t}} \cdot \nabla_{\mathbf{x}_{t}} \left[g(t)^{2} p_{t}(\mathbf{x}_{t})\right] \\
+\frac{\partial}{\partial t} p_{t}(\mathbf{x}_{t}) &= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}p_{t}(\mathbf{x}_{t})\right] + \frac{1}{2} \nabla_{\mathbf{x}_{t}} \cdot \nabla_{\mathbf{x}_{t}} \left[g(t)^{2} p_{t}(\mathbf{x}_{t})\right] \\
 &= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}p_{t}(\mathbf{x}_{t}) - \frac{1}{2} g(t)^{2} \nabla_{\mathbf{x}_{t}} p_{t}(\mathbf{x}_{t})\right] \\
 &= -\nabla_{\mathbf{x}_{t}} \cdot \left[f(t)\mathbf{x}_{t}p_{t}(\mathbf{x}_{t}) - \frac{1}{2} g(t)^{2} p_{t}(\mathbf{x}_{t}) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \\
 &= -\nabla_{\mathbf{x}_{t}} \cdot \left\{\left[f(t)\mathbf{x}_{t} - \frac{1}{2} g(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] p_{t}(\mathbf{x}_{t}) \right\}
@@ -146,16 +152,9 @@ $$
 $$
 观察这个式子，发现它是另外一个 SDE：
 $$
-\begin{aligned}
-\mathrm{d} \mathbf{x}_{t} &= \left[f(t) - \frac{1}{2} [g(t)^{2} - h(t)^{2}] \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d} t + \frac{1}{2} h(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) \mathrm{d} \mathbf{w}_{t} \\
-&= \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - \frac{1}{2} [2s(t)^{2}\dot{\sigma}(t)\sigma(t) - h(t)^{2}] \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d} t + \frac{1}{2} h(t)^{2} \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) \mathrm{d} \mathbf{w}_{t}
-\end{aligned}
+\mathrm{d} \mathbf{x}_{t} = \left\{f(t) \mathbf{x}_{t} - \frac{1}{2} [g(t)^{2} - h(t)^{2}] \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right\} \mathrm{d} t + h(t) \mathrm{d} \mathbf{w}_{t}
 $$
-的 Fokker-Planck 方程，$h(t)$ 是任意满足 $h(t)^{2} < g(t)^{2}$ 的函数。这个 SDE 和前向 SDE 的 Fokker-Planck 方程是一样的，因此这个两个 SDE 解得的边缘概率密度 $p_{t}(\mathbf{x}_{t})$ 是完全等价的。当 $h(t)\equiv0$ 的时候，就得到了概率流 ODE：
-$$
-\mathrm{d} \mathbf{x}_{t} = \left[\frac{\dot{s}(t)}{s(t)} \mathbf{x}_{t} - s(t)^{2}\dot{\sigma}(t)\sigma(t) \nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t})\right] \mathrm{d} t
-$$
-当 $h(t)=g(t)$ 的时候，就得到了前向和反向 SDE。
+的 Fokker-Planck 方程，$h(t)$ 是任意满足 $h(t)^{2} < g(t)^{2}$ 的函数。这个 SDE 和前向 SDE 的 Fokker-Planck 方程是一样的，因此这个两个 SDE 解得的边缘概率密度 $p_{t}(\mathbf{x}_{t})$ 是完全等价的。当 $h(t) \equiv 0$ 的时候，就得到了概率流 ODE。当 $h(t) \equiv g(t)$ 的时候，就得到了前向和反向 SDE。
 
 ### Controlable Generation
 

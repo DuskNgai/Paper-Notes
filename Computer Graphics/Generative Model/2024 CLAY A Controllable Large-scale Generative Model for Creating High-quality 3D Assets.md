@@ -62,4 +62,11 @@ DiT 用 V-prediction，1000 步训练去噪，100 步推理去噪。最大的模
 
 ## 3.2 Data Standardization for Pre-training
 
+从 ShapeNet 和 Objaverse 中筛选掉复杂场景和破碎的物体，一共筛选出 527k 数据。
 
+### Geometry Unification
+
+因为模型预测的是 Occupancy Field，需要水密物体当 GT，因此需要重构 mesh。重构 mesh 的软件需要满足 3 个条件：
+1. Geometry Preservation：在保持关键几何特征的同时做最小的改动
+2. Volume Conservation：确保所有结构部件的完整
+3. Adaptability to Non-Watertight Meshes：让非水密的物体也能利用起来

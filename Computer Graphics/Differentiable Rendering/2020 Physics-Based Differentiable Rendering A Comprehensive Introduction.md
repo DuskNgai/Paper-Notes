@@ -1,7 +1,5 @@
 # Physics-Based Differentiable Rendering: A Comprehensive Introduction
 
-非直接翻译。
-
 ## 1 Introduction
 
 在了解什么是可微渲染之前，首先要知道什么是渲染。渲染是模型互相耦合作用变为图像的过程。这张图片展示了渲染过程：首先把场景的建模信息（比如纹理，物体形状，相机参数）编码为 $\mathbf{x}$，作为输入送到某个过程 $f:\mathcal{X}\mapsto\mathcal{Y}$ 进行渲染，随后输出图像 $\mathbf{y}$。假如说这个渲染过程 $f$ 是可逆的，那么就可以通过一张图像 $\mathbf{y}$ 得到场景的建模 $\mathbf{x}$。我们把从模型到图像的过程叫做前向渲染（forward rendering），把图像到模型的过程叫做逆渲染（inverse rendering）。但是通常来说，$f$ 是高度复杂的非线性函数，获得其逆映射一般来说不太可能。
@@ -27,11 +25,9 @@ $$
 
 **几何体导数涉及一个独特的挑战：在计算阴影和相互反射时，物体的边界会带来麻烦的不连续性，如果不采取预防措施，会导致不正确的梯度。**
 
-### 1.1 Scope
-
 ## 2 Motivation and Mathematical Preliminaries
 
-我们首先得清楚：渲染通常建模为一个积分问题。可微渲染里面，我们会对渲染函数求导；因此我们需要证明，虽然被积函数是不连续的，但积分（渲染函数）实际上是可微的。不过需要注意的是，基本的数学定理告诉我们，对于不在紧集上连续可导的函数，积分的导数和被积函数导数的积分往往是不一致的，这点将在后续的处理中体现到。
+我们首先得清楚：渲染通常建模为一个积分问题。可微渲染里面，我们会对渲染函数求导；因此我们需要证明，虽然被积函数是不连续的，但整个积分（渲染函数）实际上是可微的。不过需要注意的是，基本的数学定理告诉我们，对于不在紧集上连续可导的函数，积分的导数和被积函数导数的积分往往是不一致的，这点将在后续的处理中体现到。
 
 ---
 
@@ -87,7 +83,7 @@ I_i\approx\frac{1}{N}\sum_{j=1}^{N}f(x_j,y_j;\boldsymbol{\pi})\tag{2}
 $$
 如果求和收敛于积分，即 $\lim_{N\to\infty}1/N\sum_{j=1}^{N}f(x_j,y_j)=I_i$，我们说离散化是**一致的**。样本 $x_j,y_j$ 不需要是随机的。如果我们使用某种概率分布随机采样 $x_j,y_j$，且其期望与积分相同，即 $\mathbb{E}[f(x_j,y_j)]=I_i$，我们说离散化是**无偏的**。
 
-大多数渲染问题是关于 1) 我们如何在这些多维积分中对被积函数 $f$ 建模，以及 2) 我们如何评估、近似、预计算或压缩每个像素的积分 $\int f$。可微渲染提出了第三个问题：我们如何去微分这些积分？
+大多数渲染问题是关于 1) 我们如何在这些多维积分中对被积函数 $f$ 建模，以及 2) 我们如何评估、近似、预计算或压缩每个像素的积分 $\int f \mathrm{d}S$。可微渲染提出了第三个问题：我们如何去微分这些积分？
 
 ### 2.2 Computing Gradients by Differentiating the Integrals
 
@@ -126,7 +122,7 @@ $$
 
 ### 2.3 Distributional Derivatives and Dirac Delta
 
-使用分布导数的概念，它定义了甚至不连续函数的导数。在上面的例子中，被积函数关于 $p$ 的分布导数是 Dirac delta $\delta$：
+一种做法是定义或者借助特殊的函数来定义导数。在上面的例子中，被积函数关于 $p$ 的分布导数是 Dirac delta $\delta$：
 $$
 \frac{\partial}{\partial{p}}\mathbb{1}[x<p]=\delta(x-p)\tag{8}
 $$
@@ -144,11 +140,11 @@ $$
 $$
 \frac{\partial}{\partial{p}}\int_0^p1\mathrm{d}x=1,\frac{\partial}{\partial{p}}\int_p^10\mathrm{d}x=0\tag{10}
 $$
-关于积分边界和被积函数的微分的一般版本是莱布尼茨规则。
+关于积分边界和被积函数的微分的一般版本是 Lebnitz 规则。
 
 ---
 
-莱布尼茨规则：设 $P=\{(x,y)\in\mathbb{R}^2\mid (x,y)\in[a,b]\times[c,d]\}$ 是 $\mathbb{R}^2$ 的一个矩形区域。如果函数 **$f:P\to\mathbb{R}\in C^{(1)}(P,\mathbb{R})$**，且函数 **$a\le\alpha(y),\beta(y)\le b\in C^{(1)}([c,d],\mathbb{R})$**，那么
+Lebnitz 规则：设 $P=\{(x,y)\in\mathbb{R}^2\mid (x,y)\in[a,b]\times[c,d]\}$ 是 $\mathbb{R}^2$ 的一个矩形区域。如果函数 **$f:P\to\mathbb{R}\in C^{(1)}(P,\mathbb{R})$**，且函数 **$a\le\alpha(y),\beta(y)\le b\in C^{(1)}([c,d],\mathbb{R})$**，那么
 $$
 F(y)=\int_{a}^{b}f(x,y)\mathrm{d}x\tag{11}
 $$
@@ -164,10 +160,10 @@ G(y,u,v)=\int_{u}^{v}f(x,y)\mathrm{d}x
 $$
 于是 $f(y)$ 是由 $F(y,u,v)$ 与 $u=a(y),v=b(y)$ 复合而成的函数，由链式法则和可微性可得
 $$
-\begin{align*}
+\begin{aligned}
 \frac{\mathrm{d}G}{\mathrm{d}y}&=\frac{\partial{F}}{\partial{y}}+\frac{\partial{F}}{\partial{u}}\frac{\partial{u}}{\partial{y}}+\frac{\partial{F}}{\partial{v}}\frac{\partial{v}}{\partial{y}}\\
 &=\int_{u}^{v}\frac{\partial{f}}{\partial{y}}(x,y)\mathrm{d}x+f(v,y)\frac{\mathrm{d}v}{\mathrm{d}y}-f(u,y)\frac{\mathrm{d}u}{\mathrm{d}y}
-\end{align*}
+\end{aligned}
 $$
 将 $u=a(y),v=b(y)$ 代入上式就得到我们想要的形式。
 
@@ -175,17 +171,17 @@ $$
 
 因此，给定一个一维积分 $\int_0^1f(x;\pi)\mathrm{d}x$，和一组关于参数 $\pi$ 的不连续点 $p_0,p_1,\dots,p_M$，积分的导数为
 $$
-\begin{align*}
+\begin{aligned}
 &\frac{\partial}{\partial{\pi}}\int_{0}^{1}f(x;\pi)\mathrm{d}x\\
 &=\frac{\partial}{\partial{\pi}}\left[\int_{0}^{p_0}f(x;\pi)\mathrm{d}x+\sum_{k=0}^{M-1}\int_{p_k}^{p_{k+1}}f(x;\pi)\mathrm{d}x+\int_{p_M}^{1}f(x;\pi)\mathrm{d}x\right]\\
 &=\frac{\partial}{\partial{\pi}}\int_{0}^{p_0}f(x;\pi)\mathrm{d}x+\sum_{k=0}^{M-1}\frac{\partial}{\partial{\pi}}\int_{p_k}^{p_{k+1}}f(x;\pi)\mathrm{d}x+\frac{\partial}{\partial{\pi}}\int_{p_M}^{1}f(x;\pi)\mathrm{d}x\\
-&=\int_{0}^{p_0}\dot{f}(x;\pi)\mathrm{d}x+\dot{p_0}f^-(p_0;\pi)\\
-&+\sum_{k=0}^{M-1}\int_{p_k}^{p_{k+1}}\dot{f}(x;\pi)\mathrm{d}x+\sum_{k=0}^{M-1}\left[\dot{p_{k+1}}f^-(p_{k+1};\pi)-\dot{p_k}f^+(p_k;\pi)\right]\\
-&+\int_{p_M}^{1}\dot{f}(x;\pi)\mathrm{d}x-\dot{p_{M-1}}f^+(p_{M-1};\pi)\\
-&=\underbrace{\int_{0}^{1}\dot{f}(x;\pi)\mathrm{d}x}_{\text{interior}}+\underbrace{\sum_{k=0}^{M}\dot{p_k}\left[f^-(p_k;\pi)-f^+(p_k;\pi)\right]}_{\text{boundary}}
-\end{align*}\tag{13}
+&=\int_{0}^{p_0}\frac{\partial f}{\partial\pi}(x;\pi)\mathrm{d}x+\frac{\partial p_0}{\partial\pi} f^+(p_0;\pi) - \frac{\partial 0}{\partial\pi} f^-(p_0;\pi)\\
+&+\sum_{k=0}^{M-1}\int_{p_k}^{p_{k+1}}\frac{\partial f}{\partial\pi}(x;\pi)\mathrm{d}x+\frac{\partial p_{k+1}}{\partial\pi} f^-(p_{k+1};\pi) - \frac{\partial p_k}{\partial\pi} f^+(p_k;\pi)\\
+&+\int_{p_M}^{1}\frac{\partial f}{\partial\pi}(x;\pi)\mathrm{d}x+\frac{\partial1}{\partial\pi} f^-(1;\pi) - \frac{\partial p_M}{\partial\pi} f^+(p_M;\pi)\\
+&=\underbrace{\int_{0}^{1}\frac{\partial f}{\partial\pi}(x;\pi)\mathrm{d}x}_{\text{interior}}+\underbrace{\sum_{k=0}^{M}\frac{\partial p_k}{\partial\pi}\left[f^-(p_k;\pi)-f^+(p_k;\pi)\right]}_{\text{boundary}}
+\end{aligned}\tag{13}
 $$
-其中 $f^-(x;\pi)=\lim_{x'\to x^-}f(x';\pi)$ 和 $f^+(x;\pi)=\lim_{x'\to x^+}f(x';\pi)$。为便于记述，当 $f$ 在 $(x; \pi)$ 处不可微时，我们定义 $\dot{f}(x;\pi)=0$。**Siggraph Course 论文中的公式少了不连续点关于参数 $\pi$ 的导数。**
+其中 $f^-(x;\pi)=\lim_{x'\to x^-}f(x';\pi)$ 和 $f^+(x;\pi)=\lim_{x'\to x^+}f(x';\pi)$。为便于记述，当 $f$ 在 $(x; \pi)$ 处不可微时，我们定义 $\partial f(x;\pi)/\partial \pi=0$.
 
 这个公式告诉了我们，不连续点的集合 $p_k$ 可以包括连续的点，因为对于连续区域，差值 $f^-(x;\pi)=f^+(x;\pi)$。当我们不知道一个三角形边界是否被遮挡时，这对于以后在二维中处理遮挡问题是很重要的。其次，我们不需要实际去拆分积分，因为积分区域可以进行统一的处理。
 
@@ -195,42 +191,45 @@ $$
 $$
 f(x)=\begin{cases}x&x<p\\x-p&p<x<2p\\x-2p&2p<x<1\end{cases}
 $$
-则
+则先求积分后求导数为：
 $$
-\begin{align*}
+\begin{aligned}
 \int_{0}^{1}f(x)\mathrm{d}x&=\frac{1}{2}[(p-0)^2+(2p-p)^2+(1-2p)^2]\\
 \partial_{p}\int_{0}^{1}f(x)\mathrm{d}x&=p+p-2(1-2p)=6p-2\\
-\end{align*}
+\end{aligned}
 $$
-而
+而先求导数后带入 Leibniz 公式为：
 $$
-\begin{align*}
+\begin{aligned}
 \partial_{p}f(x)&=\begin{cases}0&x<p\\-1&p<x<2p\\-2&2p<x<1\end{cases}\\
-\int_{0}^{1}\partial_{p}f(x)\mathrm{d}x+\sum_{i=1}^{2}\partial_p(ip)[f^-(ip;p)-f^+(ip;p)]&=-(2p-p)-2(1-2p)+p-0+2p-0\\
+\partial_{p}\int_{0}^{1}f(x)\mathrm{d}x&=\int_{0}^{1}\partial_{p}f(x)\mathrm{d}x+\sum_{i=1}^{2}\partial_p(ip)[f^-(ip;p)-f^+(ip;p)]\\
+&=-(2p-p)-2(1-2p)+p-0+2p-0\\
 &=6p-2\\
-\end{align*}
+\end{aligned}
 $$
 
 例题 2：设
 $$
 f(x)=\begin{cases}x&x<p\\x-p&p<x<q\\x-q&q<x<1\end{cases}
 $$
-则
+则先求积分后求导数为：
 $$
-\begin{align*}
+\begin{aligned}
 \int_{0}^{1}f(x)\mathrm{d}x&=\frac{1}{2}[(p-0)^2+(q-p)^2+(1-q)^2]\\
 \partial_{p}\int_{0}^{1}f(x)\mathrm{d}x&=p-(q-p)=2p-q\\
 \partial_{q}\int_{0}^{1}f(x)\mathrm{d}x&=q-p-(1-q)=2q-p-1\\
-\end{align*}
+\end{aligned}
 $$
-而
+而先求导数后带入 Leibniz 公式为：
 $$
-\begin{align*}
+\begin{aligned}
 \partial_{p}f(x)&=\begin{cases}0&x<p\\-1&p<x<q\\0&q<x<1\end{cases}\\
-\int_{0}^{1}\partial_{p}f(x)\mathrm{d}x+f^-(p;p)-f^+(p;p)&=-(q-p)+p-0=2p-q\\
+\partial_{p}\int_{0}^{1}f(x)\mathrm{d}x&=\int_{0}^{1}\partial_{p}f(x)\mathrm{d}x+f^-(p;p)-f^+(p;p)\\
+&=-(q-p)+p-0=2p-q\\
 \partial_{q}f(x)&=\begin{cases}0&x<p\\0&p<x<q\\-1&q<x<1\end{cases}\\
-\int_{0}^{1}\partial_{q}f(x)\mathrm{d}x+f^-(q;q)-f^+(q;q)&=-(1-q)+(q-p)-0=2q-p-1\\
-\end{align*}
+\partial_{q}\int_{0}^{1}f(x)\mathrm{d}x&=\int_{0}^{1}\partial_{q}f(x)\mathrm{d}x+f^-(q;q)-f^+(q;q)\\
+&=-(1-q)+(q-p)-0=2q-p-1\\
+\end{aligned}
 $$
 
 ---
@@ -277,7 +276,7 @@ $$
 L(\mathbf{x},\boldsymbol{\omega}_o)=L_e(\mathbf{x},\boldsymbol{\omega}_o)+\int_{\mathbb{S}^2}L_i(\mathbf{x},\boldsymbol{\omega}_i)f_s(\mathbf{x},\boldsymbol{\omega}_i,\boldsymbol{\omega}_o)\mathrm{d}\sigma(\boldsymbol{\omega}_i)\tag{17}
 $$
 
-这里 $f_s$ 囊括了常见的 $\cos$ 项。
+这里 $f_s$ 囊括了常见的 $\cos$ 项，$\mathrm{d}\sigma(\boldsymbol{\omega}_i)$ 是单位球面上的微元。
 
 #### 3.1.1 Direct Illumination
 
@@ -292,14 +291,16 @@ $$
 $$
 定义 $f_{\text{direct}}(\boldsymbol{\omega}_i;\mathbf{x},\boldsymbol{\omega}_o)=L_e(\mathbf{y},-\boldsymbol{\omega}_i)f_s(\mathbf{x},\boldsymbol{\omega}_i,\boldsymbol{\omega}_o)$。由 Reynolds Transport Theorem 可得
 $$
-\begin{align*}
+\begin{aligned}
 \frac{\mathrm{d}}{\mathrm{d}\pi}[L_r(\mathbf{x},\boldsymbol{\omega}_o)]&=\underbrace{\int_{\mathbb{S}^2}\frac{\mathrm{d}}{\mathrm{d}\pi}f_{\text{direct}}(\boldsymbol{\omega}_i;\mathbf{x},\boldsymbol{\omega}_o)\mathrm{d}\sigma(\boldsymbol{\omega}_i)}_{\text{interior}}\\
 &+\underbrace{\int_{\Delta\mathbb{S}^2}\langle\mathbf{n}_\perp,\dot{\boldsymbol{\omega}_i}\rangle\Delta{f}_{\text{direct}}(\boldsymbol{\omega}_i;\mathbf{x},\boldsymbol{\omega}_o)\mathrm{d}\ell(\boldsymbol{\omega}_i)}_{\text{boundary}}
-\end{align*}\tag{20}
+\end{aligned}\tag{20}
 $$
 其中 $\mathrm{d}\ell$ 是曲线微元。
 
 式子中，内部项是单位球面 $\mathbb{S}^2$ 上的积分，它与场景参数 $\pi$ 无关，使得积分变量 $\boldsymbol{\omega}_i$ 也与 $\pi$ 无关。边界项是由于 $f_{\text{direct}}$ （关于 $\boldsymbol{\omega}_i$）的（跳跃）不连续点而出现的。这些不连续点形成了一维不连续曲线，我们将其表示为单位球体上的 $\Delta\mathbb{S}^2$。对于任何 $\boldsymbol{\omega}_i\in\mathbb{S}(\mathbf{x},\boldsymbol{\omega}_o)$ 来说，$\mathbf{n}_\perp(\boldsymbol{\omega}_i)$ 是 $\mathbb{S}^2$ 的切空间中 $\boldsymbol{\omega}_i$ 处垂直于不连续曲线的法向量，且具有单位长度。
+
+![](images/pbdr-sphere.png)
 
 因为 $\pi$ 的变化导致了一维曲线在单位球面上移动，这种移动必然是沿着球面发展的，因此需要考虑球面切空间。
 
@@ -312,10 +313,10 @@ $$
 #### 3.1.2 Differential Rendering Equation
 
 $$
-\begin{align*}
+\begin{aligned}
 \frac{\mathrm{d}}{\mathrm{d}\pi}[L(\mathbf{x},\boldsymbol{\omega}_o)]&=\frac{\mathrm{d}}{\mathrm{d}\pi}[L_e(\mathbf{x},\boldsymbol{\omega}_o)]+\underbrace{\int_{\mathbb{S}^2}\frac{\mathrm{d}}{\mathrm{d}\pi}f_{\text{direct}}(\boldsymbol{\omega}_i;\mathbf{x},\boldsymbol{\omega}_o)\mathrm{d}\sigma(\boldsymbol{\omega}_i)}_{\text{interior}}\\
 &+\underbrace{\int_{\Delta\mathbb{S}^2}\langle\mathbf{n}_\perp,\dot{\boldsymbol{\omega}_i}\rangle\Delta{f}_{\text{direct}}(\boldsymbol{\omega}_i;\mathbf{x},\boldsymbol{\omega}_o)\mathrm{d}\ell(\boldsymbol{\omega}_i)}_{\text{boundary}}
-\end{align*}\tag{22}
+\end{aligned}\tag{22}
 $$
 
 ### 3.2 Differentiable Rendering of Participant Media
@@ -330,3 +331,12 @@ $$
 $$
 (\mathcal{K}_Tg)(\mathbf{x},\boldsymbol{\omega})=\int_0^DT(\mathbf{x}',\mathbf{x})g(\mathbf{x}',\boldsymbol{\omega})\mathrm{d}\tau\tag{24}
 $$
+其中 $\mathbf{x}' = \mathbf{x} - \tau\boldsymbol{\omega}$，$D$ 是云从 $\mathbf{x}$ 出发往 $-\boldsymbol{\omega}$ 方向的最大距离，即
+$$
+D=\inf\{\tau\in\mathbb{R}^+\mid\mathbf{x}-\tau\boldsymbol{\omega}\in\partial\Omega\}\tag{25}
+$$
+$T(\mathbf{x}',\mathbf{x})$ 是 $\mathbf{x}$ 和 $\mathbf{x}'$ 之间的透射率，即
+$$
+T(\mathbf{x}',\mathbf{x})=\exp\left(-\int_{0}^{\tau}\sigma_t(\mathbf{x}-\tau'\boldsymbol{\omega})\mathrm{d}\tau'\right)\tag{26}
+$$
+$\sigma_t$ 是体积云的消光系数。
