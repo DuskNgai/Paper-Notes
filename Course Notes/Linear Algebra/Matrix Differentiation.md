@@ -14,6 +14,8 @@ Scalars are small letter $a$; Vectors are small bold letter $\mathbf{a}$; Matrix
 
 ### Layout Notation
 
+> 这里我们默认使用分母布局。
+
 **分母布局 Numerator layout:**
 $$
 \frac{\mathrm{d}y}{\mathrm{d}x}\in\mathbb{R}^{1 \times 1}\quad

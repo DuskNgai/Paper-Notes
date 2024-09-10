@@ -340,3 +340,5 @@ $$
 T(\mathbf{x}',\mathbf{x})=\exp\left(-\int_{0}^{\tau}\sigma_t(\mathbf{x}-\tau'\boldsymbol{\omega})\mathrm{d}\tau'\right)\tag{26}
 $$
 $\sigma_t$ 是体积云的消光系数。
+
+![](images/boundary.png)
