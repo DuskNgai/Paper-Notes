@@ -318,3 +318,44 @@ X^TXw&=X^TY\\
 w&=(X^TX)^{-1}X^TY
 \end{align*}
 $$
+
+## Neural Network
+
+Consider an $L$-layer neural network, given that the input is $x \in \mathbb{R}^{n_{0}}$, the output is $y \in \mathbb{R}^{n_{L}}$, the weight matrix for the $l$-th ($l \in \{1, 2, \ldots, L\}$) layer is $W_l \in \mathbb{R}^{n_{l} \times n_{l-1}}$, the bias vector is $b_l \in \mathbb{R}^{n_{l}}$, the element-wise activation function is $f_{l}$, and the loss value is $\mathcal{L} \in \mathbb{R}$. 
+
+The forward propagation is structured as follows:
+$$
+\begin{aligned}
+a_{0} &= x \\
+z_{l} &= W_{l} a_{l-1} + b_{l} \in \mathbb{R}^{n_{l}} \\
+a_{l} &= f_{l}(z_{l}) \in \mathbb{R}^{n_{l}} \\
+z_{L} &= y
+\end{aligned}
+$$
+
+The backward propagation is structured as follows:
+$$
+\begin{aligned}
+\underbrace{\frac{\partial \mathcal{L}}{\partial z_{l}}}_{\mathbb{R}^{1 \times n_{l}}} &= \underbrace{\frac{\partial \mathcal{L}}{\partial z_{l+1}}}_{\mathbb{R}^{1 \times n_{l+1}}} \underbrace{\frac{\partial z_{l+1}}{\partial z_{l}}}_{\mathbb{R}^{n_{l+1} \times n_{l}}} \\
+&= \underbrace{\frac{\partial \mathcal{L}}{\partial z_{l+1}}}_{\mathbb{R}^{1 \times n_{l+1}}} \underbrace{\frac{\partial z_{l+1}}{\partial a_{l}}}_{\mathbb{R}^{n_{l+1} \times n_{l}}} \underbrace{\frac{\partial a_{l}}{\partial z_{l}}}_{\mathbb{R}^{n_{l} \times n_{l}}} \\
+&= \frac{\partial \mathcal{L}}{\partial z_{l+1}} W_{l+1} \text{diag}(f_{l}^{\prime}(z_{l}))
+\end{aligned}
+$$
+
+$$
+\underbrace{\frac{\partial \mathcal{L}}{\partial W_{l}}}_{\mathbb{R}^{n_{l-1} \times n_{l}}} = \underbrace{\frac{\partial \mathcal{L}}{\partial z_{l}}}_{\mathbb{R}^{1 \times n_{l}}} \underbrace{\frac{\partial z_{l}}{\partial W_{l}}}_{\mathbb{R}^{n_{l} \times n_{l-1}}} = a_{l-1} \left(\frac{\partial \mathcal{L}}{\partial z_{l}}\right)^{\top}
+$$
+
+$$
+\underbrace{\frac{\partial \mathcal{L}}{\partial b_{l}}}_{\mathbb{R}^{1 \times n_{l}}} = \underbrace{\frac{\partial \mathcal{L}}{\partial z_{l}}}_{\mathbb{R}^{1 \times n_{l}}} \underbrace{\frac{\partial z_{l}}{\partial b_{l}}}_{\mathbb{R}^{n_{l}} \times \mathbb{R}^{n_{l}}} = \frac{\partial \mathcal{L}}{\partial z_{l}}
+$$
+
+Update the weights and biases:
+$$
+\begin{aligned}
+W_{l} &\leftarrow W_{l} - \alpha \left(\frac{\partial \mathcal{L}}{\partial W_{l}}\right)^{\top} \\
+b_{l} &\leftarrow b_{l} - \alpha \left(\frac{\partial \mathcal{L}}{\partial b_{l}}\right)^{\top}
+\end{aligned}
+$$
+
+where $\alpha$ is the learning rate.

@@ -94,25 +94,36 @@ $$
 
 ---
 
-> 设数据的分布 $\mathbb{P}_{\text{data}}(\mathbf{x}_{0}) = \mathcal{N}(\mathbf{x}_0; \boldsymbol{\mu}_{\text{data}}, \boldsymbol{\sigma}_{\text{data}}^{2}\mathbf{I})$，求其边际概率密度 $p_{t}(\mathbf{x}_{t})$ 及其对应的分数。
+> 设数据的分布 $\mathbb{P}_{\text{data}}(\mathbf{x}_{0}) = \mathcal{N}(\mathbf{x}_0; \boldsymbol{\mu}_{\text{data}}, \Sigma_{\text{data}})$，求其边际概率密度 $p_{t}(\mathbf{x}_{t})$ 及其对应的分数。
 
-通过凑平方项，我们可以得到：
+边际概率分布 $p_{t}(\mathbf{x}_{t})$ 为：
 $$
-\begin{aligned}
-p_{t}(\mathbf{x}_{t}) &= \int_{\mathbb{R}^{d}} \mathcal{N}(\mathbf{x}_{t}; s(t) \mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \boldsymbol{I}) \mathcal{N}(\mathbf{x}_{0}; \boldsymbol{\mu}_{\text{data}}, \sigma_{\text{data}}^{2}\boldsymbol{I}) \, \mathrm{d}\mathbf{x}_{0} \\
-&\propto \int_{\mathbb{R}^{d}} \exp\left(-\frac{1}{2} \left[\frac{\left\| \mathbf{x}_{t} - s(t) \mathbf{x}_{0} \right\|^{2}}{s(t)^{2} \sigma(t)^{2}} + \frac{\left\| \mathbf{x}_{0} - \boldsymbol{\mu}_{\text{data}} \right\|^{2}}{\sigma_{\text{data}}^{2}}\right]\right) \, \mathrm{d}\mathbf{x}_{0} \\
-&\propto \exp\left(-\frac{1}{2} \frac{\left\| \mathbf{x}_{t} - s(t) \boldsymbol{\mu}_{\text{data}}\right\|^{2}}{s(t)^{2} [\sigma(t)^{2} + \sigma_{\text{data}}^{2}]}\right)
+p_{t}(\mathbf{x}_{t}) = \int_{\mathbb{R}^{d}} \mathcal{N}(\mathbf{x}_{t}; s(t) \mathbf{x}_{0}, s(t)^{2} \sigma(t)^{2} \boldsymbol{I}) \mathcal{N}(\mathbf{x}_{0}; \boldsymbol{\mu}_{\text{data}}, \Sigma_{\text{data}}) \, \mathrm{d}\mathbf{x}_{0}
+$$
+两个 Gaussian 分布的卷积是一个 Gaussian 分布，因此 $p_{t}(\mathbf{x}_{t})$ 也是一个 Gaussian 分布，因此：
+$$\begin{aligned}
+\mathbb{E}_{\boldsymbol{x}_{t}}[\boldsymbol{x}_{t}] &=
+\mathbb{E}_{\boldsymbol{x}_{0}}[\mathbb{E}_{\boldsymbol{x}_{t}}[\boldsymbol{x}_{t} \mid \boldsymbol{x}_{0}]] \\
+&= \mathbb{E}_{\boldsymbol{x}_{0}}[s(t) \boldsymbol{x}_{0}] \\
+&= s(t) \boldsymbol{\mu}_{\text{data}} \\
+\mathbb{V}_{\boldsymbol{x}_{t}}[\boldsymbol{x}_{t}] &= \mathbb{E}_{\boldsymbol{x}_{0}}[\mathbb{V}_{\boldsymbol{x}_{t}}[\boldsymbol{x}_{t} \mid \boldsymbol{x}_{0}]] + \mathbb{V}_{\boldsymbol{x}_{0}}[\mathbb{E}_{\boldsymbol{x}_{t}}[\boldsymbol{x}_{t} \mid \boldsymbol{x}_{0}]] \\
+&= \mathbb{E}_{\boldsymbol{x}_{0}}[s(t)^{2}\sigma(t)^{2} \boldsymbol{I}] + \mathbb{V}_{\boldsymbol{x}_{0}}[s(t) \boldsymbol{x}_{0}] \\
+&= s(t)^{2} [\Sigma_{\text{data}} + \sigma(t)^{2} \boldsymbol{I}]
 \end{aligned}
 $$
 即：
 $$
-p_{t}(\mathbf{x}_{t}) = \mathcal{N}(\mathbf{x}_{t}; s(t) \boldsymbol{\mu}_{\text{data}}, s(t)^{2} [\sigma(t)^{2} + \sigma_{\text{data}}^{2}]\boldsymbol{I})
+p_{t}(\mathbf{x}_{t}) = \mathcal{N}(\mathbf{x}_{t}; s(t) \boldsymbol{\mu}_{\text{data}}, s(t)^{2} [\Sigma_{\text{data}} + \sigma(t)^{2} \boldsymbol{I}])
 $$
 对应的分数为：
 $$
-\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) = \frac{\mathbf{x}_{t} - s(t) \boldsymbol{\mu}_{\text{data}}}{s(t)^{2} [\sigma(t)^{2} + \sigma_{\text{data}}^{2}]}
+\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) = - \{s(t)^{2}[\Sigma_{\text{data}} + \sigma(t)^{2} \boldsymbol{I}]\}^{-1} (\mathbf{x}_{t} - s(t) \boldsymbol{\mu}_{\text{data}})
 $$
-理论上，在采样阶段，先验分布应该是 $p_{T}(\mathbf{x}_{T})$。
+如果 $\Sigma_{\text{data}} = \sigma_{\text{data}}^{2} \boldsymbol{I}$，那么：
+$$
+\nabla_{\mathbf{x}_{t}} \log p_{t}(\mathbf{x}_{t}) = - \frac{\mathbf{x}_{t} - s(t) \boldsymbol{\mu}_{\text{data}}}{s(t)^{2} [\sigma_{\text{data}}^{2} + \sigma(t)^{2}]}
+$$
+因此理论上，在采样阶段，我们应该从 $p_{T}(\mathbf{x}_{T})$ 这个先验分布出发。
 
 ---
 
