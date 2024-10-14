@@ -12,7 +12,7 @@ u(r,\theta,\phi)=R(r)\Theta(\theta)\Phi(\phi)\tag{14.1.2}
 $$
 带入 $(14.1.2)$ 式：
 $$
-\frac{\Theta\Phi}{r^2}\frac{\mathrm{d}}{\mathrm{d}r}\left(r^2\frac{\mathrm{d}R}{\mathrm{d}r}\right)+\frac{R\Phi}{r^2\sin\theta}\frac{\mathrm{d}}{\mathrm{d}\theta}\left(\sin\theta\frac{\mathrm{d}\Theta}{\mathrm{d}\theta}\right)+\frac{R}{r^2\sin^2\theta}\frac{\mathrm{d}^2\Phi}{\mathrm{d}\phi^2}=0\tag{14.1.3}
+\frac{\Theta\Phi}{r^2}\frac{\mathrm{d}}{\mathrm{d}r}\left(r^2\frac{\mathrm{d}R}{\mathrm{d}r}\right)+\frac{R\Phi}{r^2\sin\theta}\frac{\mathrm{d}}{\mathrm{d}\theta}\left(\sin\theta\frac{\mathrm{d}\Theta}{\mathrm{d}\theta}\right)+\frac{R\Theta}{r^2\sin^2\theta}\frac{\mathrm{d}^2\Phi}{\mathrm{d}\phi^2}=0\tag{14.1.3}
 $$
 两边同乘 $\dfrac{r^2}{R\Theta\Phi}$ 并且移项后得到：
 $$
@@ -35,7 +35,7 @@ $(14.1.5a)$ 式为欧拉方程：
 令 $r=e^t$，则：
 $$
 \begin{align*}
-\frac{\mathrm{d}R}{\mathrm{d}r}&=\frac{\mathrm{d}R}{\mathrm{d}t}\frac{\mathrm{d}t}{\mathrm{d}x}=\frac{1}{r}\frac{\mathrm{d}R}{\mathrm{d}t}\\
+\frac{\mathrm{d}R}{\mathrm{d}r}&=\frac{\mathrm{d}R}{\mathrm{d}t}\frac{\mathrm{d}t}{\mathrm{d}r}=\frac{1}{r}\frac{\mathrm{d}R}{\mathrm{d}t}\\
 \frac{\mathrm{d}^2R}{\mathrm{d}r^2}&=\frac{\mathrm{d}}{\mathrm{d}r}\left(\frac{\mathrm{d}R}{\mathrm{d}r}\right)=\frac{\mathrm{d}}{\mathrm{d}r}\left(\frac{1}{r}\frac{\mathrm{d}R}{\mathrm{d}t}\right)\\
 &=-\frac{1}{r^2}\frac{\mathrm{d}R}{\mathrm{d}t}+\frac{1}{r}\frac{\mathrm{d}}{\mathrm{d}r}\left(\frac{\mathrm{d}R}{\mathrm{d}t}\right)\\
 &=-\frac{1}{r^2}\frac{\mathrm{d}R}{\mathrm{d}t}+\frac{1}{r}\frac{\mathrm{d}}{\mathrm{d}t}\left(\frac{\mathrm{d}R}{\mathrm{d}t}\right)\frac{\mathrm{d}t}{\mathrm{d}r}\\
@@ -109,11 +109,11 @@ $$
 P(x)=\frac{2x}{1-x^2}\to0\\
 Q(x)=\frac{l(l+1)}{1-x^2}\to l(l+1)
 $$
-均为有限值，他们必然在 $x=0$ 处解析。可在这点有 Taylor 级数解，设解为：
+均为有限值，他们必然在 $x=0$ 处解析，在这点有级数解，设解为：
 $$
 y=\sum_{k=0}^{\infty}C_kx^k\tag{14.2.2}
 $$
-带入 $(1.6)$​ 式：
+带入 $(14.1.11)$​ 式：
 $$
 (1-x^2)\sum_{k=\color{red}2}^{\infty}k(k-1)C_kx^{k-2}-2x\sum_{k=\color{red}1}^{\infty}kC_kx^{k-1}+l(l+1)\sum_{k=0}^{\infty}C_kx^k=0\\
 \sum_{k=0}^{\infty}(k+2)(k+1)C_{k+2}x^k-\sum_{k=\color{red}2}^{\infty}k(k-1)C_kx^k-2\sum_{k=\color{red}1}^{\infty}kC_kx^k+l(l+1)\sum_{k=0}^{\infty}C_kx^k=0\\
@@ -155,7 +155,7 @@ $$
 $$
 R=\lim_{k\to\infty}\left|\frac{C_k}{C_{k+2}}\right|=\lim_{k\to\infty}\left|\frac{(k+2)(k+1)}{(k-l)(k+l+1)}\right|=1
 $$
-因此 Legendre 函数收敛域为 $x\in(-1,1)$ ，对应 $\theta\ne0，\pi$。
+因此 Legendre 函数收敛域为 $x\in(-1,1)$ ，对应 $\theta\in(0,\pi)$。
 
 ---
 
@@ -538,5 +538,3 @@ $$
 Y_{l}^{m}(\theta,\phi)=\sqrt{\frac{(2l+1)}{4\pi}\frac{(l-m)!}{(l+m)!}}P_{l}^{m}(\cos\theta)\exp(im\phi)\\
 l\in\{0,\dots,n\},m\in\{-l,\dots,l\},\theta\in[0,\pi],\phi\in[0,2\pi]\tag{15.2.69}
 $$
-
-
