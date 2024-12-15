@@ -9,8 +9,10 @@ l\in\{0,\dots,n\},m\in\{-l,\dots,l\},\theta\in[0,\pi],\phi\in[0,2\pi]
 $$
 其中：
 $$
-P_{l}^{m}(x)=\frac{(-1)^m}{2^ll!}(1-x^2)^{m/2}\frac{\mathrm{d}^{l+m}}{\mathrm{d}x^{l+m}}(x^2-1)^l\\
-P_l(x)=\frac{1}{2^ll!}\frac{\mathrm{d}^l}{\mathrm{d}x^l}(x^2-1)^l=\frac{1}{2^l}\sum_{k=0}^{\lfloor l/2\rfloor}(-1)^{k}\frac{(2l-2k)!}{k!(l-k)!(l-2k)!}x^{l-2k}\
+\begin{aligned}
+P_{l}^{m}(x)&=\frac{(-1)^m}{2^ll!}(1-x^2)^{m/2}\frac{\mathrm{d}^{l+m}}{\mathrm{d}x^{l+m}}(x^2-1)^l\\
+P_l(x)&=\frac{1}{2^ll!}\frac{\mathrm{d}^l}{\mathrm{d}x^l}(x^2-1)^l=\frac{1}{2^l}\sum_{k=0}^{\lfloor l/2\rfloor}(-1)^{k}\frac{(2l-2k)!}{k!(l-k)!(l-2k)!}x^{l-2k}
+\end{aligned}
 $$
 
 ## Associated Legendre Polynomial Table

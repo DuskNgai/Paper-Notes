@@ -181,9 +181,11 @@ C_l=\frac{(2l)!}{2^l(l!)^2}\tag{14.2.11}
 $$
 时候，可以使得各项的系数保持简洁：
 $$
-C_{l-2}=-\frac{l(l-1)}{2(2l-1)}C_l=-\frac{(2l-2)!}{2^l(l-1)!(l-2)!}\\
-C_{l-4}=-\frac{(l-2)(l-3)}{4(2l-3)}C_{l-2}=\frac{(2l-4)!}{2^l2!(l-2)!(l-4)!}\\
-C_{l-2k}=(-1)^{k}\frac{(2l-2k)!}{2^lk!(l-k)!(l-2k)!}\quad k\in\{0,\dots,l/2\}
+\begin{aligned}
+C_{l-2}&=-\frac{l(l-1)}{2(2l-1)} &\quad C_l&=-\frac{(2l-2)!}{2^l(l-1)!(l-2)!}\\
+C_{l-4}&=-\frac{(l-2)(l-3)}{4(2l-3)} &\quad C_{l-2}&=\frac{(2l-4)!}{2^l2!(l-2)!(l-4)!}\\
+C_{l-2k}&=(-1)^{k}\frac{(2l-2k)!}{2^{lk!(l-k)!(l-2k)!}} &\quad k\in\{0,\dots,l/2\}
+\end{aligned}
 $$
 因此，$l$ 次的 Legendre 多项式为：
 $$
@@ -290,18 +292,15 @@ $$
 (n+1)P_{n+1}(x)=(2n+1)xP_n(x)-nP_{n-1}(x)
 $$
 
-<blockquote style="border-left: 5px solid #4545aa; border-radius: 3px 0 0 3px; padding: 10px 15px; background-color: rgba(70, 70, 188, 0.1)">
-    证明
-</blockquote>
-对 $(14.3.12)$ 两边对 $r$ 求导
+证明：对 $(14.3.12)$ 两边对 $r$ 求导
 $$
-\begin{align*}
+\begin{aligned}
 \frac{x-r}{(1-2rx+r^2)^{3/2}}&=\sum_{l=0}^{\infty}P_l(x)lr^{l-1}\\
 \frac{x-r}{(1-2rx+r^2)^{1/2}}&=(1-2rx+r^2)\sum_{l=0}^{\infty}P_l(x)lr^{l-1}\\
 (x-r)\sum_{l=0}^{\infty}P_l(x)r^l&=(1-2rx+r^2)\sum_{l=0}^{\infty}P_l(x)lr^{l-1}\\
 \sum_{l=0}^{\infty}P_l(x)r^l(2l+1)x&=\sum_{l=0}^{\infty}P_l(x)r^{l+1}(l+1)+\sum_{l=0}^{\infty}P_l(x)r^{l-1}l\\
 \sum_{l=0}^{\infty}P_l(x)r^{l+1}(l+1)&=\sum_{l=0}^{\infty}P_l(x)r^l(2l+1)x-\sum_{l=0}^{\infty}P_l(x)r^{l-1}l\\
-\end{align*}
+\end{aligned}
 $$
 
 对比两边系数，可以得到
@@ -428,10 +427,12 @@ $$
 $$
 两边对 $x$ 求一阶导到 $m$ 阶导：
 $$
-(1-x^2)\frac{\mathrm{d}^{1+2}P_{l}(x)}{\mathrm{d}x^{1+2}}-2(1+1)x\frac{\mathrm{d}^{1+1}P_{l}(x)}{\mathrm{d}x^{1+1}}+[l(l+1)-1(1+1)]\frac{\mathrm{d}^{1}P_{l}(x)}{\mathrm{d}x^{1}}=0\\
-(1-x^2)\frac{\mathrm{d}^{2+2}P_{l}(x)}{\mathrm{d}x^{2+2}}-2(2+1)x\frac{\mathrm{d}^{2+1}P_{l}(x)}{\mathrm{d}x^{2+1}}+[l(l+1)-2(2+1)]\frac{\mathrm{d}^{2}P_{l}(x)}{\mathrm{d}x^{2}}=0\\
+\begin{aligned}
+(1-x^2)\frac{\mathrm{d}^{1+2}P_{l}(x)}{\mathrm{d}x^{1+2}}-2(1+1)x\frac{\mathrm{d}^{1+1}P_{l}(x)}{\mathrm{d}x^{1+1}}+[l(l+1)-1(1+1)]\frac{\mathrm{d}^{1}P_{l}(x)}{\mathrm{d}x^{1}}&=0\\
+(1-x^2)\frac{\mathrm{d}^{2+2}P_{l}(x)}{\mathrm{d}x^{2+2}}-2(2+1)x\frac{\mathrm{d}^{2+1}P_{l}(x)}{\mathrm{d}x^{2+1}}+[l(l+1)-2(2+1)]\frac{\mathrm{d}^{2}P_{l}(x)}{\mathrm{d}x^{2}}&=0\\
 \vdots\\
-(1-x^2)\frac{\mathrm{d}^{m+2}P_{l}(x)}{\mathrm{d}x^{m+2}}-2(m+1)x\frac{\mathrm{d}^{m+1}P_{l}(x)}{\mathrm{d}x^{m+1}}+[l(l+1)-m(m+1)]\frac{\mathrm{d}^{m}P_{l}(x)}{\mathrm{d}x^{m}}=0
+(1-x^2)\frac{\mathrm{d}^{m+2}P_{l}(x)}{\mathrm{d}x^{m+2}}-2(m+1)x\frac{\mathrm{d}^{m+1}P_{l}(x)}{\mathrm{d}x^{m+1}}+[l(l+1)-m(m+1)]\frac{\mathrm{d}^{m}P_{l}(x)}{\mathrm{d}x^{m}}&=0
+\end{aligned}
 $$
 
 因为 $P_l(x)$ 是 $l$ 阶多项式，因此 $m\in\{0,\dots,l\}$ 以保证等式左边不为常数 $0$。因此 $P_l(x)$ 的 $m$ 阶导数满足：

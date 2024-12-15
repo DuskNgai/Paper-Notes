@@ -65,7 +65,7 @@ def get_mim_loss(s, m, t):
 ```
 
 其他的改进包括：
-- 将 DINO 和 iBOT 输出头统一到同一个 MLP。
+- 将 DINO 和 iBOT 输出头分离到两个 MLP。
 - 用了 Sinkhorn-Knopp 中心化。
 - 用了 KoLeo 正则化。
 - Teacher 网络输入 224 * 224，student 网络 98 * 98。
