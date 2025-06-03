@@ -66,10 +66,10 @@ We devised an iterative workflow combining template matching, DeePiCt, and manua
 为注释核孔复合体（NPC），还使用了一个包含约 354 个 NPC 的 127 张断层图像（用 defocus* 表示）的额外数据集，以确保为这一**大型、低丰度（平均每张断层图像 3 个）、结构灵活的复合体**提供足够的训练数据。
 For annotating the nuclear pore complex (NPC), an additional dataset of 127 tomograms (denoted by defocus*) featuring ~354 NPCs was used to ensure enough training data for this **large, low abundance (on average three per tomogram), and structurally flexible complex**.
 
-|          |                   defocus + VPP tomograms                    |                    defocus-only tomograms                    |
-| :------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| ribosome | 25311, template maching (61.6%) + DeePiCt (21%) + manually (17%) | 25901, template maching (19%) + DeePiCt (19%) + manually (61%) |
-|   FAS    | 731, template maching (0%) + manually (58.96%) + DeePiCt (22%) + manually (19%) |     366, manually (49%) + DeePiCt (37%) + manually (14%)     |
+|          |                             defocus + VPP tomograms                             |                     defocus-only tomograms                     |
+| :------: | :-----------------------------------------------------------------------------: | :------------------------------------------------------------: |
+| ribosome |        25311, template maching (61.6%) + DeePiCt (21%) + manually (17%)         | 25901, template maching (19%) + DeePiCt (19%) + manually (61%) |
+|   FAS    | 731, template maching (0%) + manually (58.96%) + DeePiCt (22%) + manually (19%) |      366, manually (49%) + DeePiCt (37%) + manually (14%)      |
 
 两种采集类型的核糖体总数相当，而在散焦数据集中检测到的 FAS 颗粒较少，这可能是由于尽管使用了均衡滤波器，但信噪比较低的缘故（扩展数据图3，补充表2和3以及补充说明2）。
 Total numbers of ribosomes in both acquisition types were comparable, while fewer FAS particles were detected in the defocus dataset likely owing to the lower SNR despite the application of an equalization filter.

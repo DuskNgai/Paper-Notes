@@ -119,7 +119,7 @@ $\lambda=0.2$
 
 ## Original Version
 
-$R$ 是正交矩阵，$S$ 是对角线元素大于 0 的对角矩阵，$M=SR$ 是它们的乘积。$\Sigma=M^TM$ 是协方差矩阵，也是对称矩阵。$l$ 关于 $M$ 的导数为：
+$R$ 是正交矩阵，$S$ 是对角线 ，$M=SR$ 是它们的乘积。$\Sigma=M^TM$ 是协方差矩阵，也是对称矩阵。$l$ 关于 $M$ 的导数为：
 $$
 \begin{align*}
 \frac{\partial{l}}{\partial{m_{ij}}}&=\sum_p\sum_q\frac{\partial{l}}{\partial{\Sigma_{pq}}}\frac{\partial{\Sigma_{pq}}}{\partial{m_{ij}}}\\
