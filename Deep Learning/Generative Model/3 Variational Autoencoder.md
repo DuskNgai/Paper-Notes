@@ -1,35 +1,22 @@
 # Variational Autoencoder
 
-|                 Symbol                  |                    Description                    |
-| :-------------------------------------: | :-----------------------------------------------: |
-|              $\theta,\phi$              |                 model parameters                  |
-| $\mathbf{x}$/$\mathbf{X}$/$\mathcal{X}$ |    data sample/data random variable/data space    |
-| $\mathbf{z}$/$\mathbf{Z}$/$\mathcal{Z}$ | latent vector/latent random variable/latent space |
+|                    Symbol                     |                    Description                    |
+| :-------------------------------------------: | :-----------------------------------------------: |
+|                 $\theta,\phi$                 |                 model parameters                  |
+|                      $p$                      |        Generative model/true distribution         |
+|                      $q$                      |     Inference model/variational distribution      |
+| $\mathbf{x}^{(n)}$/$\mathbf{x}$/$\mathcal{X}$ |    data sample/data random variable/data space    |
+| $\mathbf{z}^{(i)}$/$\mathbf{z}$/$\mathcal{Z}$ | latent vector/latent random variable/latent space |
 
 ---
-
-## Autoencoder
-
-讲到 VAE 之前，我们先要讲一下 Autoencoder（AE）。AE 是一种无监督学习的模型，它通过编码器（$\mathrm{enc}(\mathbf{x}; \phi)$）将输入数据映射到潜空间，再通过解码器（$\mathrm{dec}(\mathbf{z}; \theta)$）将潜空间的表示映射回原始数据。AE 的目标是最小化重建误差，即最小化输入数据 $\mathbf{x}$ 和重建数据 $\hat{\mathbf{x}}$ 之间的差异：
-$$
-\min_{\theta, \phi} \mathbb{E}_{\mathbf{x} \sim p(\mathbf{x})} \left[\mathcal{L}(\mathbf{x}, \mathrm{dec}(\mathrm{enc}(\mathbf{x}; \phi); \theta))\right]
-$$
-
-一般来说，潜空间的维度要比输入数据的维度小，这样 AE 可以学习到数据的压缩表示。AE 的生成能力很弱，因为 AE 的潜空间是无约束的，即潜空间中只有编码器映射到的点有意义，而潜空间中的其他点没有意义。因此，无法通过随意地采样潜空间来生成新的数据。
-
-VAE 是对 AE 的改进，它对于潜空间做出了两点改进：
-1. 相比于 AE 把数据点映射到潜空间上的一个点，VAE 把数据点映射到潜空间上的一个区域，使得区域内的任意点都有重建能力。
-2. VAE 对整个潜空间做了正则化，使得数据点在潜空间中的分布与某个先验分布相似，便于对潜空间进行采样。
-
-我们在后面的内容中会详细讲解 VAE 做出的这两点改进。
 
 ## Recap of EM Algorithm
 
 回顾一下 EM 算法中的核心公式：
 $$
-\log p(\mathbf{x};\theta) = \mathop{\mathop{\mathrm{ELBO}}}(q,\mathbf{x};\theta) + \mathop{\mathrm{KL}}[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)]
+\log p(\mathbf{x};\theta) = \underbrace{\mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})} \right]}_{\mathop{\mathop{\mathrm{ELBO}}}(q,\mathbf{x};\theta)} + \underbrace{\mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{q(\mathbf{z})}{p(\mathbf{z} \mid \mathbf{x}; \theta)} \right]}_{\mathop{\mathrm{KL}}[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)]}
 $$
-为了获取最优的变分分布 $q(\mathbf{z})$，我们需要精确推断 $p(\mathbf{z} \mid \mathbf{x})$。由于其复杂性，需要近似推断。VAE 通过引入生成网络和推断网络，将近似推断的过程转化为一个优化问题。网络设计方面，VAE 采用了 AE 的结构：
+在 EM 算法中，我们已知当 $q(\mathbf{z}) = p(\mathbf{z} \mid \mathbf{x}; \theta)$ 时，ELBO 达到最大值。但由于 $p(\mathbf{z} \mid \mathbf{x}; \theta)$ 可能过于复杂，无法直接计算。VAE 通过引入生成网络和推断网络，将近似 $p(\mathbf{z} \mid \mathbf{x}; \theta)$ 的过程转化为一个优化问题。
 
 1. **推断网络**：编码器 $\mathrm{enc}(\mathbf{x}; \phi)$ 估计变分分布 $q(\mathbf{z} \mid \mathbf{x}; \phi)$。理论上 $q(\mathbf{z})$ 是任意的、独立于 $\mathbf{x}$ 的，但由于最优的变分分布是 $p(\mathbf{z}\mid\mathbf{x})$，因此需要建模为条件概率。
 2. **生成网络**：解码器 $\mathrm{dec}(\mathbf{z}; \theta)$ 估计条件概率 $p(\mathbf{x} \mid \mathbf{z}; \theta)$。
@@ -111,38 +98,20 @@ $$
 \end{aligned}
 $$
 
-## Start From Joint Distribution
-
-我们从联合分布直接推导 VAE 的损失函数。实际上，VAE 可以看作用 KL 散度拉近数据隐空间近似的联合分布 $q(\mathbf{x}, \mathbf{z}; \phi)$ 和数据隐空间真实的联合分布 $p(\mathbf{x}, \mathbf{z}; \theta)$：
-$$
-\begin{aligned}
-&\quad \mathop{\mathrm{KL}}[q(\mathbf{x}, \mathbf{z}; \phi) \parallel p(\mathbf{x}, \mathbf{z}; \theta)]\\
-&= \mathbb{E}_{\mathbf{x}, \mathbf{z} \sim q(\mathbf{x}, \mathbf{z}; \phi)} \left[\log \frac{q(\mathbf{x}, \mathbf{z}; \phi)}{p(\mathbf{x}, \mathbf{z}; \theta)}\right] \\
-&= \iint q(\mathbf{x}, \mathbf{z}; \phi) \log \frac{q(\mathbf{x}, \mathbf{z}; \phi)}{p(\mathbf{x}, \mathbf{z}; \theta)} \mathrm{d}\mathbf{x} \mathrm{d}\mathbf{z} \\
-&= \iint q(\mathbf{z} \mid \mathbf{x}; \phi) p(\mathbf{x}) \log \frac{q(\mathbf{z} \mid \mathbf{x}; \phi) p(\mathbf{x})}{p(\mathbf{x} \mid \mathbf{z}; \theta) p(\mathbf{z})} \mathrm{d}\mathbf{x} \mathrm{d}\mathbf{z} \\
-&= \iint q(\mathbf{z} \mid \mathbf{x}; \phi) p(\mathbf{x}) \log p(\mathbf{x}) \mathrm{d}\mathbf{x} \mathrm{d}\mathbf{z} + \iint q(\mathbf{z} \mid \mathbf{x}; \phi) p(\mathbf{x}) \log \frac{q(\mathbf{z} \mid \mathbf{x}; \phi)}{p(\mathbf{x} \mid \mathbf{z}; \theta) p(\mathbf{z})} \mathrm{d}\mathbf{x} \mathrm{d}\mathbf{z}
-\end{aligned}
-$$
-这里，$q(\mathbf{x}, \mathbf{z}; \phi) = q(\mathbf{z} \mid \mathbf{x}; \phi) p(\mathbf{x})$ 表示只用网络拟合 $q(\mathbf{z} \mid \mathbf{x}; \phi)$，而 $p(\mathbf{x})$ 是数据的先验分布。看第一项，有：
-$$
-\begin{aligned}
-\iint q(\mathbf{z} \mid \mathbf{x}; \phi) p(\mathbf{x}) \log p(\mathbf{x}) \mathrm{d}\mathbf{x} \mathrm{d}\mathbf{z} &= \int \log p(\mathbf{x}) \left(\int q(\mathbf{x}, \mathbf{z}; \phi) \mathrm{d}\mathbf{z}\right) \mathrm{d}\mathbf{x} \\
-&= \int \log p(\mathbf{x}) q(\mathbf{x}; \phi) \mathrm{d}\mathbf{x} \\
-&= \text{Constant}
-\end{aligned}
-$$
-因此考虑第二项：
-$$
-\begin{aligned}
-&\quad \iint q(\mathbf{z} \mid \mathbf{x}; \phi) p(\mathbf{x}) \log \frac{q(\mathbf{z} \mid \mathbf{x}; \phi)}{p(\mathbf{x} \mid \mathbf{z}; \theta) p(\mathbf{z})} \mathrm{d}\mathbf{x} \mathrm{d}\mathbf{z}\\
-&= \mathbb{E}_{\mathbf{x} \sim p(\mathbf{x})} \left[\int q(\mathbf{z} \mid \mathbf{x}; \phi) \log \frac{q(\mathbf{z} \mid \mathbf{x}; \phi)}{p(\mathbf{x} \mid \mathbf{z}; \theta) p(\mathbf{z})} \mathrm{d}\mathbf{z}\right] \\
-&= \mathbb{E}_{\mathbf{x} \sim p(\mathbf{x})} \left[-\int q(\mathbf{z} \mid \mathbf{x}; \phi) \log p(\mathbf{x} \mid \mathbf{z}; \theta) \mathrm{d}\mathbf{z} + \int q(\mathbf{z} \mid \mathbf{x}; \phi) \log \frac{q(\mathbf{z} \mid \mathbf{x}; \phi)}{p(\mathbf{z})} \mathrm{d}\mathbf{z}\right] \\
-&= \mathbb{E}_{\mathbf{x} \sim p(\mathbf{x})} \left[-\mathbb{E}_{\mathbf{z} \sim q(\mathbf{z} \mid \mathbf{x}; \phi)} [\log p(\mathbf{x} \mid \mathbf{z}; \theta)] + \mathop{\mathrm{KL}}[q(\mathbf{z} \mid \mathbf{x}; \phi) \parallel p(\mathbf{z})]\right]
-\end{aligned}
-$$
-因此，从最小化 KL 散度的角度出发也能得到 VAE 的损失函数。
-
 ## Discussion
+
+## Autoencoder
+
+讲到 VAE 之前，我们先要讲一下 Autoencoder（AE）。AE 是一种无监督学习的模型，它通过编码器（$\mathrm{enc}(\mathbf{x}; \phi)$）将输入数据映射到潜空间，再通过解码器（$\mathrm{dec}(\mathbf{z}; \theta)$）将潜空间的表示映射回原始数据。AE 的目标是最小化重建误差，即最小化输入数据 $\mathbf{x}$ 和重建数据 $\hat{\mathbf{x}}$ 之间的差异：
+$$
+\min_{\theta, \phi} \mathbb{E}_{\mathbf{x} \sim p(\mathbf{x})} \left[\mathcal{L}(\mathbf{x}, \mathrm{dec}(\mathrm{enc}(\mathbf{x}; \phi); \theta))\right]
+$$
+
+一般来说，潜空间的维度要比输入数据的维度小，这样 AE 可以学习到数据的压缩表示。AE 的生成能力很弱，因为 AE 的潜空间是无约束的，即潜空间中只有编码器映射到的点有意义，而潜空间中的其他点没有意义。因此，无法通过随意地采样潜空间来生成新的数据。
+
+VAE 是对 AE 的改进，它对于潜空间做出了两点改进：
+1. 相比于 AE 把数据点映射到潜空间上的一个点，VAE 把数据点映射到潜空间上的一个区域，使得区域内的任意点都有重建能力。
+2. VAE 对整个潜空间做了正则化，使得数据点在潜空间中的分布与某个先验分布相似，便于对潜空间进行采样。
 
 为什么要对 AE 的潜空间做正则化？一种理解是，正则化防止了生存模型的过拟合。想象一下过拟合的情景，模型拟合了训练集中的每个数据点，那就完全失去了泛化能力，也就是生成能力。在 VAE、Diffusion 中，正则化的方式是让潜空间的分布与某个先验分布相似。但正则化又不止于此，随机批量输入、有限的模型容量、噪声注入等都是正则化的方式。
 

@@ -3,101 +3,143 @@
 |                           Symbol                            |               Description               |
 | :---------------------------------------------------------: | :-------------------------------------: |
 |                          $\theta$                           |            model parameters             |
-|                   $\mathbf{x}/\mathbf{X}$                   | explicit sample/explict random variable |
-|                   $\mathbf{z}/\mathbf{Z}$                   |  hidden sample/hidden random variable   |
+|                $\mathbf{x}^{(n)}/\mathbf{x}$                | explicit sample/explict random variable |
+|                $\mathbf{z}^{(i)}/\mathbf{z}$                |  hidden sample/hidden random variable   |
 | $\mathcal{D} = \left\{\mathbf{x}^{(n)}\right\}_{n = 1}^{N}$ |              training set               |
 
 ---
 
-首先要明确，对于式子 $p(\mathbf{x}; \theta)$（通常也写作 $p(\mathbf{x} \mid \theta)$ 或 $p_{\theta}(\mathbf{x})$），其含义取决于已知条件：如果 $\mathbf{x}$ 已知而 $\theta$ 未知，该式表示**似然**（Likelihood）；如果 $\mathbf{x}$ 未知而 $\theta$ 已知，该式表示**条件概率**（Conditional Probability）。在推导过程中，这一点需要明确区分。
+## Likelihood v.s. Probability Distribution
 
----
+在统计学中，表达式 $p(\mathbf{x}; \theta)$（等价形式有 $p(\mathbf{x} \mid \theta)$ 或 $p_{\theta}(\mathbf{x})$）的含义取决于已知条件：
 
-每一种概率分布都可以用一个概率函数来描述。对于连续型的概率分布，其对应于概率密度函数（Probability Density Function; PDF）；对于离散型的概率分布，其对应于概率质量函数（Probability Mass Function; PMF）。每一个概率函数都由一组参数来描述，例如，对于连续的均匀分布，其参数为可取值的最大和最小值；对于连续的 Gaussian 分布，其参数为均值和协方差。我们用 $\theta$ 来描述任意分布的参数。
+- **当 $\mathbf{x}$ 已知而 $\theta$ 未知**：该式表示**似然函数**（Likelihood），描述不同参数下观测到当前数据的可能性；
+- **当 $\theta$ 已知而 $\mathbf{x}$ 未知**：该式表示**概率分布**（Probability Distribution），描述在固定参数下数据的分布特性。
 
-训练集 $\mathcal{D}$ 中包含了 $N$ 个已知的**独立同分布**（i.i.d.）的显变量样本。极大似然估计的目标是求解参数 $\theta$ 的最优值，使得训练集 $\mathcal{D}$ 的似然函数 $p(\mathcal{D}; \theta)$ 最大化。训练集的似然函数定义为样本的联合分布：
+这一根本区别是理解极大似然估计的核心基础。
+
+## Probabilistic Functions
+
+每个概率分布都通过一个概率函数描述：
+- **连续型分布**：概率密度函数（Probability Density Function, PDF）；
+- **离散型分布**：概率质量函数（Probability Mass Function, PMF）。
+
+这些函数由参数决定，例如：
+- 均匀分布：参数为最小值 $a$ 和最大值 $b$；
+- 高斯分布：参数为均值 $\mu$ 和方差 $\sigma^{2}$。
+
+我们用 $\theta$ 表示任意分布的参数。
+
+## Maximum Likelihood Estimation (MLE)
+
+给定包含 $N$ 个**独立同分布**（i.i.d.）样本的训练集 $\mathcal{D}$，MLE 的目标是找到最优参数 $\theta^{*}$ 最大化训练集的似然函数：
 $$
 \begin{aligned}
-\mathcal{L}(\mathcal{D}; \theta) &= p(\mathcal{D}; \theta) \\
-&= p\left(\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(N)}; \theta\right) && \text{(Joint Distribution)} \\
-&= \prod_{n = 1}^N p\left(\mathbf{x}^{(n)}; \theta\right) &&\text{(i.i.d.)}
+p(\mathcal{D}; \theta) &=  p\left(\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(N)}; \theta\right) && \text{(Joint Distribution)} \\
+&= \prod_{n = 1}^{N} p\left(\mathbf{x}^{(n)}; \theta\right) && \text{(i.i.d.)}
 \end{aligned}
 $$
-因此，最优参数 $\theta$ 的求解转化为以下优化问题：
+
+为简化计算，通常使用**对数似然函数**：
 $$
 \begin{aligned}
-\theta^* &= \mathop{\arg\max}_{\theta} \mathcal{L}(\mathcal{D}; \theta) \\
-&= \mathop{\arg\max}_{\theta} \prod_{n = 1}^N p\left(\mathbf{x}^{(n)}; \theta\right) \\
-&= \mathop{\arg\max}_{\theta} \sum_{n = 1}^N \log p\left(\mathbf{x}^{(n)}; \theta\right) \quad &\text{(Log is monotonic increasing)}
+\theta^{*} &= \arg\max_{\theta} \log p(\mathcal{D}; \theta) \\
+&= \arg\max_{\theta} \log \left( \prod_{n = 1}^{N} p\left(\mathbf{x}^{(n)}; \theta\right) \right) \\
+&= \arg\max_{\theta} \sum_{n = 1}^{N} \log p\left(\mathbf{x}^{(n)}; \theta\right)
 \end{aligned}
 $$
-通常，在选取某种概率函数 $p(\cdot; \theta)$ 以建模数据分布之后，我们通过对似然函数求导来找到极大值点以求解其最优参数 $\theta$；也可以使用其他估计方法（如不等式放缩）来得到极大值点。至于如何选取概率函数，这是一种先验信息，我暂时没找到一种描述此类先验信息的数学工具。
+这里记：
+$$
+\mathcal{L}(\mathcal{D}; \theta) = \sum_{n = 1}^{N} \log p\left(\mathbf{x}^{(n)}; \theta\right)
+$$
 
----
+## Examples of MLE
 
-> 随机变量 $X \sim \mathcal{N}(\mu, \sigma^2)$，现有其 $N$ 个样本 $\{x^{(n)}\}_{n = 1}^{N}$，求 $\mu$ 和 $\sigma^2$ 的极大似然估计。
+### Gaussian Distribution
 
-似然函数表示为：
+> 随机变量 $X \sim \mathcal{N}(\mu, \sigma^{2})$，样本集 $\left\{x^{(n)}\right\}_{n = 1}^{N}$，求 $\mu$ 和 $\sigma^{2}$ 的 MLE。
+
+似然函数：
 $$
 \begin{aligned}
-\mathcal{L}\left(\left\{x^{(n)}\right\}_{n = 1}^{N}; \mu, \sigma^2\right) &= \sum_{n = 1}^N \log p\left(x^{(n)}; \mu, \sigma^2\right) \\
-&= \sum_{n = 1}^N \log\left[\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x^{(n)} - \mu)^2}{2\sigma^2}\right)\right] \\
-&= -\frac{N}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{n = 1}^N (x^{(n)} - \mu)^2
+\mathcal{L}(\mathcal{D}; \mu, \sigma^{2}) &= \sum_{n = 1}^{N} \log \left[ \frac{1}{\sqrt{2\pi\sigma^{2}}} \exp\left(-\frac{(x^{(n)} - \mu)^{2}}{2\sigma^{2}}\right) \right] \\
+&= -\frac{N}{2}\log(2\pi\sigma^{2}) - \frac{1}{2\sigma^{2}}\sum_{n = 1}^{N} (x^{(n)} - \mu)^{2}
 \end{aligned}
 $$
-对于 $\mu$ 和 $\sigma^2$ 求导可得：
+
+求偏导：
 $$
 \begin{aligned}
-\frac{\partial \mathcal{L}\left(\{x^{(n)}\}_{n = 1}^{N}; \mu, \sigma^2\right)}{\partial \mu} &= \frac{1}{\sigma^2} \sum_{n = 1}^N (x^{(n)} - \mu) \\
-\frac{\partial \mathcal{L}\left(\{x^{(n)}\}_{n = 1}^{N}; \mu, \sigma^2\right)}{\partial \sigma^2} &= -\frac{N}{2\sigma^2} + \frac{1}{2\sigma^4}\sum_{n = 1}^N (x^{(n)} - \mu)^2
+\frac{\partial \mathcal{L}}{\partial \mu} &= \frac{1}{\sigma^{2}} \sum_{n = 1}^{N} (x^{(n)} - \mu) \\
+\frac{\partial \mathcal{L}}{\partial \sigma^{2}} &= -\frac{N}{2\sigma^{2}} + \frac{1}{2\sigma^4}\sum_{n = 1}^{N} (x^{(n)} - \mu)^{2}
 \end{aligned}
 $$
-令二者为 $0$，得到极值点，且容易验证其为极大值点：
+
+令导数为零解得：
 $$
+\boxed{
 \begin{aligned}
 \mu^* &= \frac{1}{N} \sum_{n = 1}^{N} x^{(n)} = \bar{x} \\
-{\sigma^2}^* &= \frac{1}{N} \sum_{n = 1}^N (x^{(n)} - \bar{x})^2
+{\sigma^{2}}^* &= \frac{1}{N} \sum_{n = 1}^{N} (x^{(n)} - \bar{x})^{2}
 \end{aligned}
+}
 $$
 
-> 随机变量 $X \sim \mathrm{Expo}(\lambda)$，现有其 $N$ 个样本 $\{x^{(n)}\}_{n = 1}^{N}$，求 $\lambda$ 的极大似然估计。
+容易验证所求参数为所求函数的极大值点。
 
-似然函数表示为：
+### Exponential Distribution
+
+> 随机变量 $X \sim \mathrm{Expo}(\lambda)$，样本集 $\left\{x^{(n)}\right\}_{n = 1}^{N}$，求 $\lambda$ 的 MLE。
+
+似然函数：
 $$
 \begin{aligned}
-\mathcal{L}\left(\{x^{(n)}\}_{n = 1}^{N}; \lambda\right) &= \sum_{n = 1}^N \log p\left(x^{(n)}; \lambda\right) \\
-&= \sum_{n = 1}^N \log\left[\lambda \exp(-\lambda x^{(n)})\right] \\
-&= N \log \lambda - \lambda \sum_{n = 1}^N x^{(n)}
+\mathcal{L}(\mathcal{D}; \lambda) &= \sum_{n = 1}^{N} \log \left[ \lambda \exp\left(-\lambda x^{(n)}\right) \right] \\
+&= N \log \lambda - \lambda \sum_{n = 1}^{N} x^{(n)}
 \end{aligned}
 $$
-对于 $\lambda$ 求导可得：
+
+求导数：
 $$
-\frac{\partial \mathcal{L}\left(\{x^{(n)}\}_{n = 1}^{N}; \lambda\right)}{\partial \lambda} = \frac{N}{\lambda} - \sum_{n = 1}^N x^{(n)}
-$$
-令上式为 $0$，得到极值点，且容易验证其为极大值点：
-$$
-\lambda^* = \frac{N}{\sum_{n = 1}^{N} x^{(n)}} = \frac{1}{\bar{x}}
+\frac{\partial \mathcal{L}}{\partial \lambda} = \frac{N}{\lambda} - \sum_{n = 1}^{N} x^{(n)}
 $$
 
-> 随机变量 $X \sim \mathrm{Uniform}(a, b)$，现有其 $N$ 个样本 $\{x^{(n)}\}_{n = 1}^{N}$，求 $a$ 和 $b$ 的极大似然估计。
+令导数为零解得：
+$$
+\boxed{\lambda^* = \frac{N}{\sum_{n = 1}^{N} x^{(n)}} = \frac{1}{\bar{x}}}
+$$
 
-似然函数表示为：
+### Uniform Distribution
+
+> 随机变量 $X \sim \mathrm{Uniform}(a, b)$，样本集 $\left\{x^{(n)}\right\}_{n = 1}^{N}$，求 $a$ 和 $b$ 的 MLE。
+
+似然函数：
 $$
 \begin{aligned}
-\mathcal{L}\left(\{x^{(n)}\}_{n = 1}^{N}; a, b\right) &= \sum_{n = 1}^N \log p\left(x^{(n)}; a, b\right) \\
-&= -N \log\left(b - a\right) \\
+\mathcal{L}(\mathcal{D}; a, b) &= \sum_{n = 1}^{N} \log \left[ \frac{1}{b - a} \right] \\
+&= -N \log(b - a)
 \end{aligned}
 $$
-因此问题转化为：
+
+优化问题：
 $$
-\begin{aligned}
-a^*, b^* &= \mathop{\arg\max}_{a, b} \mathcal{L}(\mathcal{D}; a, b) \\
-&= \mathop{\arg\min}_{a, b} \log\left(b - a\right)
-\end{aligned}
+a^*, b^* = \arg\min_{a,b} \log(b - a) \quad \text{s.t.} \quad a \leq \min_{n} x^{(n)},  b \geq \max_{n} x^{(n)}
 $$
-我们必须保证 $a \le \min \{x^{(n)}\}_{n = 1}^{N}$ 以及 $b \ge \max \{x^{(n)}\}_{n = 1}^{N}$，以满足均匀分布的要求。因此当 $a^* = \min \{x^{(n)}\}_{n = 1}^{N}$ 以及 $b^* = \max \{x^{(n)}\}_{n = 1}^{N}$ 时，似然函数取到极大值。
 
+解得：
+$$
+\boxed{a^* = \min_{n} x^{(n)}, \quad b^* = \max_{n} x^{(n)}}
+$$
 
-> Story Telling
+### Story Telling
 
-假设某地区人群的身高服从正态分布 $\mathcal{N}(\mu, \sigma^2)$，随机抽取 $N$ 个人的样本可以用来求得正态分布的参数。
+假设某地区成年男性的身高服从正态分布 $\mathcal{N}(\mu, \sigma^{2})$，则其参数可以通过极大似然估计（MLE）来求解。
+
+## Discussion
+
+MLE 的核心挑战之一是模型选择，即**如何选择合适的概率概率函数 $p(\cdot; \theta)$**？这其实是一种结构先验假设，决定了模型的能力和复杂度。如果选择的模型过于简单，可能无法捕捉数据的真实分布；如果过于复杂，则可能导致过拟合。
+
+贝叶斯方法通过引入参数先验 $p(\theta)$ 来解决这个问题，形成最大后验估计（MAP）：
+$$
+\theta^{*}_{\text{MAP}} = \arg\max_{\theta} p(\mathcal{D} \mid \theta)p(\theta)
+$$

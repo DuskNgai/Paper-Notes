@@ -1,139 +1,161 @@
 # Expectation-Maximization
 
-记号同 [Maximum Likelihood Estimation](maximum%20likelihood%20estimation.md)。
+记号同 [Maximum Likelihood Estimation](1%20maximum%20likelihood%20estimation.md)。
 
 ---
 
-EM 算法是一种迭代算法，用于求解**含有隐变量**的概率模型的极大似然估计。为了说明引入隐变量的原因，这里引用来自 [What is the Expectation Maximization Algorithm](https://www.nature.com/articles/nbt1406) 的例子：
+## Why Expectation Maximization Algorithm
 
-> 硬币 A 和 B 的参数 $\theta_A$ 和 $\theta_B$ 未知，每次选择哪一枚硬币去抛掷也是未知的，只知道抛掷结果。假如知道每次选择的硬币，则可以利用极大似然估计分别求解 $\theta_A$ 和 $\theta_B$。为了克服这个困难，我们引入一个满足伯努利分布的隐变量 $Z$，表示每次选择的硬币，这样就能利用 EM 算法求解 $\theta_A$ 和 $\theta_B$ 以及 $Z$ 的参数。
+在实际问题中，我们常常遇到**数据不完整**的情况：
+- 医学诊断：知道症状（显变量），但不知病因（隐变量）
+- 自然语言处理：看到文本（显变量），但不知语义结构（隐变量）
+- 金融分析：观察交易（显变量），但不知用户意图（隐变量）
 
----
+**经典案例（硬币实验）**（来源 [What is the Expectation Maximization Algorithm](https://www.nature.com/articles/nbt1406)）：
 
-我们可以将训练集 $\mathcal{D}$ 看作由显变量 $\mathbf{X}$ 和隐变量 $\mathbf{Z}$ 组成的联合分布 $p(\mathbf{X}, \mathbf{Z})$ 采样得到的。假设 $\mathbf{Z}$ 是离散的，一个样本 $\mathbf{x}^{(n)}$ 的**边际似然函数**为：
-$$
-p\left(\mathbf{x}^{(n)}; \theta\right) = \sum_{i} p\left(\mathbf{x}^{(n)}, \mathbf{z}^{(i)}; \theta\right) = \sum_{i} p\left(\mathbf{x}^{(n)} \mid \mathbf{z}^{(i)}; \theta\right)p\left(\mathbf{z}^{(i)}; \theta\right)
-$$
-如果 $\mathbf{Z}$ 是连续的，则有：
-$$
-p\left(\mathbf{x}^{(n)}; \theta\right) = \int p\left(\mathbf{x}^{(n)}, \mathbf{z}; \theta\right) \mathrm{d} \mathbf{z} = \int p\left(\mathbf{x}^{(n)} \mid \mathbf{z}; \theta\right)p(\mathbf{z}; \theta) \mathrm{d} \mathbf{z}
-$$
-边际似然也称为**证据**（Evidence）。
+> 有两枚未知参数的硬币 A 和 B（$\theta_{A}$ 和 $\theta_{B}$），每次随机选择一枚硬币抛掷，但不知道选择了哪枚。已知抛掷结果序列。EM 算法能够同时估计：
+> 1. 每枚硬币的参数
+> 2. 每次选择的硬币概率
 
-以下推导以连续的隐变量 $\mathbf{Z}$ 为例。我们的目标是求解参数 $\theta$，使得边际似然取得极大值：
+## Core Ideas of Expectation Maximization
+
+### Evidence
+
+对于含隐变量 $\mathbf{z}$ 的模型，观测数据的**边际似然**（又称**证据**）为：
+$$
+p(\mathbf{x}; \theta) = \int p(\mathbf{x}, \mathbf{z}; \theta) \mathrm{d}\mathbf{z} = \mathbb{E}_{\mathbf{z} \sim p(\mathbf{z}; \theta)} \left[p(\mathbf{x} \mid \mathbf{z}; \theta)\right]
+$$
+
+仿照极大似然估计的方法，我们希望找到使边际似然最大的参数 $\theta^{*}$：
+$$
+\theta^{*} = \mathop{\arg\max}_{\theta} \sum_{n=1}^N \log \int p(\mathbf{x}^{(n)}, \mathbf{z}; \theta) \mathrm{d}\mathbf{z}
+$$
+由于积分的存在，对参数 $\theta$ 的求导形式复杂。
+
+### Evidence Lower Bound (ELBO)
+
+为了解决上述问题，我们引入**证据下界（ELBO）**，它是边际似然的一个下界。利用 Jensen 不等式：
 $$
 \begin{aligned}
-\theta^* &= \mathop{\arg\max}_{\theta} \sum_{n = 1}^N \log p\left(\mathbf{x}^{(n)}; \theta\right) \\
-&= \mathop{\arg\max}_{\theta} \sum_{n = 1}^N \log \int p\left(\mathbf{x}^{(n)} \mid \mathbf{z}; \theta\right)p(\mathbf{z}; \theta) \mathrm{d} \mathbf{z}
+\log p(\mathbf{x}; \theta) &= \log \int q(\mathbf{z}) \frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})} \mathrm{d}\mathbf{z} \\
+&= \log \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[\frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})}\right] \\
+&\geq \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})} \right] \equiv \mathrm{ELBO}(q, \mathbf{x}; \theta)
 \end{aligned}
 $$
-由于隐变量 $\mathbf{Z}$ 的存在，边际似然关于 $\theta$ 的导数变得非常复杂：
-$$
-\frac{\partial \mathcal{L}}{\partial \theta} = \sum_{n = 1}^N \frac{\partial }{\partial \theta} \log \int p\left(\mathbf{x}^{(n)} \mid \mathbf{z}; \theta\right)p(\mathbf{z}; \theta) \mathrm{d} \mathbf{z}
-$$
-EM 算法引入了一个任意选取的分布函数 $q(\mathbf{z})$，称为**变分分布**（Variational Distribution），并利用 Jensen 不等式，将 $\log$ 移到最内层，得到对数边际似然的一个下界：
+
+### ELBO v.s. Evidence
+
+我们可以这样分解边际似然：
 $$
 \begin{aligned}
-\log p\left(\mathbf{x}^{(n)}; \theta\right) &= \log \int p\left(\mathbf{x}^{(n)}, \mathbf{z}; \theta\right) \mathrm{d} \mathbf{z} \\
-&= \log \int q(\mathbf{z}) \frac{p\left(\mathbf{x}^{(n)}, \mathbf{z}; \theta\right)}{q(\mathbf{z})} \mathrm{d} \mathbf{z} \\
-&= \log \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \frac{p\left(\mathbf{x}^{(n)}, \mathbf{z}; \theta\right)}{q(\mathbf{z})} \right] \\
-&\geq \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p\left(\mathbf{x}^{(n)}, \mathbf{z}; \theta\right)}{q(\mathbf{z})} \right] \quad &\text{(Logarithm is concave)}
+\log p(\mathbf{x}; \theta) &= \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log p(\mathbf{x}; \theta) \right] \\
+&= \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})} \frac{q(\mathbf{z})}{p(\mathbf{z} \mid \mathbf{x}; \theta)} \right] \\
+&= \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})} \right] + \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{q(\mathbf{z})}{p(\mathbf{z} \mid \mathbf{x}; \theta)} \right] \\
+&= \mathrm{ELBO}(q, \mathbf{x}; \theta) + \mathrm{KL}\left[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)\right]
 \end{aligned}
 $$
-最后一个不等式定义了**证据下界**（Evidence Lower Bound, ELBO）：
+由于 KL 散度始终非负，因此可以比较直观的理解为何 ELBO 是边际似然的下界。我们把这个重要结论单独列出：
 $$
-\color{red}\mathop{\mathrm{ELBO}}(q, \mathbf{x}; \theta) = \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})} \right]
+\boxed{
+\log p(\mathbf{x}; \theta) = \mathrm{ELBO}(q, \mathbf{x}; \theta) + \mathrm{KL}\left[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)\right]
+}
 $$
-进一步地，我们可以将 ELBO 和边际似然用 KL 散度关联起来：
-$$
-\begin{aligned}
-\mathop{\mathrm{ELBO}}(q, \mathbf{x}; \theta) &= \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{x}, \mathbf{z}; \theta)}{q(\mathbf{z})} \right] \\
-&= \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{z} \mid \mathbf{x}; \theta)p(\mathbf{x}; \theta)}{q(\mathbf{z})} \right] \\
-&= \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log p(\mathbf{x}; \theta)\right] + \mathbb{E}_{\mathbf{z} \sim q(\mathbf{z})} \left[ \log \frac{p(\mathbf{z} \mid \mathbf{x}; \theta)}{q(\mathbf{z})} \right] \\
-&= \log p(\mathbf{x}; \theta) - \mathop{\mathrm{KL}}[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)]
-\end{aligned}
-$$
-即：
-$$
-\color{red}\log p(\mathbf{x}; \theta) = \mathop{\mathrm{ELBO}}(q, \mathbf{x}; \theta) + \mathop{\mathrm{KL}}[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)]
-$$
-由于 KL 散度非负，因此 $\mathop{\mathrm{ELBO}}(q, \mathbf{x}; \theta) \leq \log p(\mathbf{x}; \theta)$。仅当 KL 散度为 $0$，即 $q(\mathbf{z}) = p(\mathbf{z} \mid \mathbf{x}; \theta)$ 时，ELBO 取得极大值。
 
-这样，求解含有隐变量的概率模型的极大似然估计问题的 EM 算法可以分解为两个步骤：
+## Expectation Maximization Algorithm
 
-1. **E 步**：固定参数 $\theta_t$，找到一个尽可能逼近 $p(\mathbf{z} \mid \mathbf{x}; \theta_t)$ 的变分分布 $q_{t + 1}(\mathbf{z})$，使得 KL 散度取到极小值（0）：
-    $$
-    q_{t + 1}(\mathbf{z}) = \mathop{\arg\min}_{q} \mathop{\mathrm{KL}} [q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta_t)]
-    $$
-2. **M 步**：固定变分分布 $q_{t + 1}(\mathbf{z})$，找到一个新的参数 $\theta_{t + 1}$，使得由 ELBO 表示的边际似然取得极大值：
-    $$
-    \theta_{t + 1} = \mathop{\arg\max}_{\theta} \mathop{\mathrm{ELBO}}(q_{t + 1}, \mathbf{x}; \theta)
-    $$
+EM 算法通过交替优化实现最大化 ELBO。
+
+### Expectation Step
+
+固定参数 $\theta_{t}$，优化变分分布：
+$$
+q_{t + 1}(\mathbf{z}) = \mathop{\arg\min}_q \mathrm{KL}\left[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta_{t})\right]
+$$
+显然，最优解就是 $q_{t + 1}(\mathbf{z}) = p(\mathbf{z} \mid \mathbf{x}; \theta_{t})$。
+
+### Maximization Step
+
+固定变分分布 $q_{t + 1}$，优化参数：
+$$
+\theta_{t + 1} = \mathop{\arg\max}_{\theta} \mathrm{ELBO}(q_{t + 1}, \mathbf{x}; \theta)
+$$
+这一步与极大似然估计类似，都是去优化参数。
 
 ## Proof of Convergence
 
-![em](images/em.png)
+EM 算法的收敛性可以通过以下步骤证明：
 
-第 $t$ 次迭代后，设参数为 $\theta_t$，变分分布为 $q_t(\mathbf{z})$。在 E 步找到变分分布 $q_{t + 1}(\mathbf{z})$，使得 $\mathop{\mathrm{KL}}[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)] = 0$，即 $\mathop{\mathrm{ELBO}}\left(q_{t + 1}, \mathbf{x}; \theta_t\right)=\log p\left(\mathbf{x}; \theta_t\right)$。在 M 步找到参数 $\theta_{t + 1}$，使得 $\mathop{\mathrm{ELBO}}\left(q_{t + 1}, \mathbf{x}; \theta_{t + 1}\right)\geq \mathop{\mathrm{ELBO}}\left(q_{t + 1}, \mathbf{x}; \theta_t\right)$，极大化了用 ELBO 表示的边际似然。因此
-$$
-\log p\left(\mathbf{x}; \theta_{t + 1}\right) \ge \mathop{\mathrm{ELBO}}\left(q_{t + 1}, \mathbf{x}; \theta_{t + 1}\right) \ge \mathop{\mathrm{ELBO}}\left(q_{t + 1}, \mathbf{x}; \theta_t\right) = \log p\left(\mathbf{x}; \theta_t\right)
-$$
-即每次迭代后边际似然是递增的，由于边际似然是有上界的（$\log p\left(\mathbf{x}; \theta\right) \le 0$），因此EM算法是收敛的。
+1. 在 E 步后：$\mathrm{ELBO}(q_{t + 1}, \mathbf{x}; \theta_{t}) = \log p(\mathbf{x}; \theta_{t})$
+2. 在 M 步后：$\mathrm{ELBO}(q_{t + 1}, \mathbf{x}; \theta_{t + 1}) \geq \mathrm{ELBO}(q_{t + 1}, \mathbf{x}; \theta_{t})$
+3. 因此：
+   $$
+   \log p(\mathbf{x}; \theta_{t + 1}) \geq \mathrm{ELBO}(q_{t + 1}, \mathbf{x}; \theta_{t + 1}) \geq \log p(\mathbf{x}; \theta_{t})
+   $$
+4. 由此可得 $\log p(\mathbf{x}; \theta_{t})$ 是单调非减的，并且存在上界（0），因此 EM 算法收敛。
+
+![EM收敛过程可视化](images/em.png)
 
 ## Variational Inference
 
-对于绝大部分问题来说，精确推断（即精确计算 $p(\mathbf{z} \mid \mathbf{x}; \theta)$）是非常困难的。因此，我们一般会寻找**形式简单或计算简单**的变分分布 $q^*$ 来近似 $p(\mathbf{z} \mid \mathbf{x}; \theta)$，将精确推断问题转化为泛函优化问题，这就是变分推断方法：
-$$
-q^*(\mathbf{z}) = \mathop{\arg\min}_{q} \mathop{\mathrm{KL}}[q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)]
-$$
-要优化这个目标函数，必须知道后验概率 $p(\mathbf{z} \mid \mathbf{x}; \theta)$ 的具体形式，但好在 EM 算法的核心公式告诉我们：
-$$
-\begin{aligned}
-q^*(\mathbf{z}) &= \mathop{\arg\min}_{q \in \mathcal{Q}} \mathop{\mathrm{KL}}(q(\mathbf{z}) \parallel p(\mathbf{z} \mid \mathbf{x}; \theta)) \\
-&= \mathop{\arg\min}_{q \in \mathcal{Q}} \left(\log p(\mathbf{x}; \theta) - \mathop{\mathrm{ELBO}}(q, \mathbf{x}; \theta)\right) \\
-&= \mathop{\arg\max}_{q \in \mathcal{Q}} \mathop{\mathrm{ELBO}}(q, \mathbf{x}; \theta)
-\end{aligned}
-$$
-这样就能将问题转化为最大化 ELBO。传统方法如 Variational Bayes EM 算法，通过迭代优化 $q$ 的各个分量来求解。对于深度学习，可以使用神经网络来拟合。
+对于复杂模型，后验 $p(\mathbf{z}\mid\mathbf{x}; \theta)$ 常难以计算。**变分推断**通过限制 $q$ 的函数形式来近似：
 
----
+$$
+q^* = \mathop{\arg\min}_{q \in \mathcal{Q}} \mathrm{KL}\left[q(\mathbf{z}) \parallel p(\mathbf{z}\mid\mathbf{x}; \theta)\right]
+$$
+等价于：
+$$
+q^* = \mathop{\arg\max}_{q \in \mathcal{Q}} \mathrm{ELBO}(q, \mathbf{x}; \theta)
+$$
+其中 $\mathcal{Q}$ 是一个函数空间，包含所有可能的 $q$。
 
-> Gaussian Mixture Model (GMM) 是由多个 Gaussian 分布组成的模型，其总体密度函数是多个 Gaussian 密度函数的加权组合。假设样本 $x$ 是从 $K$ 个 Gaussian 分布中随机采样得到的，但无法得知具体是从哪个 Gaussian 分布中采样。为了求解，引入隐变量 $z \in \{1, \dots, K\}$ 表示样本 $x$ 是从某个 Gaussian 分布中采样得到的，且 $z$ 服从分类分布，$p(z = k) = \pi_k \ge 0$，其中 $\pi_k$ 表示样本由第 $k$ 个 Gaussian 分布生成的概率，并满足 $\sum_{k = 1}^K \pi_k = 1$。
+- 传统方法：平均场近似
+- 深度学习方法：用神经网络拟合 $q$
 
-该模型的参数为 $\boldsymbol{\pi} = \{\pi_1, \dots, \pi_K\}, \boldsymbol{\mu} = \{\mu_1, \dots, \mu_K\}, \boldsymbol{\sigma} = \{\sigma_1, \dots, \sigma_K\}$，显变量为 $\left\{x^{(n)}\right\}_{n = 1}^N$，隐变量为 $z$。首先，获得对数边际似然函数：
+## Examples of EM Algorithm
+
+### Gaussian Mixture Model
+
+> 数据由 $K$ 个高斯分布生成：
+> - 隐变量 $z \in \{1, \dots, K\}$：指示数据来源的分布；
+> - 参数：$\boldsymbol{\pi} = \{\pi_k\}_{k = 1}^{K}$（混合权重），$\boldsymbol{\mu} = \{\mu_k\}_{k = 1}^{K}$，$\boldsymbol{\sigma} = \{\sigma_k\}_{k = 1}^{K}$$
+
+**E 步**：计算后验分布
 $$
 \begin{aligned}
-\log p\left(x^{(n)}; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right) &= \log \sum_{k = 1}^K p\left(x^{(n)}, z = k; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right) \\
-&= \log \sum_{k}^K p\left(x^{(n)} \mid z = k; \boldsymbol{\mu}, \boldsymbol{\sigma}\right)p\left(z = k; \boldsymbol{\pi}\right) \\
-&= \log \sum_{k = 1}^K \mathcal{N}\left(x^{(n)}; \mu_k, \sigma_k\right) \pi_k
+\gamma_k^{(n)} &\equiv p(z = k \mid x^{(n)}; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}) \\
+&= \frac{p(x^{(n)} \mid z = k; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}) p(z = k; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma})}{p(x^{(n)}; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma})} \\
+&= \frac{\mathcal{N}(x^{(n)}; \mu_k, \sigma_k)\pi_k}{\sum_{j=1}^K \mathcal{N}(x^{(n)}; \mu_j, \sigma_j)\pi_j}
 \end{aligned}
 $$
-随后是 E 步，固定参数，求解变分分布，即样本 $x^{(n)}$ 属于第 $k$ 个 Gaussian 分布的后验概率分布：
+
+**M 步**：计算 ELBO
 $$
 \begin{aligned}
-q\left(z = k \mid x^{(n)}\right) &= p\left(z = k \mid x^{(n)}; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right) \\
-&= \frac{p\left(x^{(n)}, z = k; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right)}{p\left(x^{(n)}; \boldsymbol{\mu}, \boldsymbol{\sigma}\right)} \\
-&= \frac{\mathcal{N}\left(x^{(n)}; \mu_k, \sigma_k\right) \pi_k}{\sum_{k = 1}^K \mathcal{N}\left(x^{(n)}; \mu_k, \sigma_k\right) \pi_k}
+\mathop{\mathrm{ELBO}}\left(q, \mathcal{D}; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right) &= \sum_{n = 1}^{N}\sum_{k = 1}^K \gamma_k^{(n)}\log\frac{p\left(x^{(n)}, z = k; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right)}{\gamma_k^{(n)}} \\
+&= \sum_{n = 1}^{N}\sum_{k = 1}^K \gamma_k^{(n)}\log\frac{\mathcal{N}\left(x^{(n)}; \mu_k, \sigma_k\right) \pi_k}{\gamma_k^{(n)}} \\
+&= \sum_{n = 1}^{N}\sum_{k = 1}^K \gamma_k^{(n)}\left[-\frac{(x^{(n)} - \mu_k)^2}{2\sigma_k^2} - \log\sigma_k + \log\pi_k\right] + \text{Constant}
 \end{aligned}
 $$
-随后是 M 步，固定变分分布，更新参数：
-$$
-\begin{aligned}
-\mathop{\mathrm{ELBO}}\left(q, \{x^{(n)}\}_{n = 1}^{N}, \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right) &= \sum_{n = 1}^{N}\sum_{k = 1}^K q\left(z = k \mid x^{(n)}\right)\log\frac{p\left(x^{(n)}, z = k; \boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\sigma}\right)}{q\left(z = k \mid x^{(n)}\right)} \\
-&= \sum_{n = 1}^{N}\sum_{k = 1}^K q\left(z = k \mid x^{(n)}\right)\log\frac{\mathcal{N}\left(x^{(n)}; \mu_k, \sigma_k\right) \pi_k}{q\left(z = k \mid x^{(n)}\right)} \\
-&= \sum_{n = 1}^{N}\sum_{k = 1}^K q\left(z = k \mid x^{(n)}\right)\left[-\frac{(x^{(n)} - \mu_k)^2}{2\sigma_k^2} - \log\sigma_k + \log\pi_k\right] + \text{Constant}
-\end{aligned}
-$$
+
 利用 Lagrange 乘数法，求解参数，得到
 $$
 \begin{aligned}
-\mu_k^* &= \frac{\sum_{n = 1}^{N} q\left(z = k \mid x^{(n)}\right) x^{(n)}}{\sum_{n = 1}^{N} q\left(z = k \mid x^{(n)}\right)} \\
-\sigma_k^* &= \frac{\sum_{n = 1}^{N} q\left(z = k \mid x^{(n)}\right) (x^{(n)} - \mu_k^*)^2}{\sum_{n = 1}^{N} q\left(z = k \mid x^{(n)}\right)} \\
-\pi_k^* &= \frac{\sum_{n = 1}^{N} q\left(z = k \mid x^{(n)}\right)}{N}
+\mu_k^* &= \frac{\sum_{n = 1}^{N} \gamma_k^{(n)} x^{(n)}}{\sum_{n = 1}^{N} \gamma_k^{(n)}} \\
+\sigma_k^* &= \frac{\sum_{n = 1}^{N} \gamma_k^{(n)} (x^{(n)} - \mu_k^*)^2}{\sum_{n = 1}^{N} \gamma_k^{(n)}} \\
+\pi_k^* &= \frac{\sum_{n = 1}^{N} \gamma_k^{(n)}}{N}
 \end{aligned}
 $$
 
-> Story Telling
+### Story Telling
 
-1. 假设某地区男性人群的身高服从正态分布 $\mathcal{N}(\mu_1, \sigma^2_1)$，女性人群的身高服从正态分布 $\mathcal{N}(\mu_2, \sigma^2_2)$，因此随机抽取 $N$ 个人，其中性别就是一个隐变量。
-2. KMeans 算法可以看作是 GMM 算法的一个特例，其中显变量是数据点，隐变量是属于哪个聚类簇，参数是聚类簇的质心和半径。
+假设某地区人群身高由男性和女性两个子群体组成：
+- 男性身高分布：$\mathcal{N}(\mu_1, \sigma_1^2)$
+- 女性身高分布：$\mathcal{N}(\mu_2, \sigma_2^2)$
+
+在不知道收集到的身高数据属于哪个子群体的情况下，我们可以使用 EM 算法来估计男性和女性的身高分布参数。
+
+### K-Means Clustering
+
+K-Means 是 GMM 的特例：
+- 假设每个簇的分布都是参数相同的 Isotropic 高斯分布；
+- 混合权重只有两种可能：1 或 0，即数据点完全属于某个簇。
