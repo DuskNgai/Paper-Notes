@@ -49,6 +49,12 @@ $$
 \end{align*}
 $$
 
+## Kullback–Leibler Divergence of Gaussian Distribution with Standard Gaussian Distribution
+
+$$
+\mathrm{KL}\left[\mathcal{N}(\boldsymbol{\mu},\Sigma)\parallel\mathcal{N}(\mathbf{0},I_n)\right]=\frac{1}{2}\left(-\log|\Sigma|+\mathrm{trace}(\Sigma)+\boldsymbol{\mu}^T\boldsymbol{\mu}-n\right)
+$$
+
 ## Moment-generating Function of the Gaussian Distribution
 
 $$

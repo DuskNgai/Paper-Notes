@@ -1,11 +1,11 @@
 # Maximum Likelihood Estimation
 
-|                           Symbol                            |               Description               |
-| :---------------------------------------------------------: | :-------------------------------------: |
-|                          $\theta$                           |            model parameters             |
-|                $\mathbf{x}^{(n)}/\mathbf{x}$                | explicit sample/explict random variable |
-|                $\mathbf{z}^{(i)}/\mathbf{z}$                |  hidden sample/hidden random variable   |
-| $\mathcal{D} = \left\{\mathbf{x}^{(n)}\right\}_{n = 1}^{N}$ |              training set               |
+|                           Symbol                            |               Description               |     |
+| :---------------------------------------------------------: | :-------------------------------------: | --- |
+|                          $\theta$                           |            model parameters             |     |
+|                $\mathbf{x}^{(n)}/\mathbf{x}$                | explicit sample/explict random variable |     |
+|                $\mathbf{z}^{(i)}/\mathbf{z}$                |  hidden sample/hidden random variable   |     |
+| $\mathcal{D} = \left\{\mathbf{x}^{(n)}\right\}_{n = 1}^{N}$ |              training set               |     |
 
 ---
 

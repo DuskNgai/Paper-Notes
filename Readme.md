@@ -90,4 +90,4 @@ Personal notes of read papers and books.
 
 ## Deep Learning
 
-2018 Bridging the Gap between Deep Learning and Sparse Matrix Format Selection
+2018 Bridging the Gap between Deep Learning and Sparse Matrix Format Selection  

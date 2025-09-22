@@ -117,7 +117,7 @@ $$
 
 > 数据由 $K$ 个高斯分布生成：
 > - 隐变量 $z \in \{1, \dots, K\}$：指示数据来源的分布；
-> - 参数：$\boldsymbol{\pi} = \{\pi_k\}_{k = 1}^{K}$（混合权重），$\boldsymbol{\mu} = \{\mu_k\}_{k = 1}^{K}$，$\boldsymbol{\sigma} = \{\sigma_k\}_{k = 1}^{K}$$
+> - 参数：$\boldsymbol{\pi} = \{\pi_k\}_{k = 1}^{K}$（混合权重），$\boldsymbol{\mu} = \{\mu_k\}_{k = 1}^{K}$，$\boldsymbol{\sigma} = \{\sigma_k\}_{k = 1}^{K}$
 
 **E 步**：计算后验分布
 $$
