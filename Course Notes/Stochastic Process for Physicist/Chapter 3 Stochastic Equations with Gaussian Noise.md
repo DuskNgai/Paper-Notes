@@ -4,19 +4,19 @@
 
 ## 3.2 Gaussian Increments and the Continuum Limit
 
-从最简单的含随机变量的差分方程出发：
+从最简单的、包含随机变量的差分方程出发：
 $$
 \Delta x(t_{n}) = \epsilon_{n} \sqrt{\Delta t}
 $$
-其中 $t_{n} = n \Delta t$, $\epsilon_{n} \sim \mathcal{N}(0, 1)$ 是相互独立的随机变量。令 $\Delta w_{n} = \epsilon_{n} \sqrt{\Delta t} \sim \mathcal{N}(0, \Delta t)$，因此差分方程的解就是：
+其中 $t_{n} = n \Delta t$, $\epsilon_{n} \sim \mathcal{N}(0, 1)$ 是相互独立的随机变量。定义维纳增量 (Wiener increment) $\Delta w_{n} = \epsilon_{n} \sqrt{\Delta t}$，它服从正态分布 $\mathcal{N}(0, \Delta t)$。因此，该差分方程的解就是各个独立增量的累加：
 $$
 x_{n} \equiv x(t_{n}) = x(0) + \sum_{i = 0}^{n - 1} \Delta w_{i}
 $$
-相互独立的、满足标准 Gauss 分布的随机变量之和也满足 Gauss 分布。于是我们就考察 $x_{n}$ 的均值和方差。容易验证：
+由于相互独立的高斯随机变量之和也服从高斯分布，我们可以通过计算 $x_{n}$ 的均值和方差来确定其分布。容易验证：
 $$
-\mathbb{E}[x_{n}] = x(0) \quad \mathbb{V}[x_{n}] = n \Delta t
+\mathbb{E}[x_{n}] = x(0), \quad \mathbb{V}[x_{n}] = n \Delta t
 $$
-因此：
+因此，$x_n$ 的分布为：
 $$
 \color{red}
 \boxed{
@@ -24,11 +24,11 @@ $$
 }
 $$
 
-我们可以把结论进一步推广到微分方程上：给定一个时间 $T$，我们把它离散化为 $N$ 个离散时间步，因此有 $\Delta t = T / N$。将其作用到差分方程上，有：
+现在，我们将这个结论推广到连续的微分方程上。给定一个总时间 $T$，我们将其离散化为 $N$ 个时间步，则 $\Delta t = T / N$。当 $N \to \infty$ 时，差分方程的解就变成了一个积分：
 $$
-x_{T} - x_{0} = \lim_{N \to \infty} \sum_{i = 0}^{N - 1} \Delta w_{i} = \int_{0}^{T} \mathrm{d} w(t) \equiv w(T)
+x(T) - x(0) = \lim_{N \to \infty} \sum_{i = 0}^{N - 1} \Delta w_{i} = \int_{0}^{T} \mathrm{d} w(t) \equiv w(T)
 $$
-其中 $w(t)$ 就是 Wiener 过程，$\mathrm{d}w$ 是 Wiener 过程的增量。利用差分方程的结论，我们有：
+这里的 $w(t)$ 就是 Wiener 过程，而 $\mathrm{d}w$ 是其无穷小增量。利用离散情况的结论，我们可以得到 Wiener 过程在 $T$ 时刻的分布：
 $$
 \color{red}
 \boxed{
@@ -38,29 +38,25 @@ $$
 
 ## 3.4 Ito Calculus
 
-以下我们不严谨地证明 $(\mathrm{d}w)^{2} = \mathrm{d}t$。我们还是从离散的开始，先考察 $(\Delta w)^{2}$ 的均值和方差。已知 $\Delta w \sim \mathcal{N}(0, \Delta t)$，因此：
+接下来，我们将不严谨地证明 $(\mathrm{d}w)^{2} = \mathrm{d}t$。我们依然从离散情况出发，考察 $(\Delta w)^{2}$ 的均值和方差。已知 $\Delta w \sim \mathcal{N}(0, \Delta t)$，因此：
 $$
-\mathbb{E}\left[(\Delta w)^{2}\right] = \mathbb{V}[(\Delta w)] + \mathbb{E}[(\Delta w)]^{2} = \Delta t
+\mathbb{E}\left[(\Delta w)^{2}\right] = \mathbb{V}[\Delta w] + \mathbb{E}[\Delta w]^{2} = \Delta t
 $$
-
 $$
 \mathbb{V}\left[(\Delta w)^{2}\right] = \mathbb{E}\left[(\Delta w)^{4}\right] - \mathbb{E}\left[(\Delta w)^{2}\right]^{2} = 3 (\Delta t)^{2} - (\Delta t)^{2} = 2 (\Delta t)^{2}
 $$
-
-然后考虑求和的均值和方差：
+然后考虑 $N$ 步求和的均值和方差：
 $$
-\mathbb{E}\left[\sum_{i = 0}^{N - 1}(\Delta w_{i})^{2}\right] = N \Delta t \quad \mathbb{V}\left[\sum_{i = 0}^{N - 1}(\Delta w_{i})^{2}\right] = 2 N (\Delta t)^{2}
+\mathbb{E}\left[\sum_{i = 0}^{N - 1}(\Delta w_{i})^{2}\right] = N \Delta t, \quad \mathbb{V}\left[\sum_{i = 0}^{N - 1}(\Delta w_{i})^{2}\right] = 2 N (\Delta t)^{2}
 $$
-最后拓展到连续的情况上，需要用到 $\Delta t = T / N$ 的前提条件，并且要不严谨地交换求极限和求期望的顺序：
+最后，我们将其拓展到连续情况。利用 $\Delta t = T / N$ 的关系，并在极限和期望之间不严谨地交换顺序：
 $$
 \mathbb{E}\left[\int_{0}^{T} (\mathrm{d} w)^{2}\right] = \mathbb{E}\left[\lim_{N \to \infty} \sum_{i = 0}^{N - 1}(\Delta w_{i})^{2}\right] = \lim_{N \to \infty} N \Delta t = T
 $$
-
 $$
-\mathbb{V}\left[\int_{0}^{T} (\mathrm{d} w)^{2}\right] = \mathbb{V}\left[\lim_{N \to \infty} \sum_{i = 0}^{N - 1}(\Delta w_{i})^{2}\right] = \lim_{N \to \infty} 2N(\Delta t)^2 = \lim_{\Delta t \to 0} 2T\Delta t = 0
+\mathbb{V}\left[\int_{0}^{T} (\mathrm{d} w)^{2}\right] = \mathbb{V}\left[\lim_{N \to \infty} \sum_{i = 0}^{N - 1}(\Delta w_{i})^{2}\right] = \lim_{N \to \infty} 2N(\Delta t)^{2} = \lim_{\Delta t \to 0} 2T\Delta t = 0
 $$
-
-方差为 0 意味着积分实际上是确定的！即：
+方差为 0 意味着这个积分的结果在极限情况下是完全确定的，没有任何随机性！
 $$
 \color{red}
 \boxed{
@@ -77,25 +73,35 @@ $$
 
 ## 3.5 Ito's Formula: Changing Variables in an SDE
 
-设 $x$ 满足某个 SDE：
+设随机变量 $x$ 满足某个 SDE：
 $$
 \mathrm{d}x = f \mathrm{d}t + g \mathrm{d}w
 $$
 那么 $y = y(x, t)$ 的微分形式如下：
 $$
 \begin{aligned}
-\mathrm{d}y &= \frac{\partial y}{\partial x} \mathrm{d}x + \frac{\partial y}{\partial t} \mathrm{d}t + \frac{1}{2} \frac{\partial^{2} y}{\partial x^{2}} (\mathrm{d}x)^{2} + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
-&= \frac{\partial y}{\partial x} (f \mathrm{d}t + g \mathrm{d}w) + \frac{\partial y}{\partial t} \mathrm{d}t + \frac{1}{2} \frac{\partial^{2} y}{\partial x^{2}} (f \mathrm{d}t + g \mathrm{d}w)^{2} + \dots \\
-&= \left(\frac{\partial y}{\partial x} f + \frac{\partial y}{\partial t} + \frac{1}{2} \frac{\partial^{2} y}{\partial x^{2}} g^{2}\right) \mathrm{d}t + \frac{\partial y}{\partial x} g \mathrm{d}w + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
+\mathrm{d}y &= \frac{\partial y}{\partial t} \mathrm{d}t + \frac{\partial y}{\partial x} \mathrm{d}x + \frac{1}{2} \frac{\partial^{2} y}{\partial x^{2}} (\mathrm{d}x)^{2} + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
 \end{aligned}
 $$
+将 $\mathrm{d}x$ 的表达式代入，并计算 $(\mathrm{d}x)^{2}$：
+$$
+(\mathrm{d}x)^{2} = (f \mathrm{d}t + g \mathrm{d}w)^{2} = f^{2}(\mathrm{d}t)^{2} + 2fg(\mathrm{d}t)(\mathrm{d}w) + g^{2}(\mathrm{d}w)^{2}
+$$
+根据 Ito 规则，我们知道 $(\mathrm{d}w)^{2} = \mathrm{d}t$。而 $(\mathrm{d}t)^{2}$ 和 $\mathrm{d}t \mathrm{d}w$ 都是比 $\mathrm{d}t$ 更高阶的无穷小量，因此在极限中趋于零。所以，我们只保留 $g^{2} \mathrm{d}t$ 这一项。代回到 $\mathrm{d}y$ 的展开式中：
+$$
+\begin{aligned}
+\mathrm{d}y &= \frac{\partial y}{\partial t} \mathrm{d}t + \frac{\partial y}{\partial x} (f \mathrm{d}t + g \mathrm{d}w) + \frac{1}{2} \frac{\partial^{2} y}{\partial x^{2}} (g^{2} \mathrm{d}t) + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
+&= \left(\frac{\partial y}{\partial t} + f \frac{\partial y}{\partial x} + \frac{1}{2} g^{2} \frac{\partial^{2} y}{\partial x^{2}}\right)\mathrm{d}t + g \frac{\partial y}{\partial x} \mathrm{d}w + \mathcal{O}((\mathrm{d}t)^{3/2})
+\end{aligned}
+$$
+
 因此得到 Ito 公式：
 $$
 \color{red}
 \boxed{
     \begin{aligned}
-    \mathrm{d}y &= \frac{\partial y}{\partial x} \mathrm{d}x + \frac{\partial y}{\partial t} \mathrm{d}t + \frac{1}{2} \frac{\partial^{2} y}{\partial x^{2}} (\mathrm{d}x)^{2} \\
-    &= \left(\frac{\partial y}{\partial t} + f \frac{\partial y}{\partial x} + \frac{1}{2} g^2 \frac{\partial^2 y}{\partial x^2}\right)\mathrm{d}t + g \frac{\partial y}{\partial x} \mathrm{d}w
+    \mathrm{d}y &= \frac{\partial y}{\partial t} \mathrm{d}t + \frac{\partial y}{\partial x} \mathrm{d}x + \frac{1}{2} \frac{\partial^{2} y}{\partial x^{2}} (\mathrm{d}x)^{2} \\
+    &= \left(\frac{\partial y}{\partial t} + f \frac{\partial y}{\partial x} + \frac{1}{2} g^{2} \frac{\partial^{2} y}{\partial x^{2}}\right)\mathrm{d}t + g \frac{\partial y}{\partial x} \mathrm{d}w
     \end{aligned}
 }
 $$
@@ -106,7 +112,7 @@ $$
 
 ### 3.6.1 The Ornstein-Uhlenbeck Process
 
-OU 过程对应的 SDE 为：
+Ornstein-Uhlenbeck (OU) 过程对应的 SDE 为：
 $$
 \mathrm{d}x = -\mu x \mathrm{d}t + \sigma \mathrm{d}w
 $$
@@ -140,12 +146,11 @@ $$
 &= \frac{1}{2 \mu} \left(\exp(2 \mu T) - 1\right)
 \end{aligned}
 $$
-
-显然 $y(t)$ 是一个满足高斯分布的随机变量，因此：
+因此：
 $$
 y(T) \sim \mathcal{N}\left(y_{0}, \frac{\sigma^{2}}{2 \mu} \left(\exp(2 \mu T) - 1\right)\right)
 $$
-代换回 $x$，有：
+代换回 $x(t)$：
 $$
 \begin{aligned}
 x(t) &= \left(y(0) + \sigma \int_{0}^{t} \exp(\mu s) \mathrm{d}w(s)\right) \exp(-\mu t) \\
@@ -168,7 +173,7 @@ $$
 $$
 \begin{aligned}
 \mathrm{d}y &= \frac{1}{x} \mathrm{d}x + \frac{1}{2} \left(-\frac{1}{x^{2}}\right) (\mathrm{d}x)^{2} \\
-&= \frac{1}{x} (-\mu x \mathrm{d}t + \sigma x \mathrm{d}w) - \frac{1}{2} \frac{1}{x^{2}} (\sigma^2 x^2 \mathrm{d}t) \\
+&= \frac{1}{x} (-\mu x \mathrm{d}t + \sigma x \mathrm{d}w) - \frac{1}{2x^{2}} (\sigma^{2} x^{2} \mathrm{d}t) \\
 &= \left(-\mu - \frac{1}{2} \sigma^{2}\right) \mathrm{d}t + \sigma \mathrm{d}w
 \end{aligned}
 $$
@@ -202,7 +207,9 @@ $$
 
 ## 3.7 Deriving Equations for the Means and Variances
 
-通常，为了得到一个随机过程的均值和方差，我们会先求解 SDE 得到其概率密度，再通过积分计算。但很多 SDE 无法解析求解。我们可以绕过这一步，直接从 SDE 推导出关于矩（均值、方差等）的微分方程。考虑一般的 SDE：
+通常，为了得到一个随机过程的矩（如均值、方差），我们需要先求解 SDE 得到其概率密度，再通过积分计算。但很多 SDE 无法解析求解。幸运的是，我们可以绕过这一步，直接从 SDE 推导出关于矩的微分方程。
+
+考虑一般的SDE：
 $$
 \mathrm{d}x = f(x, t) \mathrm{d}t + g(x, t) \mathrm{d}w
 $$
@@ -254,7 +261,7 @@ $$
 
 ### 3.8.1 SDEs with Multiple Noise Sources
 
-SDE 的噪声来源可以是多个的，这些噪声可以独立也可以相关。考虑如下的 SDE：
+SDE 的噪声源可以是多个的，这些噪声可以独立也可以相关。考虑如下的 SDE：
 $$
 \mathrm{d}x = f(x, t) \mathrm{d}t + g_{1}(x, t) \mathrm{d}w_{1} + g_{2}(x, t) \mathrm{d}w_{2}
 $$
@@ -289,7 +296,7 @@ $$
 $$
 \mathrm{d}\mathbf{x} = \mathbf{f}(\mathbf{x}, t) \mathrm{d}t + G(\mathbf{x}, t) \mathrm{d}\mathbf{w}
 $$
-其中 $\mathbf{x} \in \mathbb{R}^{n}$, $\mathbf{f} : \mathbb{R}^{n} \times \mathbb{R} \to \mathbb{R}^{n}$, $G : \mathbb{R}^{n} \times \mathbb{R} \to \mathbb{R}^{n \times m}$, $\mathbf{w} \in \mathbb{R}^{m}$ 是 $m$ 维的 Wiener 过程，且有 $\mathrm{d}\mathbf{w}_{i} \mathrm{d}\mathbf{w}_{j} = \delta_{ij} \mathrm{d}t$。如果 $\mathbf{y} = \mathbf{y}(\mathbf{x}, t)$，则：
+其中 $\mathbf{x} \in \mathbb{R}^{n}$, $\mathbf{f} : \mathbb{R}^{n} \times \mathbb{R} \to \mathbb{R}^{n}$, $G : \mathbb{R}^{n} \times \mathbb{R} \to \mathbb{R}^{n \times m}$, $\mathbf{w} \in \mathbb{R}^{m}$ 是 $m$ 维独立的 Wiener 过程，且有 $\mathrm{d}\mathbf{w}_{i} \mathrm{d}\mathbf{w}_{j} = \delta_{ij} \mathrm{d}t$。如果 $\mathbf{y} = \mathbf{y}(\mathbf{x}, t)$，则：
 $$
 \mathrm{d}\mathbf{y}_{i} = \frac{\partial \mathbf{y}_{i}}{\partial t} \mathrm{d}t + \sum_{j = 1}^{n} \frac{\partial \mathbf{y}_{i}}{\partial \mathbf{x}_{j}} \mathrm{d}\mathbf{x}_{j} + \frac{1}{2} \sum_{j = 1}^{n} \sum_{k = 1}^{n} \frac{\partial^{2} \mathbf{y}_{i}}{\partial \mathbf{x}_{j} \partial \mathbf{x}_{k}} \mathrm{d}\mathbf{x}_{j} \mathrm{d}\mathbf{x}_{k} + \cdots
 $$
@@ -297,7 +304,6 @@ $$
 $$
 \mathrm{d}\mathbf{y}_{i} = \frac{\partial \mathbf{y}_{i}}{\partial t} \mathrm{d}t + \sum_{j = 1}^{n} \frac{\partial \mathbf{y}_{i}}{\partial \mathbf{x}_{j}} \left(\mathbf{f}_{j} \mathrm{d}t + \sum_{k = 1}^{m} G_{jk} \mathrm{d}\mathbf{w}_{k}\right) + \frac{1}{2} \sum_{j = 1}^{n} \sum_{k = 1}^{n} \frac{\partial^{2} \mathbf{y}_{i}}{\partial \mathbf{x}_{j} \partial \mathbf{x}_{k}} \left(\sum_{l = 1}^{m} G_{jl} G_{kl} \mathrm{d}t\right) + \cdots
 $$
-
 
 ---
 
@@ -307,8 +313,10 @@ $$
 
 $$
 \begin{aligned}
-\exp\left(\alpha \mathrm{d}t - \frac{1}{2} \beta^{2} \mathrm{d}t + \beta \mathrm{d}w\right) &= 1 + \left(\alpha \mathrm{d}t - \frac{1}{2} \beta^{2} \mathrm{d}t + \beta \mathrm{d}w\right) + \frac{1}{2}\left(\alpha \mathrm{d}t - \frac{1}{2} \beta^{2} \mathrm{d}t + \beta \mathrm{d}w\right)^{2} + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
-&= 1 + \alpha \mathrm{d}t + \beta \mathrm{d}w + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
+\exp\left(\alpha \mathrm{d}t - \frac{1}{2} \beta^{2} \mathrm{d}t + \beta \mathrm{d}w\right) &= 1 + \left(\alpha \mathrm{d}t - \frac{1}{2} \beta^{2} \mathrm{d}t + \beta \mathrm{d}w\right) + \frac{1}{2}\left(\dots + \beta \mathrm{d}w\right)^{2} + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
+&= 1 + \alpha \mathrm{d}t - \frac{1}{2} \beta^{2} \mathrm{d}t + \beta \mathrm{d}w + \frac{1}{2}(\beta \mathrm{d}w)^{2} + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
+&= 1 + \alpha \mathrm{d}t - \frac{1}{2} \beta^{2} \mathrm{d}t + \beta \mathrm{d}w + \frac{1}{2}\beta^{2} \mathrm{d}t + \mathcal{O}((\mathrm{d}t)^{3/2}) \\
+&= 1 + \alpha \mathrm{d}t + \beta \mathrm{d}w + \mathcal{O}((\mathrm{d}t)^{3/2})
 \end{aligned}
 $$
 
@@ -623,4 +631,3 @@ $$
 &= \exp\left(-\frac{1}{2} \beta^{2} t + \beta w(t)\right) \begin{bmatrix}\cos(\alpha t) & \sin(\alpha t) \\ -\sin(\alpha t) & \cos(\alpha t)\end{bmatrix} \mathbf{x}(0) \\
 \end{aligned}
 $$
-
