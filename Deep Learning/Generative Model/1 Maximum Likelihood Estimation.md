@@ -87,6 +87,19 @@ $$
 
 容易验证所求参数为所求函数的极大值点。
 
+
+二阶偏导数（用于求期望）：
+$$
+\frac{\partial^2 \mathcal{L}}{\partial\mu^2} = -\frac{N}{\sigma^2},\qquad
+\frac{\partial^2 \mathcal{L}}{\partial\mu\partial\sigma^2} = -\frac{1}{\sigma^4} \sum_{n = 1}^{N} (x^{(n)} - \mu),\qquad
+\frac{\partial^2 \mathcal{L}}{\partial(\sigma^2)^2} = \frac{N}{2\sigma^4}-\frac{1}{\sigma^6} \sum_{n = 1}^{N} (x^{(n)} - \mu)^2.
+$$
+
+因此 Fisher 信息矩阵为：
+$$
+I(\theta) = N\begin{pmatrix}1/\sigma^2 & 0\\[4pt] 0 & 1/(2\sigma^4)\end{pmatrix},
+$$
+
 ### Exponential Distribution
 
 > 随机变量 $X \sim \mathrm{Expo}(\lambda)$，样本集 $\left\{x^{(n)}\right\}_{n = 1}^{N}$，求 $\lambda$ 的 MLE。
@@ -108,6 +121,16 @@ $$
 $$
 \boxed{\lambda^* = \frac{N}{\sum_{n = 1}^{N} x^{(n)}} = \frac{1}{\bar{x}}}
 $$
+
+二阶导数：
+$$
+\frac{\partial^2 \mathcal{L}}{\partial\lambda^2} = -\frac{1}{\lambda^2}.
+$$
+因此单样本 Fisher 信息为：
+$$
+I(\lambda)=-E\left[\frac{\partial^2 \mathcal{L}}{\partial\lambda^2}\right]=\frac{1}{\lambda^2}.
+$$
+对 $N$ 个样本：$I_N(\lambda) = N/\lambda^2$。
 
 ### Uniform Distribution
 
