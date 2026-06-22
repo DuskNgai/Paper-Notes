@@ -77,7 +77,7 @@ $$
 
 只要一个随机过程在任意两个时刻 $t$ 和 $t'$ 的联合概率密度存在，我们就能计算其自相关函数。因此，我们来研究联合概率密度：
 $$
-\mathbb{P}(x(t) = x, x(t') = x') = \mathbb{P}(x(t) = x | x(t') = x') \mathbb{P}(x(t') = x')
+\mathbb{P}(x, t, x', t') = \mathbb{P}(x, t \mid x', t') \mathbb{P}(x', t')
 $$
 以标准 Wiener 过程为例 (假设 $t > t'$)：
 $$
@@ -164,7 +164,7 @@ g(0) &= \mathbb{E}[\xi(t) \xi(t)] \\
 &= \lim_{\Delta t \to 0} \mathbb{E}\left[\frac{\Delta w(t)}{\Delta t} \frac{\Delta w(t)}{\Delta t}\right] \\
 &= \lim_{\Delta t \to 0} \mathbb{E}\left[\frac{\Delta w(t)^{2}}{\Delta t^{2}}\right] \\
 &= \lim_{\Delta t \to 0} \frac{\mathbb{E}[\Delta w(t)^{2}]}{\Delta t^{2}} \\
-&= \lim_{\Delta t \to 0} \frac{\Delta t}{\Delta t^{2}} = \infin
+&= \lim_{\Delta t \to 0} \frac{\Delta t}{\Delta t^{2}} = \infty
 \end{aligned}
 $$
 

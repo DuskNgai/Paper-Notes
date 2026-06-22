@@ -145,6 +145,23 @@ W(\mathbf{r}, h) = \frac{1}{\pi h^{3}} \begin{cases}
 \end{cases}, \tag{31}
 $$
 
+我们来计算一下 Cubic Spline Kernel 的梯度：
+$$
+\nabla W = \frac{1}{\pi h^{4}} \begin{cases}
+\left( -3\,\dfrac{|\mathbf{r}|}{h} + \dfrac{9}{4}\,\dfrac{|\mathbf{r}|^{2}}{h^{2}} \right) \dfrac{\mathbf{r}}{|\mathbf{r}|}, & 0 \le |\mathbf{r}| < h,\\[1em]
+-\dfrac{3}{4}\left(2 - \dfrac{|\mathbf{r}|}{h}\right)^{2} \dfrac{\mathbf{r}}{|\mathbf{r}|}, & h \le |\mathbf{r}| < 2h,\\[1em]
+\mathbf{0}, & |\mathbf{r}| \ge 2h.
+\end{cases}
+$$
+Laplacian：
+$$
+\nabla^{2} W = \frac{1}{\pi h^{6}} \begin{cases}
+9\left(|\mathbf{r}| - h\right), & 0 \le |\mathbf{r}| < h, \\[1em]
+\dfrac{3\left(2h - |\mathbf{r}|\right)\left(|\mathbf{r}| - h\right)}{|\mathbf{r}|}, & h \le |\mathbf{r}| < 2h, \\[1em]
+0, & |\mathbf{r}| \ge 2h.
+\end{cases}
+$$
+
 ## Fluid Equations
 
 连续性方程（质量守恒）：
@@ -284,3 +301,42 @@ $$
 SPH 中最重要的问题是找到最近邻。可以使用空间哈希或者树结构来加速邻居搜索。
 
 ## Integration and Timestepping
+好的，我对你的笔记进行了简单修补，**加粗**了修改的部分。修改后的完整版本如下：
+
+---
+
+### The Leapfrog Integrator
+
+蛙跳格式的得名来自于位置和速度的更新有着半个时间步的错位。给定位置，速度，加速度，时间步长（$\mathbf{x}_{i}$, $\mathbf{v}_{i}$, $\mathbf{a}_{i}$, $\Delta t$），位置和速度的更新为：
+$$
+\begin{aligned}
+\mathbf{x}_{i + 1} &\gets \mathbf{x}_{i} + \mathbf{v}_{i - 1 / 2} \Delta t \\
+\mathbf{v}_{i + 1 / 2} &\gets \mathbf{v}_{i - 1 / 2} + \mathbf{a}_{i} \Delta t
+\end{aligned} \tag{150}
+$$
+换成整数的时间步长，可以得到下面的更新公式：
+$$
+\begin{aligned}
+\mathbf{x}_{i + 1} &\gets \mathbf{x}_{i} + \left(\mathbf{v}_{i} + \frac{1}{2} \mathbf{a}_{i} \Delta t \right) \Delta t \\
+\mathbf{v}_{i + 1} &\gets \mathbf{v}_{i} + (\mathbf{a}_{i} + \mathbf{a}_{i + 1}) \frac{\Delta t}{2}
+\end{aligned} \tag{151}
+$$
+
+上述的公式其实要求加速度只依赖于位置，如果加速度依赖于速度，就会出现问题，整个求解格式变成了隐式的。对应的修正方法为：
+1. 先预测半时间步上的位置：
+$$
+\mathbf{x}_{i + 1 / 2} \gets \mathbf{x}_{i} + \mathbf{v}_{i} \frac{\Delta t}{2}
+$$
+2. 再预测半时间步上的速度：
+$$
+\mathbf{v}_{i + 1 / 2} \gets \mathbf{v}_{i} + \mathbf{a}_{i} \frac{\Delta t}{2}
+$$
+然后用 $\mathbf{x}_{i + 1 / 2}$ 和 $\mathbf{v}_{i + 1 / 2}$ 计算半时间步上的加速度 $\mathbf{a}_{i + 1 / 2}$（以及其它物理量）。
+3. 再用半时间步的加速度更新整个时间步的速度：
+$$
+\mathbf{v}_{i + 1} \gets \mathbf{v}_{i} + \mathbf{a}_{i + 1 / 2} \Delta t
+$$
+4. 最后更新整个时间步的位置：
+$$
+\mathbf{x}_{i + 1} \gets \mathbf{x}_{i} + \left(\mathbf{v}_{i} + \mathbf{v}_{i + 1}\right) \frac{\Delta t}{2}
+$$
